@@ -212,6 +212,10 @@ local function NatDexExtension()
 	-- NAT DEX DATA
 	self.Data = {}
 
+	self.Data.pokeTypesList = {
+		fairy = "Fairy",
+	}
+
 	self.Data.pokeNameList = {
 		[412] = "Turtwig"        , [413] = "Grotle"         , [414] = "Torterra"       , [415] = "Chimchar"       , [416] = "Monferno"       ,
 		[417] = "Infernape"      , [418] = "Piplup"         , [419] = "Prinplup"       , [420] = "Empoleon"       , [421] = "Starly"         ,
@@ -6790,6 +6794,11 @@ local function NatDexExtension()
 	end
 
 	function self.addResources()
+		local pokeTypes = Resources.Game.PokemonTypes
+		for id, name in pairs(self.Data.pokeTypesList) do
+			pokeTypes[id] = name
+		end
+
 		local pokeNames = Resources.Game.PokemonNames
 		for id, name in pairs(self.Data.pokeNameList) do
 			pokeNames[id] = name
