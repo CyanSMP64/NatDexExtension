@@ -36,7 +36,7 @@ local function NatDexExtension()
 
 	-- Returns true if the Tracker code supports this Nat. Dex rom hack
 	function self.checkIfTrackerVersionSupported()
-		if GameSettings.RomHackSupport.NatDex then
+		if GameSettings and GameSettings.RomHackSupport and GameSettings.RomHackSupport.NatDex then
 			return true
 		end
 
