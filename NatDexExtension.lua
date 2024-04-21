@@ -7301,8 +7301,8 @@ local function NatDexExtension()
 		mon[234].evolution = "41"
 		mon[320].evolution = PE.THUNDER
 		mon[328].evolution = PE.WATER
-		mon[346].evolution = PE.DUSK
-		mon[362].evolution = "47"
+		mon[346].evolution = PE.DAWN42
+		mon[362].evolution = PE.DUSK
 		mon[363].evolution = PE.SHINY
 		mon[373].evolution = PE.DEEPSEA
 		mon[393].evolution = PE.DAWN30
