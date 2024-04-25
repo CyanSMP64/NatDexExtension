@@ -1,6 +1,6 @@
 local function NatDexExtension()
 	local self = {
-		version = "1.1.1",
+		version = "1.1.2",
 		name = "Nat. Dex",
 		author = "CyanSixFour, UTDZac",
 		description = "Extension that allows for compatibility with the Emerald & FireRed Nat. Dex ROM hacks.",
@@ -180,6 +180,7 @@ local function NatDexExtension()
 		self.overrideTrackerSettings()
 		self.overrideCoreTrackerFunctions()
 		self.addUpdateNewData()
+		self.addGameOverInfo()
 	end
 
 	-- Executed only once: When the extension is disabled by the user, necessary to undo any customizations, if able
@@ -197,6 +198,7 @@ local function NatDexExtension()
 		-- if DEBUG_MESSAGES_ON then
 		-- 	Utils.printDebug("\nNat. Dex extension disabled.")
 		-- end
+		self.removeGameOverInfo()
 	end
 
 	-- Executed when the user clicks the "Check for Updates" button while viewing the extension details within the Tracker's UI
@@ -6828,6 +6830,36 @@ local function NatDexExtension()
 		Resources.sanitizeTable(Resources.Data)
 	end
 
+	function self.addGameOverInfo()
+		GameOverScreen.Buttons.NatDexVersion = {
+		type = Constants.ButtonTypes.NO_BORDER,
+		-- The location and dimensions of the button {x,y,w,h}; shares space with Retry Battle button.
+		box = { Constants.SCREEN.WIDTH + 80, 7, 32, 16 },
+		-- Text to show on the button
+		getText = function(_thisBtnObj)
+			return string.format("[v%s]", self.version)
+		end,
+		-- Color used for the text only; must pick a color from Theme
+		textColor = "Intermediate text",
+	
+		-- Only display this button if the game ends because the player won
+		isVisible = function(_thisBtnObj)
+			return Main.IsOnBizhawk() and GameOverScreen.status == GameOverScreen.Statuses.WON
+		end,
+		-- Optional code to execute each time the Tracker refreshes data
+		-- updateSelf = function(_thisBtnObj)
+		-- end,
+		-- Optional code to perform an on-click event.
+		-- If this changes something on screen, use `Program.redraw(true)` to refresh immediately
+		-- onClick = function(_thisBtnObj)
+		-- end,
+		}
+	end
+
+	function self.removeGameOverInfo()
+		GameOverScreen.Buttons.NatDexVersion = nil
+	end
+
 	function self.updatePokeData()
 		local PE = PokemonData.Evolutions
 
@@ -7359,7 +7391,6 @@ local function NatDexExtension()
 		MoveData.Moves[225].name = "Dragon Breath"
 		MoveData.Moves[245].name = "Extreme Speed"
 		MoveData.Moves[246].name = "Ancient Power"
-		MoveData.Moves[261].name = "Will-o-Wisp"
 		MoveData.Moves[265].name = "Smelling Salts"
 		MoveData.Moves[297].name = "Feather Dance"
 		MoveData.Moves[320].name = "Grass Whistle"
@@ -7418,7 +7449,6 @@ local function NatDexExtension()
 		moveNames[225] = "Dragon Breath"
 		moveNames[245] = "Extreme Speed"
 		moveNames[246] = "Ancient Power"
-		moveNames[261] = "Will-o-Wisp"
 		moveNames[265] = "Smelling Salts"
 		moveNames[297] = "Feather Dance"
 		moveNames[320] = "Grass Whistle"
@@ -7442,7 +7472,6 @@ local function NatDexExtension()
 		moveDesc[225].NameKey = "Dragon Breath"
 		moveDesc[245].NameKey = "Extreme Speed"
 		moveDesc[246].NameKey = "Ancient Power"
-		moveDesc[261].NameKey = "Will-o-Wisp"
 		moveDesc[265].NameKey = "Smelling Salts"
 		moveDesc[297].NameKey = "Feather Dance"
 		moveDesc[320].NameKey = "Grass Whistle"
@@ -8548,13 +8577,7 @@ local function NatDexExtension()
 				{ id = 329, perc = 2.01, }, { id = 989, perc = 1.94, }, { id = 160, perc = 1.91, }, { id = 843, perc = 1.90, }, { id = 528, perc = 1.87, }, { id = 619, perc = 1.84, }, { id = 186, perc = 1.82, }, { id = 55, perc = 1.82, }, { id = 134, perc = 1.81, }, { id = 99, perc = 1.78, }, { id = 9, perc = 1.77, }, { id = 1183, perc = 1.75, }, { id = 1002, perc = 1.74, }, { id = 482, perc = 1.70, }, { id = 343, perc = 1.70, }, { id = 575, perc = 1.68, }, { id = 285, perc = 1.65, }, { id = 375, perc = 1.65, }, { id = 374, perc = 1.62, }, { id = 872, perc = 1.61, }, { id = 1182, perc = 1.61, }, { id = 119, perc = 1.59, }, { id = 224, perc = 1.56, }, { id = 420, perc = 1.56, }, { id = 541, perc = 1.51, }, { id = 130, perc = 1.50, }, { id = 718, perc = 1.50, }, { id = 131, perc = 1.49, }, { id = 514, perc = 1.49, }, { id = 683, perc = 1.49, }, { id = 314, perc = 1.46, }, { id = 324, perc = 1.44, }, { id = 793, perc = 1.44, }, { id = 939, perc = 1.44, }, { id = 1226, perc = 1.44, }, { id = 606, perc = 1.43, }, { id = 448, perc = 1.41, }, { id = 1003, perc = 1.38, }, { id = 327, perc = 1.36, }, { id = 171, perc = 1.33, }, { id = 230, perc = 1.31, }, { id = 91, perc = 1.31, }, { id = 562, perc = 1.31, }, { id = 755, perc = 1.30, }, { id = 870, perc = 1.30, }, { id = 804, perc = 1.30, }, { id = 1145, perc = 1.30, }, { id = 381, perc = 1.27, }, { id = 226, perc = 1.26, }, { id = 927, perc = 1.24, }, { id = 907, perc = 1.23, }, { id = 859, perc = 1.21, }, { id = 331, perc = 1.20, }, { id = 121, perc = 1.16, }, { id = 1174, perc = 1.14, }, { id = 908, perc = 1.14, }, { id = 73, perc = 1.13, }, { id = 87, perc = 1.10, }, { id = 139, perc = 1.07, }, { id = 714, perc = 1.06, }, { id = 62, perc = 1.06, }, { id = 141, perc = 1.05, }, { id = 618, perc = 1.05, }, { id = 1159, perc = 1.02, }, { id = 590, perc = 0.98, }, { id = 297, perc = 0.96, }, { id = 80, perc = 0.95, }, { id = 199, perc = 0.94, }, { id = 1001, perc = 0.89, }, { id = 777, perc = 0.88, }, { id = 773, perc = 0.88, },
 			},
 			[445] = {
-				options = { 446, 1172},
-				[446] = {
-					{ id = 153, perc = 2.98, }, { id = 521, perc = 2.86, }, { id = 581, perc = 2.85, }, { id = 278, perc = 2.77, }, { id = 413, perc = 2.74, }, { id = 855, perc = 2.61, }, { id = 480, perc = 2.59, }, { id = 932, perc = 2.57, }, { id = 192, perc = 2.57, }, { id = 836, perc = 2.54, }, { id = 574, perc = 2.53, }, { id = 1036, perc = 2.52, }, { id = 189, perc = 2.48, }, { id = 114, perc = 2.44, }, { id = 2, perc = 2.43, }, { id = 779, perc = 2.41, }, { id = 676, perc = 2.41, }, { id = 345, perc = 2.39, }, { id = 182, perc = 2.37, }, { id = 867, perc = 2.35, }, { id = 866, perc = 2.31, }, { id = 734, perc = 2.28, }, { id = 572, perc = 2.12, }, { id = 623, perc = 2.10, }, { id = 748, perc = 2.08, }, { id = 1146, perc = 2.06, }, { id = 369, perc = 2.04, }, { id = 1201, perc = 2.00, }, { id = 1200, perc = 1.95, }, { id = 972, perc = 1.95, }, { id = 307, perc = 1.94, }, { id = 977, perc = 1.92, }, { id = 389, perc = 1.92, }, { id = 611, perc = 1.92, }, { id = 736, perc = 1.88, }, { id = 1199, perc = 1.88, }, { id = 616, perc = 1.87, }, { id = 300, perc = 1.87, }, { id = 45, perc = 1.82, }, { id = 71, perc = 1.69, }, { id = 781, perc = 1.63, }, { id = 485, perc = 1.60, }, { id = 1141, perc = 1.49, }, { id = 47, perc = 1.48, }, { id = 438, perc = 1.41, }, { id = 297, perc = 1.37, }, { id = 788, perc = 0.01, },
-				},
-				[1172] = {
-					{ id = 1011, perc = 2.99, }, { id = 1026, perc = 2.81, }, { id = 812, perc = 2.62, }, { id = 698, perc = 2.62, }, { id = 823, perc = 2.59, }, { id = 490, perc = 2.44, }, { id = 837, perc = 2.34, }, { id = 279, perc = 2.24, }, { id = 495, perc = 2.22, }, { id = 1042, perc = 2.17, }, { id = 1233, perc = 2.15, }, { id = 1117, perc = 2.14, }, { id = 154, perc = 2.09, }, { id = 1231, perc = 2.06, }, { id = 788, perc = 2.04, }, { id = 522, perc = 2.01, }, { id = 933, perc = 1.91, }, { id = 1232, perc = 1.86, }, { id = 574, perc = 1.82, }, { id = 537, perc = 1.74, }, { id = 779, perc = 1.74, }, { id = 677, perc = 1.73, }, { id = 3, perc = 1.72, }, { id = 1044, perc = 1.70, }, { id = 1036, perc = 1.65, }, { id = 182, perc = 1.61, }, { id = 867, perc = 1.61, }, { id = 1153, perc = 1.59, }, { id = 103, perc = 1.57, }, { id = 432, perc = 1.56, }, { id = 866, perc = 1.55, }, { id = 749, perc = 1.54, }, { id = 414, perc = 1.52, }, { id = 623, perc = 1.50, }, { id = 1200, perc = 1.48, }, { id = 1199, perc = 1.48, }, { id = 806, perc = 1.47, }, { id = 734, perc = 1.46, }, { id = 1038, perc = 1.43, }, { id = 45, perc = 1.42, }, { id = 572, perc = 1.40, }, { id = 972, perc = 1.39, }, { id = 611, perc = 1.36, }, { id = 1177, perc = 1.32, }, { id = 485, perc = 1.31, }, { id = 974, perc = 1.30, }, { id = 300, perc = 1.27, }, { id = 1146, perc = 1.27, }, { id = 736, perc = 1.27, }, { id = 1201, perc = 1.25, }, { id = 345, perc = 1.24, }, { id = 567, perc = 1.24, }, { id = 923, perc = 1.23, }, { id = 955, perc = 1.20, }, { id = 389, perc = 1.18, }, { id = 977, perc = 1.18, }, { id = 71, perc = 1.16, }, { id = 1141, perc = 1.16, }, { id = 297, perc = 1.08, },
-				}
+				{ id = 153, perc = 2.98, }, { id = 521, perc = 2.86, }, { id = 581, perc = 2.85, }, { id = 278, perc = 2.77, }, { id = 413, perc = 2.74, }, { id = 855, perc = 2.61, }, { id = 480, perc = 2.59, }, { id = 932, perc = 2.57, }, { id = 192, perc = 2.57, }, { id = 836, perc = 2.54, }, { id = 574, perc = 2.53, }, { id = 1036, perc = 2.52, }, { id = 189, perc = 2.48, }, { id = 114, perc = 2.44, }, { id = 2, perc = 2.43, }, { id = 779, perc = 2.41, }, { id = 676, perc = 2.41, }, { id = 345, perc = 2.39, }, { id = 182, perc = 2.37, }, { id = 867, perc = 2.35, }, { id = 866, perc = 2.31, }, { id = 734, perc = 2.28, }, { id = 572, perc = 2.12, }, { id = 623, perc = 2.10, }, { id = 748, perc = 2.08, }, { id = 1146, perc = 2.06, }, { id = 369, perc = 2.04, }, { id = 1201, perc = 2.00, }, { id = 1200, perc = 1.95, }, { id = 972, perc = 1.95, }, { id = 307, perc = 1.94, }, { id = 977, perc = 1.92, }, { id = 389, perc = 1.92, }, { id = 611, perc = 1.92, }, { id = 736, perc = 1.88, }, { id = 1199, perc = 1.88, }, { id = 616, perc = 1.87, }, { id = 300, perc = 1.87, }, { id = 45, perc = 1.82, }, { id = 71, perc = 1.69, }, { id = 781, perc = 1.63, }, { id = 485, perc = 1.60, }, { id = 1141, perc = 1.49, }, { id = 47, perc = 1.48, }, { id = 438, perc = 1.41, }, { id = 297, perc = 1.37, }, { id = 788, perc = 0.01, },
 			},
 			[447] = {
 				{ id = 619, perc = 2.86, }, { id = 99, perc = 2.69, }, { id = 989, perc = 2.55, }, { id = 374, perc = 2.52, }, { id = 575, perc = 2.35, }, { id = 186, perc = 2.29, }, { id = 1182, perc = 2.26, }, { id = 1183, perc = 2.25, }, { id = 55, perc = 2.20, }, { id = 872, perc = 2.17, }, { id = 482, perc = 2.14, }, { id = 718, perc = 2.13, }, { id = 907, perc = 2.11, }, { id = 541, perc = 2.09, }, { id = 375, perc = 2.05, }, { id = 514, perc = 2.05, }, { id = 314, perc = 2.03, }, { id = 119, perc = 2.01, }, { id = 224, perc = 1.99, }, { id = 324, perc = 1.96, }, { id = 1003, perc = 1.96, }, { id = 117, perc = 1.91, }, { id = 444, perc = 1.91, }, { id = 62, perc = 1.88, }, { id = 327, perc = 1.87, }, { id = 606, perc = 1.80, }, { id = 870, perc = 1.78, }, { id = 121, perc = 1.74, }, { id = 590, perc = 1.72, }, { id = 73, perc = 1.71, }, { id = 139, perc = 1.70, }, { id = 562, perc = 1.69, }, { id = 331, perc = 1.66, }, { id = 908, perc = 1.65, }, { id = 141, perc = 1.64, }, { id = 171, perc = 1.64, }, { id = 211, perc = 1.63, }, { id = 859, perc = 1.63, }, { id = 310, perc = 1.63, }, { id = 381, perc = 1.63, }, { id = 87, perc = 1.61, }, { id = 1174, perc = 1.60, }, { id = 195, perc = 1.57, }, { id = 199, perc = 1.55, }, { id = 618, perc = 1.54, }, { id = 80, perc = 1.52, }, { id = 804, perc = 1.51, }, { id = 226, perc = 1.46, }, { id = 714, perc = 1.44, }, { id = 773, perc = 1.43, }, { id = 777, perc = 1.42, }, { id = 1159, perc = 1.35, }, { id = 1001, perc = 1.32, }, { id = 297, perc = 1.18, }, { id = 284, perc = 0.01, }, { id = 796, perc = 0.01, },
