@@ -1,6 +1,6 @@
 local function NatDexExtension()
 	local self = {
-		version = "1.1.2",
+		version = "1.1.3",
 		name = "Nat. Dex",
 		author = "CyanSixFour, UTDZac",
 		description = "Extension that allows for compatibility with the Emerald & FireRed Nat. Dex ROM hacks.",
@@ -605,7 +605,7 @@ local function NatDexExtension()
 			detailed = { "Linking Cord", },
 			evoItemIds = { 92 },
 		},
-		-- Water or Moon stone items
+		-- Water or Dusk stone items
 		WATER_DUSK = {
 			abbreviation = "WTR/DSK",
 			short = { "Water", "Dusk", },
@@ -7806,7 +7806,7 @@ local function NatDexExtension()
 			-- Cute Charm
 			GS.ABILITIES.ATTACKER[0x082db75f + 0xe] = {[56] = true} -- BattleScript_CuteCharmActivates + 0xe
 			-- Truant
-			GS.ABILITIES.REVERSE_ATTACKER[0x082db7b1 + 0x5] = {[54] = true} -- BattleScript_MoveUsedLoafingAround + 0x5
+			GS.ABILITIES.REVERSE_ATTACKER[0x082db7cb + 0x5] = {[54] = true} -- BattleScript_MoveUsedLoafingAroundMsg + 0x5
 		end
 	end
 
