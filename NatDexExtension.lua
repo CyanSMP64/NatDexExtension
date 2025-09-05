@@ -1,6 +1,7 @@
 local function NatDexExtension()
 	local self = {
-		version = "1.1.3",
+		version = "1.2.0",
+		version_fake = "1.1.3-r166" -- temporary, for game over screen
 		name = "Nat. Dex",
 		author = "CyanSixFour, UTDZac",
 		description = "Extension that allows for compatibility with the Emerald & FireRed Nat. Dex ROM hacks.",
@@ -130,8 +131,11 @@ local function NatDexExtension()
 		-- Add new Nat Dex data
 		self.addNewEvoStones()
 		self.addNewEvoDetails()
+		self.addNewBattleItems()
+		self.addNewOtherItems()
 		self.addNewPokemonData()
 		self.addNewMoves()
+		self.addNewAbilities()
 		self.addNewTypes()
 		self.addNewSprites()
 		self.addResources()
@@ -356,80 +360,3691 @@ local function NatDexExtension()
 		[1041] = "Fezandipiti"   , [1042] = "Ogerpon"       , [1043] = "Archaludon"    , [1044] = "Hydrapple"     , [1045] = "Gouging Fire"  ,
 		[1046] = "Raging Bolt"   , [1047] = "Iron Boulder"  , [1048] = "Iron Crown"    , [1049] = "Terapagos"     , [1050] = "Pecharunt"     ,
 
-		[1051] = "Venusaur M"    , [1052] = "Charizard X"   , [1053] = "Charizard Y"   , [1054] = "Blastoise M"   , [1055] = "Beedrill M"    ,
-		[1056] = "Pidgeot M"     , [1057] = "Alakazam M"    , [1058] = "Slowbro M"     , [1059] = "Gengar M"      , [1060] = "Kangaskhan M"  ,
-		[1061] = "Pinsir M"      , [1062] = "Gyarados M"    , [1063] = "Aerodactyl M"  , [1064] = "Mewtwo X"      , [1065] = "Mewtwo Y"      ,
-		[1066] = "Ampharos M"    , [1067] = "Steelix M"     , [1068] = "Scizor M"      , [1069] = "Heracross M"   , [1070] = "Houndoom M"    ,
-		[1071] = "Tyranitar M"   , [1072] = "Sceptile M"    , [1073] = "Blaziken M"    , [1074] = "Swampert M"    , [1075] = "Gardevoir M"   ,
-		[1076] = "Sableye M"     , [1077] = "Mawile M"      , [1078] = "Aggron M"      , [1079] = "Medicham M"    , [1080] = "Manectric M"   ,
-		[1081] = "Sharpedo M"    , [1082] = "Camerupt M"    , [1083] = "Altaria M"     , [1084] = "Banette M"     , [1085] = "Absol M"       ,
-		[1086] = "Glalie M"      , [1087] = "Salamence M"   , [1088] = "Metagross M"   , [1089] = "Latias M"      , [1090] = "Latios M"      ,
-		[1091] = "Lopunny M"     , [1092] = "Garchomp M"    , [1093] = "Lucario M"     , [1094] = "Abomasnow M"   , [1095] = "Gallade M"     ,
-		[1096] = "Audino M"      , [1097] = "Diancie M"     , [1098] = "Rayquaza M"    , [1099] = "Kyogre P"      , [1100] = "Groudon P"     ,
+		[1051] = "Venusaur-M"    , [1052] = "Charizard-X"   , [1053] = "Charizard-Y"   , [1054] = "Blastoise-M"   , [1055] = "Beedrill-M"    ,
+		[1056] = "Pidgeot-M"     , [1057] = "Alakazam-M"    , [1058] = "Slowbro-M"     , [1059] = "Gengar-M"      , [1060] = "Kangaskhan-M"  ,
+		[1061] = "Pinsir-M"      , [1062] = "Gyarados-M"    , [1063] = "Aerodactyl-M"  , [1064] = "Mewtwo-X"      , [1065] = "Mewtwo-Y"      ,
+		[1066] = "Ampharos-M"    , [1067] = "Steelix-M"     , [1068] = "Scizor-M"      , [1069] = "Heracross-M"   , [1070] = "Houndoom-M"    ,
+		[1071] = "Tyranitar-M"   , [1072] = "Sceptile-M"    , [1073] = "Blaziken-M"    , [1074] = "Swampert-M"    , [1075] = "Gardevoir-M"   ,
+		[1076] = "Sableye-M"     , [1077] = "Mawile-M"      , [1078] = "Aggron-M"      , [1079] = "Medicham-M"    , [1080] = "Manectric-M"   ,
+		[1081] = "Sharpedo-M"    , [1082] = "Camerupt-M"    , [1083] = "Altaria-M"     , [1084] = "Banette-M"     , [1085] = "Absol-M"       ,
+		[1086] = "Glalie-M"      , [1087] = "Salamence-M"   , [1088] = "Metagross-M"   , [1089] = "Latias-M"      , [1090] = "Latios-M"      ,
+		[1091] = "Lopunny-M"     , [1092] = "Garchomp-M"    , [1093] = "Lucario-M"     , [1094] = "Abomasnow-M"   , [1095] = "Gallade-M"     ,
+		[1096] = "Audino-M"      , [1097] = "Diancie-M"     , [1098] = "Rqyquaza-M"    , [1099] = "Kyogre-P"      , [1100] = "Groudon-P"     ,
 
-		[1101] = "Rattata A"     , [1102] = "Raticate A"    , [1103] = "Raichu A"      , [1104] = "Sandshrew A"   , [1105] = "Sandslash A"   ,
-		[1106] = "Vulpix A"      , [1107] = "Ninetales A"   , [1108] = "Diglett A"     , [1109] = "Dugtrio A"     , [1110] = "Meowth A"      ,
-		[1111] = "Persian A"     , [1112] = "Geodude A"     , [1113] = "Graveler A"    , [1114] = "Golem A"       , [1115] = "Grimer A"      ,
-		[1116] = "Muk A"         , [1117] = "Exeggutor A"   , [1118] = "Marowak A"     , [1119] = "Meowth G"      , [1120] = "Ponyta G"      ,
-		[1121] = "Rapidash G"    , [1122] = "Slowpoke G"    , [1123] = "Slowbro G"     , [1124] = "Farfetch'd G"  , [1125] = "Weezing G"     ,
-		[1126] = "Mr. Mime G"    , [1127] = "Articuno G"    , [1128] = "Zapdos G"      , [1129] = "Moltres G"     , [1130] = "Slowking G"    ,
-		[1131] = "Corsola G"     , [1132] = "Zigzagoon G"   , [1133] = "Linoone G"     , [1134] = "Darumaka G"    , [1135] = "Darmanitan G"  ,
-		[1136] = "Yamask G"      , [1137] = "Stunfisk G"    , [1138] = "Growlithe H"   , [1139] = "Arcanine H"    , [1140] = "Voltorb H"     ,
-		[1141] = "Electrode H"   , [1142] = "Typhlosion H"  , [1143] = "Qwilfish H"    , [1144] = "Sneasel H"     , [1145] = "Samurott H"    ,
-		[1146] = "Lilligant H"   , [1147] = "Zorua H"       , [1148] = "Zoroark H"     , [1149] = "Braviary H"    , [1150] = "Sliggoo H"     ,
-		[1151] = "Goodra H"      , [1152] = "Avalugg H"     , [1153] = "Decidueye H"   , [1154] = "Tauros P"      , [1155] = "Wooper P"      ,
+		[1101] = "Rattata-A"     , [1102] = "Raticate-A"    , [1103] = "Raichu-A"      , [1104] = "Sandshrew-A"   , [1105] = "Sandslash-A"   ,
+		[1106] = "Vulpix-A"      , [1107] = "Ninetales-A"   , [1108] = "Diglett-A"     , [1109] = "Dugtrio-A"     , [1110] = "Meowth-A"      ,
+		[1111] = "Persian-A"     , [1112] = "Geodude-A"     , [1113] = "Graveler-A"    , [1114] = "Golem-A"       , [1115] = "Grimer-A"      ,
+		[1116] = "Muk-A"         , [1117] = "Exeggutor-A"   , [1118] = "Marowak-A"     , [1119] = "Meowth-G"      , [1120] = "Ponyta-G"      ,
+		[1121] = "Rapidash-G"    , [1122] = "Slowpoke-G"    , [1123] = "Slowbro-G"     , [1124] = "Farfetch'd-G"  , [1125] = "Weezing-G"     ,
+		[1126] = "Mr. Mime-G"    , [1127] = "Articuno-G"    , [1128] = "Zapdos-G"      , [1129] = "Moltres-G"     , [1130] = "Slowking-G"    ,
+		[1131] = "Corsola-G"     , [1132] = "Zigzagoon-G"   , [1133] = "Linoone-G"     , [1134] = "Darumaka-G"    , [1135] = "Darmanitan-G"  ,
+		[1136] = "Yamask-G"      , [1137] = "Stunfisk-G"    , [1138] = "Growlithe-H"   , [1139] = "Arcanine-H"    , [1140] = "Voltorb-H"     ,
+		[1141] = "Electrode-H"   , [1142] = "Typhlosion-H"  , [1143] = "Qwilfish-H"    , [1144] = "Sneasel-H"     , [1145] = "Samurott-H"    ,
+		[1146] = "Lilligant-H"   , [1147] = "Zorua-H"       , [1148] = "Zoroark-H"     , [1149] = "Braviary-H"    , [1150] = "Sliggoo-H"     ,
+		[1151] = "Goodra-H"      , [1152] = "Avalugg-H"     , [1153] = "Decidueye-H"   , [1154] = "Tauros-P"      , [1155] = "Wooper-P"      ,
 
-		[1156] = "Pikachu C"     , [1157] = "Pikachu P"     , [1158] = "Tauros P F"    , [1159] = "Tauros P W"    , [1160] = "Eevee P"       ,
-		[1161] = "Pichu S"       , [1162] = "Castform F"    , [1163] = "Castform W"    , [1164] = "Castform I"    , [1165] = "Deoxys Atk"    ,
-		[1166] = "Deoxys Def"    , [1167] = "Deoxys Spe"    , [1168] = "Burmy S"       , [1169] = "Burmy T"       , [1170] = "Wormadam S"    ,
-		[1171] = "Wormadam T"    , [1172] = "Cherrim S"     , [1173] = "Rotom Heat"    , [1174] = "Rotom Wash"    , [1175] = "Rotom Frost"   ,
-		[1176] = "Rotom Fan"     , [1177] = "Rotom Mow"     , [1178] = "Dialga O"      , [1179] = "Palkia O"      , [1180] = "Giratina O"    ,
-		[1181] = "Shaymin S"     , [1182] = "Basculin B"    , [1183] = "Basculin W"    , [1184] = "Darmanitan Z"  , [1185] = "Darmanitan Z G",
-		[1186] = "Tornadus T"    , [1187] = "Thundurus T"   , [1188] = "Landorus T"    , [1189] = "Kyurem W"      , [1190] = "Kyurem B"      ,
-		[1191] = "Meloetta P"    , [1192] = "Greninja A"    , [1193] = "Floette E"     , [1194] = "Meowstic F"    , [1195] = "Aegislash B"   ,
-	    [1196] = "Pumpkaboo S"   , [1197] = "Pumpkaboo L"   , [1198] = "Pumpkaboo X"   , [1199] = "Gourgeist S"   , [1200] = "Gourgeist L"   ,
-		[1201] = "Gourgeist X"   , [1202] = "Zygarde 10"    , [1203] = "Zygarde C"     , [1204] = "Hoopa U"       , [1205] = "Oricorio E"    ,
-		[1206] = "Oricorio P"    , [1207] = "Oricorio G"    , [1208] = "Lycanroc M"    , [1209] = "Lycanroc D"    , [1210] = "Wishiwashi S"  ,
-		[1211] = "Minior C"      , [1212] = "Necrozma DM"   , [1213] = "Necrozma DW"   , [1214] = "Necrozma U"    , [1215] = "Toxtricity L"  ,
-		[1216] = "Eiscue N"      , [1217] = "Indeedee F"    , [1218] = "Morpeko H"     , [1219] = "Zacian C"      , [1220] = "Zamazenta C"   ,
-		[1221] = "Eternatus E"   , [1222] = "Urshifu R"     , [1223] = "Calyrex I"     , [1224] = "Calyrex S"     , [1225] = "Ursaluna B"    ,
-		[1226] = "Basculegion F" , [1227] = "Enamorus T"    , [1228] = "Oinkologne F"  , [1229] = "Palafin H"     , [1230] = "Gimmighoul R"  ,
-		[1231] = "Ogerpon W"     , [1232] = "Ogerpon F"     , [1233] = "Ogerpon R"     , [1234] = "Terapagos T"   , [1235] = "Terapagos S"   ,
+		[1156] = "Pikachu-C"     , [1157] = "Pikachu-P"     , [1158] = "Tauros-PF"     , [1159] = "Tauros-PW"     , [1160] = "Eevee-P"       ,
+		[1161] = "Pichu-S"       , [1162] = "Castform-F"    , [1163] = "Castform-W"    , [1164] = "Castform-I"    , [1165] = "Deoxys-A"      ,
+		[1166] = "Deoxys-D"      , [1167] = "Deoxys-S"      , [1168] = "Burmy-S"       , [1169] = "Burmy-T"       , [1170] = "Wormadam-S"    ,
+		[1171] = "Wormadam-T"    , [1172] = "Cherrim-S"     , [1173] = "Rotom-Heat"    , [1174] = "Rotom-Wash"    , [1175] = "Rotom-Frost"   ,
+		[1176] = "Rotom-Fan"     , [1177] = "Rotom-Mow"     , [1178] = "Dialga-O"      , [1179] = "Palkia-O"      , [1180] = "Giratina-O"    ,
+		[1181] = "Shaymin-S"     , [1182] = "Basculin-B"    , [1183] = "Basculin-W"    , [1184] = "Darmanitan-Z"  , [1185] = "Darmanitan-GZ" ,
+		[1186] = "Tornadus-T"    , [1187] = "Thundurus-T"   , [1188] = "Landorus-T"    , [1189] = "Kyurem-W"      , [1190] = "Kyurem-B"      ,
+		[1191] = "Meloetta-P"    , [1192] = "Greninja-A"    , [1193] = "Floette-E"     , [1194] = "Meowstic-F"    , [1195] = "Aegislash-B"   ,
+	    [1196] = "Pumpkaboo-S"   , [1197] = "Pumpkaboo-L"   , [1198] = "Pumpkaboo-XL"  , [1199] = "Gourgeist-S"   , [1200] = "Gourgeist-L"   ,
+		[1201] = "Gourgeist-XL"  , [1202] = "Zygarde-10"    , [1203] = "Zygarde-C"     , [1204] = "Hoopa-U"       , [1205] = "Oricorio-E"    ,
+		[1206] = "Oricorio-P"    , [1207] = "Oricorio-G"    , [1208] = "Lycanroc-M"    , [1209] = "Lycanroc-D"    , [1210] = "Wishiwashi-S"  ,
+		[1211] = "Minior-C"      , [1212] = "Necrozma-DM"   , [1213] = "Necrozma-DW"   , [1214] = "Necrozma-U"    , [1215] = "Toxtricity-L"  ,
+		[1216] = "Eiscue-N"      , [1217] = "Indeedee-F"    , [1218] = "Morpeko-H"     , [1219] = "Zacian-C"      , [1220] = "Zamazenta-C"   ,
+		[1221] = "Eternatus-E"   , [1222] = "Urshifu-R"     , [1223] = "Calyrex-I"     , [1224] = "Calyrex-S"     , [1225] = "Ursaluna-B"    ,
+		[1226] = "Basculegion-F" , [1227] = "Enamorus-T"    , [1228] = "Oinkologne-F"  , [1229] = "Palafin-H"     , [1230] = "Gimmighoul-R"  ,
+		[1231] = "Ogerpon-W"     , [1232] = "Ogerpon-F"     , [1233] = "Ogerpon-R"     , [1234] = "Terapagos-T"   , [1235] = "Terapagos-S"   ,
 	}
 
 	self.Data.moveNameList = {
-		[355] = "Disarming Voice",
-		[356] = "Draining Kiss",
-		[357] = "Play Rough",
-		[358] = "Fairy Wind",
-		[359] = "Moonblast",
-		[360] = "Dazzling Gleam",
+		[355] = "Roost",
+		[356] = "Gravity",
+		[357] = "Miracle Eye",
+		[358] = "Wake-Up Slap",
+		[359] = "Hammer Arm",
+		[360] = "Gyro Ball",
+		[361] = "Healing Wish",
+		[362] = "Brine",
+		[363] = "Natural Gift",
+		[364] = "Feint",
+		[365] = "Pluck",
+		[366] = "Tailwind",
+		[367] = "Acupressure",
+		[368] = "Metal Burst",
+		[369] = "U-turn",
+		[370] = "Close Combat",
+		[371] = "Payback",
+		[372] = "Assurance",
+		[373] = "Embargo",
+		[374] = "Fling",
+		[375] = "Psycho Shift",
+		[376] = "Trump Card",
+		[377] = "Heal Block",
+		[378] = "Wring Out",
+		[379] = "Power Trick",
+		[380] = "Gastro Acid",
+		[381] = "Lucky Chant",
+		[382] = "Me First",
+		[383] = "Copycat",
+		[384] = "Power Swap",
+		[385] = "Guard Swap",
+		[386] = "Punishment",
+		[387] = "Last Resort",
+		[388] = "Worry Seed",
+		[389] = "Sucker Punch",
+		[390] = "Toxic Spikes",
+		[391] = "Heart Swap",
+		[392] = "Aqua Ring",
+		[393] = "Magnet Rise",
+		[394] = "Flare Blitz",
+		[395] = "Force Palm",
+		[396] = "Aura Sphere",
+		[397] = "Rock Polish",
+		[398] = "Poison Jab",
+		[399] = "Dark Pulse",
+		[400] = "Night Slash",
+		[401] = "Aqua Tail",
+		[402] = "Seed Bomb",
+		[403] = "Air Slash",
+		[404] = "X-Scissor",
+		[405] = "Bug Buzz",
+		[406] = "Dragon Pulse",
+		[407] = "Dragon Rush",
+		[408] = "Power Gem",
+		[409] = "Drain Punch",
+		[410] = "Vacuum Wave",
+		[411] = "Focus Blast",
+		[412] = "Energy Ball",
+		[413] = "Brave Bird",
+		[414] = "Earth Power",
+		[415] = "Switcheroo",
+		[416] = "Giga Impact",
+		[417] = "Nasty Plot",
+		[418] = "Bullet Punch",
+		[419] = "Avalanche",
+		[420] = "Ice Shard",
+		[421] = "Shadow Claw",
+		[422] = "Thunder Fang",
+		[423] = "Ice Fang",
+		[424] = "Fire Fang",
+		[425] = "Shadow Sneak",
+		[426] = "Mud Bomb",
+		[427] = "Psycho Cut",
+		[428] = "Zen Headbutt",
+		[429] = "Mirror Shot",
+		[430] = "Flash Cannon",
+		[431] = "Rock Climb",
+		[432] = "Defog",
+		[433] = "Trick Room",
+		[434] = "Draco Meteor",
+		[435] = "Discharge",
+		[436] = "Lava Plume",
+		[437] = "Leaf Storm",
+		[438] = "Power Whip",
+		[439] = "Rock Wrecker",
+		[440] = "Cross Poison",
+		[441] = "Gunk Shot",
+		[442] = "Iron Head",
+		[443] = "Magnet Bomb",
+		[444] = "Stone Edge",
+		[445] = "Captivate",
+		[446] = "Stealth Rock",
+		[447] = "Grass Knot",
+		[448] = "Chatter",
+		[449] = "Judgment",
+		[450] = "Bug Bite",
+		[451] = "Charge Beam",
+		[452] = "Wood Hammer",
+		[453] = "Aqua Jet",
+		[454] = "Attack Order",
+		[455] = "Defend Order",
+		[456] = "Heal Order",
+		[457] = "Head Smash",
+		[458] = "Double Hit",
+		[459] = "Roar of Time",
+		[460] = "Spacial Rend",
+		[461] = "Lunar Dance",
+		[462] = "Crush Grip",
+		[463] = "Magma Storm",
+		[464] = "Dark Void",
+		[465] = "Seed Flare",
+		[466] = "Ominous Wind",
+		[467] = "Shadow Force",
+		[468] = "Hone Claws",
+		[469] = "Wide Guard",
+		[470] = "Guard Split",
+		[471] = "Power Split",
+		[472] = "Wonder Room",
+		[473] = "Psyshock",
+		[474] = "Venoshock",
+		[475] = "Autotomize",
+		[476] = "Rage Powder",
+		[477] = "Telekinesis",
+		[478] = "Magic Room",
+		[479] = "Smack Down",
+		[480] = "Storm Throw",
+		[481] = "Flame Burst",
+		[482] = "Sludge Wave",
+		[483] = "Quiver Dance",
+		[484] = "Heavy Slam",
+		[485] = "Synchronoise",
+		[486] = "Electro Ball",
+		[487] = "Soak",
+		[488] = "Flame Charge",
+		[489] = "Coil",
+		[490] = "Low Sweep",
+		[491] = "Acid Spray",
+		[492] = "Foul Play",
+		[493] = "Simple Beam",
+		[494] = "Entrainment",
+		[495] = "After You",
+		[496] = "Round",
+		[497] = "Echoed Voice",
+		[498] = "Chip Away",
+		[499] = "Clear Smog",
+		[500] = "Stored Power",
+		[501] = "Quick Guard",
+		[502] = "Ally Switch",
+		[503] = "Scald",
+		[504] = "Shell Smash",
+		[505] = "Heal Pulse",
+		[506] = "Hex",
+		[507] = "Sky Drop",
+		[508] = "Shift Gear",
+		[509] = "Circle Throw",
+		[510] = "Incinerate",
+		[511] = "Quash",
+		[512] = "Acrobatics",
+		[513] = "Reflect Type",
+		[514] = "Retaliate",
+		[515] = "Final Gambit",
+		[516] = "Bestow",
+		[517] = "Inferno",
+		[518] = "Water Pledge",
+		[519] = "Fire Pledge",
+		[520] = "Grass Pledge",
+		[521] = "Volt Switch",
+		[522] = "Struggle Bug",
+		[523] = "Bulldoze",
+		[524] = "Frost Breath",
+		[525] = "Dragon Tail",
+		[526] = "Work Up",
+		[527] = "Electroweb",
+		[528] = "Wild Charge",
+		[529] = "Drill Run",
+		[530] = "Dual Chop",
+		[531] = "Heart Stamp",
+		[532] = "Horn Leech",
+		[533] = "Sacred Sword",
+		[534] = "Razor Shell",
+		[535] = "Heat Crash",
+		[536] = "Leaf Tornado",
+		[537] = "Steamroller",
+		[538] = "Cotton Guard",
+		[539] = "Night Daze",
+		[540] = "Psystrike",
+		[541] = "Tail Slap",
+		[542] = "Hurricane",
+		[543] = "Head Charge",
+		[544] = "Gear Grind",
+		[545] = "Searing Shot",
+		[546] = "Techno Blast",
+		[547] = "Relic Song",
+		[548] = "Secret Sword",
+		[549] = "Glaciate",
+		[550] = "Bolt Strike",
+		[551] = "Blue Flare",
+		[552] = "Fiery Dance",
+		[553] = "Freeze Shock",
+		[554] = "Ice Burn",
+		[555] = "Snarl",
+		[556] = "Icicle Crash",
+		[557] = "V-create",
+		[558] = "Fusion Flare",
+		[559] = "Fusion Bolt",
+		[560] = "Flying Press",
+		[561] = "Mat Block",
+		[562] = "Belch",
+		[563] = "Rototiller",
+		[564] = "Sticky Web",
+		[565] = "Fell Stinger",
+		[566] = "Phantom Force",
+		[567] = "Trick-or-Treat",
+		[568] = "Noble Roar",
+		[569] = "Ion Deluge",
+		[570] = "Parabolic Charge",
+		[571] = "Forest's Curse",
+		[572] = "Petal Blizzard",
+		[573] = "Freeze-Dry",
+		[574] = "Disarming Voice",
+		[575] = "Parting Shot",
+		[576] = "Topsy-Turvy",
+		[577] = "Draining Kiss",
+		[578] = "Crafty Shield",
+		[579] = "Flower Shield",
+		[580] = "Grassy Terrain",
+		[581] = "Misty Terrain",
+		[582] = "Electrify",
+		[583] = "Play Rough",
+		[584] = "Fairy Wind",
+		[585] = "Moonblast",
+		[586] = "Boomburst",
+		[587] = "Fairy Lock",
+		[588] = "King's Shield",
+		[589] = "Play Nice",
+		[590] = "Confide",
+		[591] = "Diamond Storm",
+		[592] = "Steam Eruption",
+		[593] = "Hyperspace Hole",
+		[594] = "Water Shuriken",
+		[595] = "Mystical Fire",
+		[596] = "Spiky Shield",
+		[597] = "Aromatic Mist",
+		[598] = "Eerie Impulse",
+		[599] = "Venom Drench",
+		[600] = "Powder",
+		[601] = "Geomancy",
+		[602] = "Magnetic Flux",
+		[603] = "Happy Hour",
+		[604] = "Electric Terrain",
+		[605] = "Dazzling Gleam",
+		[606] = "Celebrate",
+		[607] = "Hold Hands",
+		[608] = "Baby-Doll Eyes",
+		[609] = "Nuzzle",
+		[610] = "Hold Back",
+		[611] = "Infestation",
+		[612] = "Power-Up Punch",
+		[613] = "Oblivion Wing",
+		[614] = "Thousand Arrows",
+		[615] = "Thousand Waves",
+		[616] = "Land's Wrath",
+		[617] = "Light Of Ruin",
+		[618] = "Origin Pulse",
+		[619] = "Precipice Blades",
+		[620] = "Dragon Ascent",
+		[621] = "Hyperspace Fury",
+		[622] = "Shore Up",
+		[623] = "First Impression",
+		[624] = "Baneful Bunker",
+		[625] = "Spirit Shackle",
+		[626] = "Darkest Lariat",
+		[627] = "Sparkling Aria",
+		[628] = "Ice Hammer",
+		[629] = "Floral Healing",
+		[630] = "High Horsepower",
+		[631] = "Strength Sap",
+		[632] = "Solar Blade",
+		[633] = "Leafage",
+		[634] = "Spotlight",
+		[635] = "Toxic Thread",
+		[636] = "Laser Focus",
+		[637] = "Gear Up",
+		[638] = "Throat Chop",
+		[639] = "Pollen Puff",
+		[640] = "Anchor Shot",
+		[641] = "Psychic Terrain",
+		[642] = "Lunge",
+		[643] = "Fire Lash",
+		[644] = "Power Trip",
+		[645] = "Burn Up",
+		[646] = "Speed Swap",
+		[647] = "Smart Strike",
+		[648] = "Purify",
+		[649] = "Revelation Dance",
+		[650] = "Core Enforcer",
+		[651] = "Trop Kick",
+		[652] = "Instruct",
+		[653] = "Beak Blast",
+		[654] = "Clanging Scales",
+		[655] = "Dragon Hammer",
+		[656] = "Brutal Swing",
+		[657] = "Aurora Veil",
+		[658] = "Shell Trap",
+		[659] = "Fleur Cannon",
+		[660] = "Psychic Fangs",
+		[661] = "Stomping Tantrum",
+		[662] = "Shadow Bone",
+		[663] = "Accelerock",
+		[664] = "Liquidation",
+		[665] = "Prismatic Laser",
+		[666] = "Spectral Thief",
+		[667] = "Sunsteel Strike",
+		[668] = "Moongeist Beam",
+		[669] = "Tearful Look",
+		[670] = "Zing Zap",
+		[671] = "Nature's Madness",
+		[672] = "Multi-Attack",
+		[673] = "Mind Blown",
+		[674] = "Plasma Fists",
+		[675] = "Photon Geyser",
+		[676] = "Zippy Zap",
+		[677] = "Splishy Splash",
+		[678] = "Floaty Fall",
+		[679] = "Pika Papow",
+		[680] = "Bouncy Bubble",
+		[681] = "Buzzy Buzz",
+		[682] = "Sizzly Slide",
+		[683] = "Glitzy Glow",
+		[684] = "Baddy Bad",
+		[685] = "Sappy Seed",
+		[686] = "Freezy Frost",
+		[687] = "Sparkly Swirl",
+		[688] = "Veevee Volley",
+		[689] = "Double Iron Bash",
+		[690] = "Dynamax Cannon",
+		[691] = "Snipe Shot",
+		[692] = "Jaw Lock",
+		[693] = "Stuff Cheeks",
+		[694] = "No Retreat",
+		[695] = "Tar Shot",
+		[696] = "Magic Powder",
+		[697] = "Dragon Darts",
+		[698] = "Teatime",
+		[699] = "Octolock",
+		[700] = "Bolt Beak",
+		[701] = "Fishious Rend",
+		[702] = "Court Change",
+		[703] = "Clangorous Soul",
+		[704] = "Body Press",
+		[705] = "Decorate",
+		[706] = "Drum Beating",
+		[707] = "Snap Trap",
+		[708] = "Pyro Ball",
+		[709] = "Behemoth Blade",
+		[710] = "Behemoth Bash",
+		[711] = "Aura Wheel",
+		[712] = "Breaking Swipe",
+		[713] = "Branch Poke",
+		[714] = "Overdrive",
+		[715] = "Apple Acid",
+		[716] = "Grav Apple",
+		[717] = "Spirit Break",
+		[718] = "Strange Steam",
+		[719] = "Life Dew",
+		[720] = "Obstruct",
+		[721] = "False Surrender",
+		[722] = "Meteor Assault",
+		[723] = "Eternabeam",
+		[724] = "Steel Beam",
+		[725] = "Expanding Force",
+		[726] = "Steel Roller",
+		[727] = "Scale Shot",
+		[728] = "Meteor Beam",
+		[729] = "Shell Side Arm",
+		[730] = "Misty Explosion",
+		[731] = "Grassy Glide",
+		[732] = "Rising Voltage",
+		[733] = "Terrain Pulse",
+		[734] = "Skitter Smack",
+		[735] = "Burning Jealousy",
+		[736] = "Lash Out",
+		[737] = "Poltergeist",
+		[738] = "Corrosive Gas",
+		[739] = "Coaching",
+		[740] = "Flip Turn",
+		[741] = "Triple Axel",
+		[742] = "Dual Wingbeat",
+		[743] = "Scorching Sands",
+		[744] = "Jungle Healing",
+		[745] = "Wicked Blow",
+		[746] = "Surging Strikes",
+		[747] = "Thunder Cage",
+		[748] = "Dragon Energy",
+		[749] = "Freezing Glare",
+		[750] = "Fiery Wrath",
+		[751] = "Thunderous Kick",
+		[752] = "Glacial Lance",
+		[753] = "Astral Barrage",
+		[754] = "Eerie Spell",
+		[755] = "Dire Claw",
+		[756] = "Psyshield Bash",
+		[757] = "Power Shift",
+		[758] = "Stone Axe",
+		[759] = "Springtide Storm",
+		[760] = "Mystical Power",
+		[761] = "Raging Fury",
+		[762] = "Wave Crash",
+		[763] = "Chloroblast",
+		[764] = "Mountain Gale",
+		[765] = "Victory Dance",
+		[766] = "Headlong Rush",
+		[767] = "Barb Barrage",
+		[768] = "Esper Wing",
+		[769] = "Bitter Malice",
+		[770] = "Shelter",
+		[771] = "Triple Arrows",
+		[772] = "Infernal Parade",
+		[773] = "Ceaseless Edge",
+		[774] = "Bleakwind Storm",
+		[775] = "Wildbolt Storm",
+		[776] = "Sandsear Storm",
+		[777] = "Lunar Blessing",
+		[778] = "Take Heart",
+		[779] = "Tera Blast",
+		[780] = "Silk Trap",
+		[781] = "Axe Kick",
+		[782] = "Last Respects",
+		[783] = "Lumina Crash",
+		[784] = "Order Up",
+		[785] = "Jet Punch",
+		[786] = "Spicy Extract",
+		[787] = "Spin Out",
+		[788] = "Population Bomb",
+		[789] = "Ice Spinner",
+		[790] = "Glaive Rush",
+		[791] = "Revival Blessing",
+		[792] = "Salt Cure",
+		[793] = "Triple Dive",
+		[794] = "Mortal Spin",
+		[795] = "Doodle",
+		[796] = "Fillet Away",
+		[797] = "Kowtow Cleave",
+		[798] = "Flower Trick",
+		[799] = "Torch Song",
+		[800] = "Aqua Step",
+		[801] = "Raging Bull",
+		[802] = "Make It Rain",
+		[803] = "Ruination",
+		[804] = "Collision Course",
+		[805] = "Electro Drift",
+		[806] = "Shed Tail",
+		[807] = "Chilly Reception",
+		[808] = "Tidy Up",
+		[809] = "Snowscape",
+		[810] = "Pounce",
+		[811] = "Trailblaze",
+		[812] = "Chilling Water",
+		[813] = "Hyper Drill",
+		[814] = "Twin Beam",
+		[815] = "Rage Fist",
+		[816] = "Armor Cannon",
+		[817] = "Bitter Blade",
+		[818] = "Double Shock",
+		[819] = "Gigaton Hammer",
+		[820] = "Comeuppance",
+		[821] = "Aqua Cutter",
+		[822] = "Blazing Torque",
+		[823] = "Wicked Torque",
+		[824] = "Noxious Torque",
+		[825] = "Combat Torque",
+		[826] = "Magical Torque",
+		[827] = "Psyblade",
+		[828] = "Hydro Steam",
+		[829] = "Blood Moon",
+		[830] = "Matcha Gotcha",
+		[831] = "Syrup Bomb",
+		[832] = "Ivy Cudgel",
+		[833] = "Electro Shot",
+		[834] = "Tera Starstorm",
+		[835] = "Fickle Beam",
+		[836] = "Burning Bulwark",
+		[837] = "Thunderclap",
+		[838] = "Mighty Cleave",
+		[839] = "Tachyon Cutter",
+		[840] = "Hard Press",
+		[841] = "Dragon Cheer",
+		[842] = "Alluring Voice",
+		[843] = "Temper Flare",
+		[844] = "Supercell Slam",
+		[845] = "Psychic Noise",
+		[846] = "Upper Hand",
+		[847] = "Malignant Chain",
 	}
 
 	self.Data.natDexMoveDescriptions = {
 		[355] = {
+			NameKey = "Roost",
+			Description = "Not implemented yet.",
+		},
+		[356] = {
+			NameKey = "Gravity",
+			Description = "Not implemented yet.",
+		},
+		[357] = {
+			NameKey = "Miracle Eye",
+			Description = "Not implemented yet.",
+		},
+		[358] = {
+			NameKey = "Wake-Up Slap",
+			Description = "Not implemented yet.",
+		},
+		[359] = {
+			NameKey = "Hammer Arm",
+			Description = "Not implemented yet.",
+		},
+		[360] = {
+			NameKey = "Gyro Ball",
+			Description = "Not implemented yet.",
+		},
+		[361] = {
+			NameKey = "Healing Wish",
+			Description = "Not implemented yet.",
+		},
+		[362] = {
+			NameKey = "Brine",
+			Description = "Not implemented yet.",
+		},
+		[363] = {
+			NameKey = "Natural Gift",
+			Description = "Not implemented yet.",
+		},
+		[364] = {
+			NameKey = "Feint",
+			Description = "Not implemented yet.",
+		},
+		[365] = {
+			NameKey = "Pluck",
+			Description = "Not implemented yet.",
+		},
+		[366] = {
+			NameKey = "Tailwind",
+			Description = "Not implemented yet.",
+		},
+		[367] = {
+			NameKey = "Acupressure",
+			Description = "Not implemented yet.",
+		},
+		[368] = {
+			NameKey = "Metal Burst",
+			Description = "Not implemented yet.",
+		},
+		[369] = {
+			NameKey = "U-turn",
+			Description = "Not implemented yet.",
+		},
+		[370] = {
+			NameKey = "Close Combat",
+			Description = "Not implemented yet.",
+		},
+		[371] = {
+			NameKey = "Payback",
+			Description = "Not implemented yet.",
+		},
+		[372] = {
+			NameKey = "Assurance",
+			Description = "Not implemented yet.",
+		},
+		[373] = {
+			NameKey = "Embargo",
+			Description = "Not implemented yet.",
+		},
+		[374] = {
+			NameKey = "Fling",
+			Description = "Not implemented yet.",
+		},
+		[375] = {
+			NameKey = "Psycho Shift",
+			Description = "Not implemented yet.",
+		},
+		[376] = {
+			NameKey = "Trump Card",
+			Description = "Not implemented yet.",
+		},
+		[377] = {
+			NameKey = "Heal Block",
+			Description = "Not implemented yet.",
+		},
+		[378] = {
+			NameKey = "Wring Out",
+			Description = "Not implemented yet.",
+		},
+		[379] = {
+			NameKey = "Power Trick",
+			Description = "Not implemented yet.",
+		},
+		[380] = {
+			NameKey = "Gastro Acid",
+			Description = "Not implemented yet.",
+		},
+		[381] = {
+			NameKey = "Lucky Chant",
+			Description = "Not implemented yet.",
+		},
+		[382] = {
+			NameKey = "Me First",
+			Description = "Not implemented yet.",
+		},
+		[383] = {
+			NameKey = "Copycat",
+			Description = "Not implemented yet.",
+		},
+		[384] = {
+			NameKey = "Power Swap",
+			Description = "Not implemented yet.",
+		},
+		[385] = {
+			NameKey = "Guard Swap",
+			Description = "Not implemented yet.",
+		},
+		[386] = {
+			NameKey = "Punishment",
+			Description = "Not implemented yet.",
+		},
+		[387] = {
+			NameKey = "Last Resort",
+			Description = "Not implemented yet.",
+		},
+		[388] = {
+			NameKey = "Worry Seed",
+			Description = "Not implemented yet.",
+		},
+		[389] = {
+			NameKey = "Sucker Punch",
+			Description = "Not implemented yet.",
+		},
+		[390] = {
+			NameKey = "Toxic Spikes",
+			Description = "Not implemented yet.",
+		},
+		[391] = {
+			NameKey = "Heart Swap",
+			Description = "Not implemented yet.",
+		},
+		[392] = {
+			NameKey = "Aqua Ring",
+			Description = "Not implemented yet.",
+		},
+		[393] = {
+			NameKey = "Magnet Rise",
+			Description = "Not implemented yet.",
+		},
+		[394] = {
+			NameKey = "Flare Blitz",
+			Description = "Not implemented yet.",
+		},
+		[395] = {
+			NameKey = "Force Palm",
+			Description = "Not implemented yet.",
+		},
+		[396] = {
+			NameKey = "Aura Sphere",
+			Description = "Not implemented yet.",
+		},
+		[397] = {
+			NameKey = "Rock Polish",
+			Description = "Not implemented yet.",
+		},
+		[398] = {
+			NameKey = "Poison Jab",
+			Description = "Not implemented yet.",
+		},
+		[399] = {
+			NameKey = "Dark Pulse",
+			Description = "Not implemented yet.",
+		},
+		[400] = {
+			NameKey = "Night Slash",
+			Description = "Not implemented yet.",
+		},
+		[401] = {
+			NameKey = "Aqua Tail",
+			Description = "Not implemented yet.",
+		},
+		[402] = {
+			NameKey = "Seed Bomb",
+			Description = "Not implemented yet.",
+		},
+		[403] = {
+			NameKey = "Air Slash",
+			Description = "Deals damage and has a 30% chance of causing the target flinch.",
+		},
+		[404] = {
+			NameKey = "X-Scissor",
+			Description = "Not implemented yet.",
+		},
+		[405] = {
+			NameKey = "Bug Buzz",
+			Description = "Not implemented yet.",
+		},
+		[406] = {
+			NameKey = "Dragon Pulse",
+			Description = "Not implemented yet.",
+		},
+		[407] = {
+			NameKey = "Dragon Rush",
+			Description = "Not implemented yet.",
+		},
+		[408] = {
+			NameKey = "Power Gem",
+			Description = "Not implemented yet.",
+		},
+		[409] = {
+			NameKey = "Drain Punch",
+			Description = "Not implemented yet.",
+		},
+		[410] = {
+			NameKey = "Vacuum Wave",
+			Description = "Not implemented yet.",
+		},
+		[411] = {
+			NameKey = "Focus Blast",
+			Description = "Not implemented yet.",
+		},
+		[412] = {
+			NameKey = "Energy Ball",
+			Description = "Not implemented yet.",
+		},
+		[413] = {
+			NameKey = "Brave Bird",
+			Description = "Not implemented yet.",
+		},
+		[414] = {
+			NameKey = "Earth Power",
+			Description = "Not implemented yet.",
+		},
+		[415] = {
+			NameKey = "Switcheroo",
+			Description = "Not implemented yet.",
+		},
+		[416] = {
+			NameKey = "Giga Impact",
+			Description = "Not implemented yet.",
+		},
+		[417] = {
+			NameKey = "Nasty Plot",
+			Description = "Not implemented yet.",
+		},
+		[418] = {
+			NameKey = "Bullet Punch",
+			Description = "Not implemented yet.",
+		},
+		[419] = {
+			NameKey = "Avalanche",
+			Description = "Not implemented yet.",
+		},
+		[420] = {
+			NameKey = "Ice Shard",
+			Description = "Not implemented yet.",
+		},
+		[421] = {
+			NameKey = "Shadow Claw",
+			Description = "Not implemented yet.",
+		},
+		[422] = {
+			NameKey = "Thunder Fang",
+			Description = "Not implemented yet.",
+		},
+		[423] = {
+			NameKey = "Ice Fang",
+			Description = "Not implemented yet.",
+		},
+		[424] = {
+			NameKey = "Fire Fang",
+			Description = "Not implemented yet.",
+		},
+		[425] = {
+			NameKey = "Shadow Sneak",
+			Description = "This is an increased priority move, causing the user to attack before most other moves.",
+		},
+		[426] = {
+			NameKey = "Mud Bomb",
+			Description = "Not implemented yet.",
+		},
+		[427] = {
+			NameKey = "Psycho Cut",
+			Description = "Not implemented yet.",
+		},
+		[428] = {
+			NameKey = "Zen Headbutt",
+			Description = "Not implemented yet.",
+		},
+		[429] = {
+			NameKey = "Mirror Shot",
+			Description = "Not implemented yet.",
+		},
+		[430] = {
+			NameKey = "Flash Cannon",
+			Description = "Not implemented yet.",
+		},
+		[431] = {
+			NameKey = "Rock Climb",
+			Description = "Not implemented yet.",
+		},
+		[432] = {
+			NameKey = "Defog",
+			Description = "Not implemented yet.",
+		},
+		[433] = {
+			NameKey = "Trick Room",
+			Description = "Not implemented yet.",
+		},
+		[434] = {
+			NameKey = "Draco Meteor",
+			Description = "Not implemented yet.",
+		},
+		[435] = {
+			NameKey = "Discharge",
+			Description = "Not implemented yet.",
+		},
+		[436] = {
+			NameKey = "Lava Plume",
+			Description = "Not implemented yet.",
+		},
+		[437] = {
+			NameKey = "Leaf Storm",
+			Description = "Deals damage and lowers the user's Special Attack stat by two stages.",
+		},
+		[438] = {
+			NameKey = "Power Whip",
+			Description = "Not implemented yet.",
+		},
+		[439] = {
+			NameKey = "Rock Wrecker",
+			Description = "Not implemented yet.",
+		},
+		[440] = {
+			NameKey = "Cross Poison",
+			Description = "Not implemented yet.",
+		},
+		[441] = {
+			NameKey = "Gunk Shot",
+			Description = "Not implemented yet.",
+		},
+		[442] = {
+			NameKey = "Iron Head",
+			Description = "Not implemented yet.",
+		},
+		[443] = {
+			NameKey = "Magnet Bomb",
+			Description = "Not implemented yet.",
+		},
+		[444] = {
+			NameKey = "Stone Edge",
+			Description = "Not implemented yet.",
+		},
+		[445] = {
+			NameKey = "Captivate",
+			Description = "Not implemented yet.",
+		},
+		[446] = {
+			NameKey = "Stealth Rock",
+			Description = "Not implemented yet.",
+		},
+		[447] = {
+			NameKey = "Grass Knot",
+			Description = "Not implemented yet.",
+		},
+		[448] = {
+			NameKey = "Chatter",
+			Description = "Not implemented yet.",
+		},
+		[449] = {
+			NameKey = "Judgment",
+			Description = "Not implemented yet.",
+		},
+		[450] = {
+			NameKey = "Bug Bite",
+			Description = "Not implemented yet.",
+		},
+		[451] = {
+			NameKey = "Charge Beam",
+			Description = "Not implemented yet.",
+		},
+		[452] = {
+			NameKey = "Wood Hammer",
+			Description = "Not implemented yet.",
+		},
+		[453] = {
+			NameKey = "Aqua Jet",
+			Description = "Not implemented yet.",
+		},
+		[454] = {
+			NameKey = "Attack Order",
+			Description = "Not implemented yet.",
+		},
+		[455] = {
+			NameKey = "Defend Order",
+			Description = "Not implemented yet.",
+		},
+		[456] = {
+			NameKey = "Heal Order",
+			Description = "Not implemented yet.",
+		},
+		[457] = {
+			NameKey = "Head Smash",
+			Description = "Not implemented yet.",
+		},
+		[458] = {
+			NameKey = "Double Hit",
+			Description = "Not implemented yet.",
+		},
+		[459] = {
+			NameKey = "Roar of Time",
+			Description = "Not implemented yet.",
+		},
+		[460] = {
+			NameKey = "Spacial Rend",
+			Description = "Not implemented yet.",
+		},
+		[461] = {
+			NameKey = "Lunar Dance",
+			Description = "Not implemented yet.",
+		},
+		[462] = {
+			NameKey = "Crush Grip",
+			Description = "Not implemented yet.",
+		},
+		[463] = {
+			NameKey = "Magma Storm",
+			Description = "Not implemented yet.",
+		},
+		[464] = {
+			NameKey = "Dark Void",
+			Description = "Not implemented yet.",
+		},
+		[465] = {
+			NameKey = "Seed Flare",
+			Description = "Not implemented yet.",
+		},
+		[466] = {
+			NameKey = "Ominous Wind",
+			Description = "Not implemented yet.",
+		},
+		[467] = {
+			NameKey = "Shadow Force",
+			Description = "Not implemented yet.",
+		},
+		[468] = {
+			NameKey = "Hone Claws",
+			Description = "Not implemented yet.",
+		},
+		[469] = {
+			NameKey = "Wide Guard",
+			Description = "Not implemented yet.",
+		},
+		[470] = {
+			NameKey = "Guard Split",
+			Description = "Not implemented yet.",
+		},
+		[471] = {
+			NameKey = "Power Split",
+			Description = "Not implemented yet.",
+		},
+		[472] = {
+			NameKey = "Wonder Room",
+			Description = "Not implemented yet.",
+		},
+		[473] = {
+			NameKey = "Psyshock",
+			Description = "Not implemented yet.",
+		},
+		[474] = {
+			NameKey = "Venoshock",
+			Description = "Not implemented yet.",
+		},
+		[475] = {
+			NameKey = "Autotomize",
+			Description = "Not implemented yet.",
+		},
+		[476] = {
+			NameKey = "Rage Powder",
+			Description = "Not implemented yet.",
+		},
+		[477] = {
+			NameKey = "Telekinesis",
+			Description = "Not implemented yet.",
+		},
+		[478] = {
+			NameKey = "Magic Room",
+			Description = "Not implemented yet.",
+		},
+		[479] = {
+			NameKey = "Smack Down",
+			Description = "Not implemented yet.",
+		},
+		[480] = {
+			NameKey = "Storm Throw",
+			Description = "Not implemented yet.",
+		},
+		[481] = {
+			NameKey = "Flame Burst",
+			Description = "Not implemented yet.",
+		},
+		[482] = {
+			NameKey = "Sludge Wave",
+			Description = "Not implemented yet.",
+		},
+		[483] = {
+			NameKey = "Quiver Dance",
+			Description = "Not implemented yet.",
+		},
+		[484] = {
+			NameKey = "Heavy Slam",
+			Description = "Not implemented yet.",
+		},
+		[485] = {
+			NameKey = "Synchronoise",
+			Description = "Not implemented yet.",
+		},
+		[486] = {
+			NameKey = "Electro Ball",
+			Description = "Not implemented yet.",
+		},
+		[487] = {
+			NameKey = "Soak",
+			Description = "Not implemented yet.",
+		},
+		[488] = {
+			NameKey = "Flame Charge",
+			Description = "Not implemented yet.",
+		},
+		[489] = {
+			NameKey = "Coil",
+			Description = "Not implemented yet.",
+		},
+		[490] = {
+			NameKey = "Low Sweep",
+			Description = "Not implemented yet.",
+		},
+		[491] = {
+			NameKey = "Acid Spray",
+			Description = "Not implemented yet.",
+		},
+		[492] = {
+			NameKey = "Foul Play",
+			Description = "Not implemented yet.",
+		},
+		[493] = {
+			NameKey = "Simple Beam",
+			Description = "Not implemented yet.",
+		},
+		[494] = {
+			NameKey = "Entrainment",
+			Description = "Not implemented yet.",
+		},
+		[495] = {
+			NameKey = "After You",
+			Description = "Not implemented yet.",
+		},
+		[496] = {
+			NameKey = "Round",
+			Description = "Not implemented yet.",
+		},
+		[497] = {
+			NameKey = "Echoed Voice",
+			Description = "Not implemented yet.",
+		},
+		[498] = {
+			NameKey = "Chip Away",
+			Description = "Not implemented yet.",
+		},
+		[499] = {
+			NameKey = "Clear Smog",
+			Description = "Not implemented yet.",
+		},
+		[500] = {
+			NameKey = "Stored Power",
+			Description = "Not implemented yet.",
+		},
+		[501] = {
+			NameKey = "Quick Guard",
+			Description = "Not implemented yet.",
+		},
+		[502] = {
+			NameKey = "Ally Switch",
+			Description = "Not implemented yet.",
+		},
+		[503] = {
+			NameKey = "Scald",
+			Description = "Not implemented yet.",
+		},
+		[504] = {
+			NameKey = "Shell Smash",
+			Description = "Not implemented yet.",
+		},
+		[505] = {
+			NameKey = "Heal Pulse",
+			Description = "Not implemented yet.",
+		},
+		[506] = {
+			NameKey = "Hex",
+			Description = "Not implemented yet.",
+		},
+		[507] = {
+			NameKey = "Sky Drop",
+			Description = "Not implemented yet.",
+		},
+		[508] = {
+			NameKey = "Shift Gear",
+			Description = "Not implemented yet.",
+		},
+		[509] = {
+			NameKey = "Circle Throw",
+			Description = "Not implemented yet.",
+		},
+		[510] = {
+			NameKey = "Incinerate",
+			Description = "Not implemented yet.",
+		},
+		[511] = {
+			NameKey = "Quash",
+			Description = "Not implemented yet.",
+		},
+		[512] = {
+			NameKey = "Acrobatics",
+			Description = "Not implemented yet.",
+		},
+		[513] = {
+			NameKey = "Reflect Type",
+			Description = "Not implemented yet.",
+		},
+		[514] = {
+			NameKey = "Retaliate",
+			Description = "Not implemented yet.",
+		},
+		[515] = {
+			NameKey = "Final Gambit",
+			Description = "Not implemented yet.",
+		},
+		[516] = {
+			NameKey = "Bestow",
+			Description = "Not implemented yet.",
+		},
+		[517] = {
+			NameKey = "Inferno",
+			Description = "Not implemented yet.",
+		},
+		[518] = {
+			NameKey = "Water Pledge",
+			Description = "Not implemented yet.",
+		},
+		[519] = {
+			NameKey = "Fire Pledge",
+			Description = "Not implemented yet.",
+		},
+		[520] = {
+			NameKey = "Grass Pledge",
+			Description = "Not implemented yet.",
+		},
+		[521] = {
+			NameKey = "Volt Switch",
+			Description = "Not implemented yet.",
+		},
+		[522] = {
+			NameKey = "Struggle Bug",
+			Description = "Deals damage to all adjacent opponents and lowers the Special Attack of each by one stage.",
+		},
+		[523] = {
+			NameKey = "Bulldoze",
+			Description = "Not implemented yet.",
+		},
+		[524] = {
+			NameKey = "Frost Breath",
+			Description = "Not implemented yet.",
+		},
+		[525] = {
+			NameKey = "Dragon Tail",
+			Description = "Not implemented yet.",
+		},
+		[526] = {
+			NameKey = "Work Up",
+			Description = "Not implemented yet.",
+		},
+		[527] = {
+			NameKey = "Electroweb",
+			Description = "Not implemented yet.",
+		},
+		[528] = {
+			NameKey = "Wild Charge",
+			Description = "Not implemented yet.",
+		},
+		[529] = {
+			NameKey = "Drill Run",
+			Description = "Not implemented yet.",
+		},
+		[530] = {
+			NameKey = "Dual Chop",
+			Description = "Not implemented yet.",
+		},
+		[531] = {
+			NameKey = "Heart Stamp",
+			Description = "Not implemented yet.",
+		},
+		[532] = {
+			NameKey = "Horn Leech",
+			Description = "Not implemented yet.",
+		},
+		[533] = {
+			NameKey = "Sacred Sword",
+			Description = "Not implemented yet.",
+		},
+		[534] = {
+			NameKey = "Razor Shell",
+			Description = "Not implemented yet.",
+		},
+		[535] = {
+			NameKey = "Heat Crash",
+			Description = "Not implemented yet.",
+		},
+		[536] = {
+			NameKey = "Leaf Tornado",
+			Description = "Not implemented yet.",
+		},
+		[537] = {
+			NameKey = "Steamroller",
+			Description = "Not implemented yet.",
+		},
+		[538] = {
+			NameKey = "Cotton Guard",
+			Description = "Not implemented yet.",
+		},
+		[539] = {
+			NameKey = "Night Daze",
+			Description = "Not implemented yet.",
+		},
+		[540] = {
+			NameKey = "Psystrike",
+			Description = "Not implemented yet.",
+		},
+		[541] = {
+			NameKey = "Tail Slap",
+			Description = "Not implemented yet.",
+		},
+		[542] = {
+			NameKey = "Hurricane",
+			Description = "Not implemented yet.",
+		},
+		[543] = {
+			NameKey = "Head Charge",
+			Description = "Not implemented yet.",
+		},
+		[544] = {
+			NameKey = "Gear Grind",
+			Description = "Not implemented yet.",
+		},
+		[545] = {
+			NameKey = "Searing Shot",
+			Description = "Not implemented yet.",
+		},
+		[546] = {
+			NameKey = "Techno Blast",
+			Description = "Not implemented yet.",
+		},
+		[547] = {
+			NameKey = "Relic Song",
+			Description = "Not implemented yet.",
+		},
+		[548] = {
+			NameKey = "Secret Sword",
+			Description = "Not implemented yet.",
+		},
+		[549] = {
+			NameKey = "Glaciate",
+			Description = "Not implemented yet.",
+		},
+		[550] = {
+			NameKey = "Bolt Strike",
+			Description = "Not implemented yet.",
+		},
+		[551] = {
+			NameKey = "Blue Flare",
+			Description = "Not implemented yet.",
+		},
+		[552] = {
+			NameKey = "Fiery Dance",
+			Description = "Not implemented yet.",
+		},
+		[553] = {
+			NameKey = "Freeze Shock",
+			Description = "Not implemented yet.",
+		},
+		[554] = {
+			NameKey = "Ice Burn",
+			Description = "Not implemented yet.",
+		},
+		[555] = {
+			NameKey = "Snarl",
+			Description = "Not implemented yet.",
+		},
+		[556] = {
+			NameKey = "Icicle Crash",
+			Description = "Not implemented yet.",
+		},
+		[557] = {
+			NameKey = "V-create",
+			Description = "Not implemented yet.",
+		},
+		[558] = {
+			NameKey = "Fusion Flare",
+			Description = "Not implemented yet.",
+		},
+		[559] = {
+			NameKey = "Fusion Bolt",
+			Description = "Not implemented yet.",
+		},
+		[560] = {
+			NameKey = "Flying Press",
+			Description = "Not implemented yet.",
+		},
+		[561] = {
+			NameKey = "Mat Block",
+			Description = "Not implemented yet.",
+		},
+		[562] = {
+			NameKey = "Belch",
+			Description = "Not implemented yet.",
+		},
+		[563] = {
+			NameKey = "Rototiller",
+			Description = "Not implemented yet.",
+		},
+		[564] = {
+			NameKey = "Sticky Web",
+			Description = "Not implemented yet.",
+		},
+		[565] = {
+			NameKey = "Fell Stinger",
+			Description = "Not implemented yet.",
+		},
+		[566] = {
+			NameKey = "Phantom Force",
+			Description = "Not implemented yet.",
+		},
+		[567] = {
+			NameKey = "Trick-or-Treat",
+			Description = "Not implemented yet.",
+		},
+		[568] = {
+			NameKey = "Noble Roar",
+			Description = "Not implemented yet.",
+		},
+		[569] = {
+			NameKey = "Ion Deluge",
+			Description = "Not implemented yet.",
+		},
+		[570] = {
+			NameKey = "Parabolic Charge",
+			Description = "Not implemented yet.",
+		},
+		[571] = {
+			NameKey = "Forest's Curse",
+			Description = "Not implemented yet.",
+		},
+		[572] = {
+			NameKey = "Petal Blizzard",
+			Description = "Not implemented yet.",
+		},
+		[573] = {
+			NameKey = "Freeze-Dry",
+			Description = "Not implemented yet.",
+		},
+		[574] = {
 			NameKey = "Disarming Voice",
 			Description = "Deals damage and bypasses accuracy checks to always hit, unless the target is in the semi-invulnerable turn of a move such as Dig or Fly. No effect against Soundproof.",
 		},
-		[356] = {
+		[575] = {
+			NameKey = "Parting Shot",
+			Description = "Not implemented yet.",
+		},
+		[576] = {
+			NameKey = "Topsy-Turvy",
+			Description = "Not implemented yet.",
+		},
+		[577] = {
 			NameKey = "Draining Kiss",
 			Description = "75% of the damage dealt is restored to the user as HP.",
 		},
-		[357] = {
+		[578] = {
+			NameKey = "Crafty Shield",
+			Description = "Not implemented yet.",
+		},
+		[579] = {
+			NameKey = "Flower Shield",
+			Description = "Not implemented yet.",
+		},
+		[580] = {
+			NameKey = "Grassy Terrain",
+			Description = "Not implemented yet.",
+		},
+		[581] = {
+			NameKey = "Misty Terrain",
+			Description = "Not implemented yet.",
+		},
+		[582] = {
+			NameKey = "Electrify",
+			Description = "Not implemented yet.",
+		},
+		[583] = {
 			NameKey = "Play Rough",
 			Description = "Deals damage and has a 10% chance of lowering the target's Attack stat by one stage.",
 		},
-		[358] = {
+		[584] = {
 			NameKey = "Fairy Wind",
 			Description = "Deals damage and has no secondary effect.",
 		},
-		[359] = {
+		[585] = {
 			NameKey = "Moonblast",
 			Description = "Deals damage and has a 30% chance of lowering the target's Special Attack stat by one stage.",
 		},
-		[360] = {
+		[586] = {
+			NameKey = "Boomburst",
+			Description = "Not implemented yet.",
+		},
+		[587] = {
+			NameKey = "Fairy Lock",
+			Description = "Not implemented yet.",
+		},
+		[588] = {
+			NameKey = "King's Shield",
+			Description = "Not implemented yet.",
+		},
+		[589] = {
+			NameKey = "Play Nice",
+			Description = "Reduces the target's Attack by one stage. Bypasses accuracy checks, as well as Protect and Substitute, unless the target is in the semi-invulnerable state.",
+		},
+		[590] = {
+			NameKey = "Confide",
+			Description = "Not implemented yet.",
+		},
+		[591] = {
+			NameKey = "Diamond Storm",
+			Description = "Not implemented yet.",
+		},
+		[592] = {
+			NameKey = "Steam Eruption",
+			Description = "Not implemented yet.",
+		},
+		[593] = {
+			NameKey = "Hyperspace Hole",
+			Description = "Not implemented yet.",
+		},
+		[594] = {
+			NameKey = "Water Shuriken",
+			Description = "Not implemented yet.",
+		},
+		[595] = {
+			NameKey = "Mystical Fire",
+			Description = "Not implemented yet.",
+		},
+		[596] = {
+			NameKey = "Spiky Shield",
+			Description = "Not implemented yet.",
+		},
+		[597] = {
+			NameKey = "Aromatic Mist",
+			Description = "Not implemented yet.",
+		},
+		[598] = {
+			NameKey = "Eerie Impulse",
+			Description = "Not implemented yet.",
+		},
+		[599] = {
+			NameKey = "Venom Drench",
+			Description = "Not implemented yet.",
+		},
+		[600] = {
+			NameKey = "Powder",
+			Description = "Not implemented yet.",
+		},
+		[601] = {
+			NameKey = "Geomancy",
+			Description = "Not implemented yet.",
+		},
+		[602] = {
+			NameKey = "Magnetic Flux",
+			Description = "Not implemented yet.",
+		},
+		[603] = {
+			NameKey = "Happy Hour",
+			Description = "Not implemented yet.",
+		},
+		[604] = {
+			NameKey = "Electric Terrain",
+			Description = "Not implemented yet.",
+		},
+		[605] = {
 			NameKey = "Dazzling Gleam",
 			Description = "Deals damage to all adjacent opponents.",
+		},
+		[606] = {
+			NameKey = "Celebrate",
+			Description = "Not implemented yet.",
+		},
+		[607] = {
+			NameKey = "Hold Hands",
+			Description = "Not implemented yet.",
+		},
+		[608] = {
+			NameKey = "Baby-Doll Eyes",
+			Description = "Not implemented yet.",
+		},
+		[609] = {
+			NameKey = "Nuzzle",
+			Description = "Not implemented yet.",
+		},
+		[610] = {
+			NameKey = "Hold Back",
+			Description = "Not implemented yet.",
+		},
+		[611] = {
+			NameKey = "Infestation",
+			Description = "Not implemented yet.",
+		},
+		[612] = {
+			NameKey = "Power-Up Punch",
+			Description = "Not implemented yet.",
+		},
+		[613] = {
+			NameKey = "Oblivion Wing",
+			Description = "Not implemented yet.",
+		},
+		[614] = {
+			NameKey = "Thousand Arrows",
+			Description = "Not implemented yet.",
+		},
+		[615] = {
+			NameKey = "Thousand Waves",
+			Description = "Not implemented yet.",
+		},
+		[616] = {
+			NameKey = "Land's Wrath",
+			Description = "Not implemented yet.",
+		},
+		[617] = {
+			NameKey = "Light Of Ruin",
+			Description = "Not implemented yet.",
+		},
+		[618] = {
+			NameKey = "Origin Pulse",
+			Description = "Not implemented yet.",
+		},
+		[619] = {
+			NameKey = "Precipice Blades",
+			Description = "Not implemented yet.",
+		},
+		[620] = {
+			NameKey = "Dragon Ascent",
+			Description = "Not implemented yet.",
+		},
+		[621] = {
+			NameKey = "Hyperspace Fury",
+			Description = "Not implemented yet.",
+		},
+		[622] = {
+			NameKey = "Shore Up",
+			Description = "Not implemented yet.",
+		},
+		[623] = {
+			NameKey = "First Impression",
+			Description = "Not implemented yet.",
+		},
+		[624] = {
+			NameKey = "Baneful Bunker",
+			Description = "Not implemented yet.",
+		},
+		[625] = {
+			NameKey = "Spirit Shackle",
+			Description = "Not implemented yet.",
+		},
+		[626] = {
+			NameKey = "Darkest Lariat",
+			Description = "Not implemented yet.",
+		},
+		[627] = {
+			NameKey = "Sparkling Aria",
+			Description = "Not implemented yet.",
+		},
+		[628] = {
+			NameKey = "Ice Hammer",
+			Description = "Not implemented yet.",
+		},
+		[629] = {
+			NameKey = "Floral Healing",
+			Description = "Not implemented yet.",
+		},
+		[630] = {
+			NameKey = "High Horsepower",
+			Description = "Not implemented yet.",
+		},
+		[631] = {
+			NameKey = "Strength Sap",
+			Description = "Not implemented yet.",
+		},
+		[632] = {
+			NameKey = "Solar Blade",
+			Description = "Not implemented yet.",
+		},
+		[633] = {
+			NameKey = "Leafage",
+			Description = "Not implemented yet.",
+		},
+		[634] = {
+			NameKey = "Spotlight",
+			Description = "Not implemented yet.",
+		},
+		[635] = {
+			NameKey = "Toxic Thread",
+			Description = "Not implemented yet.",
+		},
+		[636] = {
+			NameKey = "Laser Focus",
+			Description = "Not implemented yet.",
+		},
+		[637] = {
+			NameKey = "Gear Up",
+			Description = "Not implemented yet.",
+		},
+		[638] = {
+			NameKey = "Throat Chop",
+			Description = "Not implemented yet.",
+		},
+		[639] = {
+			NameKey = "Pollen Puff",
+			Description = "Not implemented yet.",
+		},
+		[640] = {
+			NameKey = "Anchor Shot",
+			Description = "Not implemented yet.",
+		},
+		[641] = {
+			NameKey = "Psychic Terrain",
+			Description = "Not implemented yet.",
+		},
+		[642] = {
+			NameKey = "Lunge",
+			Description = "Not implemented yet.",
+		},
+		[643] = {
+			NameKey = "Fire Lash",
+			Description = "Not implemented yet.",
+		},
+		[644] = {
+			NameKey = "Power Trip",
+			Description = "Not implemented yet.",
+		},
+		[645] = {
+			NameKey = "Burn Up",
+			Description = "Not implemented yet.",
+		},
+		[646] = {
+			NameKey = "Speed Swap",
+			Description = "Not implemented yet.",
+		},
+		[647] = {
+			NameKey = "Smart Strike",
+			Description = "Not implemented yet.",
+		},
+		[648] = {
+			NameKey = "Purify",
+			Description = "Not implemented yet.",
+		},
+		[649] = {
+			NameKey = "Revelation Dance",
+			Description = "Not implemented yet.",
+		},
+		[650] = {
+			NameKey = "Core Enforcer",
+			Description = "Not implemented yet.",
+		},
+		[651] = {
+			NameKey = "Trop Kick",
+			Description = "Not implemented yet.",
+		},
+		[652] = {
+			NameKey = "Instruct",
+			Description = "Not implemented yet.",
+		},
+		[653] = {
+			NameKey = "Beak Blast",
+			Description = "Not implemented yet.",
+		},
+		[654] = {
+			NameKey = "Clanging Scales",
+			Description = "Not implemented yet.",
+		},
+		[655] = {
+			NameKey = "Dragon Hammer",
+			Description = "Not implemented yet.",
+		},
+		[656] = {
+			NameKey = "Brutal Swing",
+			Description = "Not implemented yet.",
+		},
+		[657] = {
+			NameKey = "Aurora Veil",
+			Description = "Not implemented yet.",
+		},
+		[658] = {
+			NameKey = "Shell Trap",
+			Description = "Not implemented yet.",
+		},
+		[659] = {
+			NameKey = "Fleur Cannon",
+			Description = "Not implemented yet.",
+		},
+		[660] = {
+			NameKey = "Psychic Fangs",
+			Description = "Not implemented yet.",
+		},
+		[661] = {
+			NameKey = "Stomping Tantrum",
+			Description = "Not implemented yet.",
+		},
+		[662] = {
+			NameKey = "Shadow Bone",
+			Description = "Not implemented yet.",
+		},
+		[663] = {
+			NameKey = "Accelerock",
+			Description = "Not implemented yet.",
+		},
+		[664] = {
+			NameKey = "Liquidation",
+			Description = "Not implemented yet.",
+		},
+		[665] = {
+			NameKey = "Prismatic Laser",
+			Description = "Not implemented yet.",
+		},
+		[666] = {
+			NameKey = "Spectral Thief",
+			Description = "Not implemented yet.",
+		},
+		[667] = {
+			NameKey = "Sunsteel Strike",
+			Description = "Not implemented yet.",
+		},
+		[668] = {
+			NameKey = "Moongeist Beam",
+			Description = "Not implemented yet.",
+		},
+		[669] = {
+			NameKey = "Tearful Look",
+			Description = "Not implemented yet.",
+		},
+		[670] = {
+			NameKey = "Zing Zap",
+			Description = "Not implemented yet.",
+		},
+		[671] = {
+			NameKey = "Nature's Madness",
+			Description = "Not implemented yet.",
+		},
+		[672] = {
+			NameKey = "Multi-Attack",
+			Description = "Not implemented yet.",
+		},
+		[673] = {
+			NameKey = "Mind Blown",
+			Description = "Not implemented yet.",
+		},
+		[674] = {
+			NameKey = "Plasma Fists",
+			Description = "Not implemented yet.",
+		},
+		[675] = {
+			NameKey = "Photon Geyser",
+			Description = "Not implemented yet.",
+		},
+		[676] = {
+			NameKey = "Zippy Zap",
+			Description = "Not implemented yet.",
+		},
+		[677] = {
+			NameKey = "Splishy Splash",
+			Description = "Not implemented yet.",
+		},
+		[678] = {
+			NameKey = "Floaty Fall",
+			Description = "Not implemented yet.",
+		},
+		[679] = {
+			NameKey = "Pika Papow",
+			Description = "Not implemented yet.",
+		},
+		[680] = {
+			NameKey = "Bouncy Bubble",
+			Description = "Not implemented yet.",
+		},
+		[681] = {
+			NameKey = "Buzzy Buzz",
+			Description = "Not implemented yet.",
+		},
+		[682] = {
+			NameKey = "Sizzly Slide",
+			Description = "Not implemented yet.",
+		},
+		[683] = {
+			NameKey = "Glitzy Glow",
+			Description = "Not implemented yet.",
+		},
+		[684] = {
+			NameKey = "Baddy Bad",
+			Description = "Not implemented yet.",
+		},
+		[685] = {
+			NameKey = "Sappy Seed",
+			Description = "Not implemented yet.",
+		},
+		[686] = {
+			NameKey = "Freezy Frost",
+			Description = "Not implemented yet.",
+		},
+		[687] = {
+			NameKey = "Sparkly Swirl",
+			Description = "Not implemented yet.",
+		},
+		[688] = {
+			NameKey = "Veevee Volley",
+			Description = "Not implemented yet.",
+		},
+		[689] = {
+			NameKey = "Double Iron Bash",
+			Description = "Not implemented yet.",
+		},
+		[690] = {
+			NameKey = "Dynamax Cannon",
+			Description = "Not implemented yet.",
+		},
+		[691] = {
+			NameKey = "Snipe Shot",
+			Description = "Not implemented yet.",
+		},
+		[692] = {
+			NameKey = "Jaw Lock",
+			Description = "Not implemented yet.",
+		},
+		[693] = {
+			NameKey = "Stuff Cheeks",
+			Description = "Not implemented yet.",
+		},
+		[694] = {
+			NameKey = "No Retreat",
+			Description = "Not implemented yet.",
+		},
+		[695] = {
+			NameKey = "Tar Shot",
+			Description = "Not implemented yet.",
+		},
+		[696] = {
+			NameKey = "Magic Powder",
+			Description = "Not implemented yet.",
+		},
+		[697] = {
+			NameKey = "Dragon Darts",
+			Description = "Not implemented yet.",
+		},
+		[698] = {
+			NameKey = "Teatime",
+			Description = "Not implemented yet.",
+		},
+		[699] = {
+			NameKey = "Octolock",
+			Description = "Not implemented yet.",
+		},
+		[700] = {
+			NameKey = "Bolt Beak",
+			Description = "Not implemented yet.",
+		},
+		[701] = {
+			NameKey = "Fishious Rend",
+			Description = "Not implemented yet.",
+		},
+		[702] = {
+			NameKey = "Court Change",
+			Description = "Not implemented yet.",
+		},
+		[703] = {
+			NameKey = "Clangorous Soul",
+			Description = "Not implemented yet.",
+		},
+		[704] = {
+			NameKey = "Body Press",
+			Description = "Not implemented yet.",
+		},
+		[705] = {
+			NameKey = "Decorate",
+			Description = "Not implemented yet.",
+		},
+		[706] = {
+			NameKey = "Drum Beating",
+			Description = "Not implemented yet.",
+		},
+		[707] = {
+			NameKey = "Snap Trap",
+			Description = "Not implemented yet.",
+		},
+		[708] = {
+			NameKey = "Pyro Ball",
+			Description = "Not implemented yet.",
+		},
+		[709] = {
+			NameKey = "Behemoth Blade",
+			Description = "Not implemented yet.",
+		},
+		[710] = {
+			NameKey = "Behemoth Bash",
+			Description = "Not implemented yet.",
+		},
+		[711] = {
+			NameKey = "Aura Wheel",
+			Description = "Not implemented yet.",
+		},
+		[712] = {
+			NameKey = "Breaking Swipe",
+			Description = "Not implemented yet.",
+		},
+		[713] = {
+			NameKey = "Branch Poke",
+			Description = "Not implemented yet.",
+		},
+		[714] = {
+			NameKey = "Overdrive",
+			Description = "Not implemented yet.",
+		},
+		[715] = {
+			NameKey = "Apple Acid",
+			Description = "Not implemented yet.",
+		},
+		[716] = {
+			NameKey = "Grav Apple",
+			Description = "Not implemented yet.",
+		},
+		[717] = {
+			NameKey = "Spirit Break",
+			Description = "Not implemented yet.",
+		},
+		[718] = {
+			NameKey = "Strange Steam",
+			Description = "Not implemented yet.",
+		},
+		[719] = {
+			NameKey = "Life Dew",
+			Description = "Not implemented yet.",
+		},
+		[720] = {
+			NameKey = "Obstruct",
+			Description = "Not implemented yet.",
+		},
+		[721] = {
+			NameKey = "False Surrender",
+			Description = "Not implemented yet.",
+		},
+		[722] = {
+			NameKey = "Meteor Assault",
+			Description = "Not implemented yet.",
+		},
+		[723] = {
+			NameKey = "Eternabeam",
+			Description = "Not implemented yet.",
+		},
+		[724] = {
+			NameKey = "Steel Beam",
+			Description = "Not implemented yet.",
+		},
+		[725] = {
+			NameKey = "Expanding Force",
+			Description = "Not implemented yet.",
+		},
+		[726] = {
+			NameKey = "Steel Roller",
+			Description = "Not implemented yet.",
+		},
+		[727] = {
+			NameKey = "Scale Shot",
+			Description = "Not implemented yet.",
+		},
+		[728] = {
+			NameKey = "Meteor Beam",
+			Description = "Not implemented yet.",
+		},
+		[729] = {
+			NameKey = "Shell Side Arm",
+			Description = "Not implemented yet.",
+		},
+		[730] = {
+			NameKey = "Misty Explosion",
+			Description = "Not implemented yet.",
+		},
+		[731] = {
+			NameKey = "Grassy Glide",
+			Description = "Not implemented yet.",
+		},
+		[732] = {
+			NameKey = "Rising Voltage",
+			Description = "Not implemented yet.",
+		},
+		[733] = {
+			NameKey = "Terrain Pulse",
+			Description = "Not implemented yet.",
+		},
+		[734] = {
+			NameKey = "Skitter Smack",
+			Description = "Not implemented yet.",
+		},
+		[735] = {
+			NameKey = "Burning Jealousy",
+			Description = "Not implemented yet.",
+		},
+		[736] = {
+			NameKey = "Lash Out",
+			Description = "Not implemented yet.",
+		},
+		[737] = {
+			NameKey = "Poltergeist",
+			Description = "Not implemented yet.",
+		},
+		[738] = {
+			NameKey = "Corrosive Gas",
+			Description = "Not implemented yet.",
+		},
+		[739] = {
+			NameKey = "Coaching",
+			Description = "Not implemented yet.",
+		},
+		[740] = {
+			NameKey = "Flip Turn",
+			Description = "Not implemented yet.",
+		},
+		[741] = {
+			NameKey = "Triple Axel",
+			Description = "Not implemented yet.",
+		},
+		[742] = {
+			NameKey = "Dual Wingbeat",
+			Description = "Not implemented yet.",
+		},
+		[743] = {
+			NameKey = "Scorching Sands",
+			Description = "Not implemented yet.",
+		},
+		[744] = {
+			NameKey = "Jungle Healing",
+			Description = "Not implemented yet.",
+		},
+		[745] = {
+			NameKey = "Wicked Blow",
+			Description = "Not implemented yet.",
+		},
+		[746] = {
+			NameKey = "Surging Strikes",
+			Description = "Not implemented yet.",
+		},
+		[747] = {
+			NameKey = "Thunder Cage",
+			Description = "Not implemented yet.",
+		},
+		[748] = {
+			NameKey = "Dragon Energy",
+			Description = "Not implemented yet.",
+		},
+		[749] = {
+			NameKey = "Freezing Glare",
+			Description = "Not implemented yet.",
+		},
+		[750] = {
+			NameKey = "Fiery Wrath",
+			Description = "Not implemented yet.",
+		},
+		[751] = {
+			NameKey = "Thunderous Kick",
+			Description = "Not implemented yet.",
+		},
+		[752] = {
+			NameKey = "Glacial Lance",
+			Description = "Not implemented yet.",
+		},
+		[753] = {
+			NameKey = "Astral Barrage",
+			Description = "Not implemented yet.",
+		},
+		[754] = {
+			NameKey = "Eerie Spell",
+			Description = "Not implemented yet.",
+		},
+		[755] = {
+			NameKey = "Dire Claw",
+			Description = "Not implemented yet.",
+		},
+		[756] = {
+			NameKey = "Psyshield Bash",
+			Description = "Not implemented yet.",
+		},
+		[757] = {
+			NameKey = "Power Shift",
+			Description = "Not implemented yet.",
+		},
+		[758] = {
+			NameKey = "Stone Axe",
+			Description = "Not implemented yet.",
+		},
+		[759] = {
+			NameKey = "Springtide Storm",
+			Description = "Not implemented yet.",
+		},
+		[760] = {
+			NameKey = "Mystical Power",
+			Description = "Not implemented yet.",
+		},
+		[761] = {
+			NameKey = "Raging Fury",
+			Description = "Not implemented yet.",
+		},
+		[762] = {
+			NameKey = "Wave Crash",
+			Description = "Not implemented yet.",
+		},
+		[763] = {
+			NameKey = "Chloroblast",
+			Description = "Not implemented yet.",
+		},
+		[764] = {
+			NameKey = "Mountain Gale",
+			Description = "Not implemented yet.",
+		},
+		[765] = {
+			NameKey = "Victory Dance",
+			Description = "Not implemented yet.",
+		},
+		[766] = {
+			NameKey = "Headlong Rush",
+			Description = "Not implemented yet.",
+		},
+		[767] = {
+			NameKey = "Barb Barrage",
+			Description = "Not implemented yet.",
+		},
+		[768] = {
+			NameKey = "Esper Wing",
+			Description = "Not implemented yet.",
+		},
+		[769] = {
+			NameKey = "Bitter Malice",
+			Description = "Not implemented yet.",
+		},
+		[770] = {
+			NameKey = "Shelter",
+			Description = "Not implemented yet.",
+		},
+		[771] = {
+			NameKey = "Triple Arrows",
+			Description = "Not implemented yet.",
+		},
+		[772] = {
+			NameKey = "Infernal Parade",
+			Description = "Not implemented yet.",
+		},
+		[773] = {
+			NameKey = "Ceaseless Edge",
+			Description = "Not implemented yet.",
+		},
+		[774] = {
+			NameKey = "Bleakwind Storm",
+			Description = "Not implemented yet.",
+		},
+		[775] = {
+			NameKey = "Wildbolt Storm",
+			Description = "Not implemented yet.",
+		},
+		[776] = {
+			NameKey = "Sandsear Storm",
+			Description = "Not implemented yet.",
+		},
+		[777] = {
+			NameKey = "Lunar Blessing",
+			Description = "Not implemented yet.",
+		},
+		[778] = {
+			NameKey = "Take Heart",
+			Description = "Not implemented yet.",
+		},
+		[779] = {
+			NameKey = "Tera Blast",
+			Description = "Not implemented yet.",
+		},
+		[780] = {
+			NameKey = "Silk Trap",
+			Description = "Not implemented yet.",
+		},
+		[781] = {
+			NameKey = "Axe Kick",
+			Description = "Not implemented yet.",
+		},
+		[782] = {
+			NameKey = "Last Respects",
+			Description = "Not implemented yet.",
+		},
+		[783] = {
+			NameKey = "Lumina Crash",
+			Description = "Not implemented yet.",
+		},
+		[784] = {
+			NameKey = "Order Up",
+			Description = "Not implemented yet.",
+		},
+		[785] = {
+			NameKey = "Jet Punch",
+			Description = "Not implemented yet.",
+		},
+		[786] = {
+			NameKey = "Spicy Extract",
+			Description = "Not implemented yet.",
+		},
+		[787] = {
+			NameKey = "Spin Out",
+			Description = "Not implemented yet.",
+		},
+		[788] = {
+			NameKey = "Population Bomb",
+			Description = "Not implemented yet.",
+		},
+		[789] = {
+			NameKey = "Ice Spinner",
+			Description = "Not implemented yet.",
+		},
+		[790] = {
+			NameKey = "Glaive Rush",
+			Description = "Not implemented yet.",
+		},
+		[791] = {
+			NameKey = "Revival Blessing",
+			Description = "Not implemented yet.",
+		},
+		[792] = {
+			NameKey = "Salt Cure",
+			Description = "Not implemented yet.",
+		},
+		[793] = {
+			NameKey = "Triple Dive",
+			Description = "Not implemented yet.",
+		},
+		[794] = {
+			NameKey = "Mortal Spin",
+			Description = "Not implemented yet.",
+		},
+		[795] = {
+			NameKey = "Doodle",
+			Description = "Not implemented yet.",
+		},
+		[796] = {
+			NameKey = "Fillet Away",
+			Description = "Not implemented yet.",
+		},
+		[797] = {
+			NameKey = "Kowtow Cleave",
+			Description = "Not implemented yet.",
+		},
+		[798] = {
+			NameKey = "Flower Trick",
+			Description = "Not implemented yet.",
+		},
+		[799] = {
+			NameKey = "Torch Song",
+			Description = "Not implemented yet.",
+		},
+		[800] = {
+			NameKey = "Aqua Step",
+			Description = "Not implemented yet.",
+		},
+		[801] = {
+			NameKey = "Raging Bull",
+			Description = "Not implemented yet.",
+		},
+		[802] = {
+			NameKey = "Make It Rain",
+			Description = "Not implemented yet.",
+		},
+		[803] = {
+			NameKey = "Ruination",
+			Description = "Not implemented yet.",
+		},
+		[804] = {
+			NameKey = "Collision Course",
+			Description = "Not implemented yet.",
+		},
+		[805] = {
+			NameKey = "Electro Drift",
+			Description = "Not implemented yet.",
+		},
+		[806] = {
+			NameKey = "Shed Tail",
+			Description = "Not implemented yet.",
+		},
+		[807] = {
+			NameKey = "Chilly Reception",
+			Description = "Not implemented yet.",
+		},
+		[808] = {
+			NameKey = "Tidy Up",
+			Description = "Not implemented yet.",
+		},
+		[809] = {
+			NameKey = "Snowscape",
+			Description = "Not implemented yet.",
+		},
+		[810] = {
+			NameKey = "Pounce",
+			Description = "Not implemented yet.",
+		},
+		[811] = {
+			NameKey = "Trailblaze",
+			Description = "Not implemented yet.",
+		},
+		[812] = {
+			NameKey = "Chilling Water",
+			Description = "Not implemented yet.",
+		},
+		[813] = {
+			NameKey = "Hyper Drill",
+			Description = "Not implemented yet.",
+		},
+		[814] = {
+			NameKey = "Twin Beam",
+			Description = "Not implemented yet.",
+		},
+		[815] = {
+			NameKey = "Rage Fist",
+			Description = "Not implemented yet.",
+		},
+		[816] = {
+			NameKey = "Armor Cannon",
+			Description = "Not implemented yet.",
+		},
+		[817] = {
+			NameKey = "Bitter Blade",
+			Description = "Not implemented yet.",
+		},
+		[818] = {
+			NameKey = "Double Shock",
+			Description = "Not implemented yet.",
+		},
+		[819] = {
+			NameKey = "Gigaton Hammer",
+			Description = "Not implemented yet.",
+		},
+		[820] = {
+			NameKey = "Comeuppance",
+			Description = "Not implemented yet.",
+		},
+		[821] = {
+			NameKey = "Aqua Cutter",
+			Description = "Not implemented yet.",
+		},
+		[822] = {
+			NameKey = "Blazing Torque",
+			Description = "Not implemented yet.",
+		},
+		[823] = {
+			NameKey = "Wicked Torque",
+			Description = "Not implemented yet.",
+		},
+		[824] = {
+			NameKey = "Noxious Torque",
+			Description = "Not implemented yet.",
+		},
+		[825] = {
+			NameKey = "Combat Torque",
+			Description = "Not implemented yet.",
+		},
+		[826] = {
+			NameKey = "Magical Torque",
+			Description = "Not implemented yet.",
+		},
+		[827] = {
+			NameKey = "Psyblade",
+			Description = "Not implemented yet.",
+		},
+		[828] = {
+			NameKey = "Hydro Steam",
+			Description = "Not implemented yet.",
+		},
+		[829] = {
+			NameKey = "Blood Moon",
+			Description = "Not implemented yet.",
+		},
+		[830] = {
+			NameKey = "Matcha Gotcha",
+			Description = "Not implemented yet.",
+		},
+		[831] = {
+			NameKey = "Syrup Bomb",
+			Description = "Not implemented yet.",
+		},
+		[832] = {
+			NameKey = "Ivy Cudgel",
+			Description = "Not implemented yet.",
+		},
+		[833] = {
+			NameKey = "Electro Shot",
+			Description = "Not implemented yet.",
+		},
+		[834] = {
+			NameKey = "Tera Starstorm",
+			Description = "Not implemented yet.",
+		},
+		[835] = {
+			NameKey = "Fickle Beam",
+			Description = "Not implemented yet.",
+		},
+		[836] = {
+			NameKey = "Burning Bulwark",
+			Description = "Not implemented yet.",
+		},
+		[837] = {
+			NameKey = "Thunderclap",
+			Description = "Not implemented yet.",
+		},
+		[838] = {
+			NameKey = "Mighty Cleave",
+			Description = "Not implemented yet.",
+		},
+		[839] = {
+			NameKey = "Tachyon Cutter",
+			Description = "Not implemented yet.",
+		},
+		[840] = {
+			NameKey = "Hard Press",
+			Description = "Not implemented yet.",
+		},
+		[841] = {
+			NameKey = "Dragon Cheer",
+			Description = "Not implemented yet.",
+		},
+		[842] = {
+			NameKey = "Alluring Voice",
+			Description = "Not implemented yet.",
+		},
+		[843] = {
+			NameKey = "Temper Flare",
+			Description = "Not implemented yet.",
+		},
+		[844] = {
+			NameKey = "Supercell Slam",
+			Description = "Not implemented yet.",
+		},
+		[845] = {
+			NameKey = "Psychic Noise",
+			Description = "Not implemented yet.",
+		},
+		[846] = {
+			NameKey = "Upper Hand",
+			Description = "Not implemented yet.",
+		},
+		[847] = {
+			NameKey = "Malignant Chain",
+			Description = "Not implemented yet.",
+		},
+	}
+
+	self.Data.abilityNameList = {
+		[78] = "Tangled Feet",
+		[79] = "Motor Drive",
+		[80] = "Rivalry",
+		[81] = "Steadfast",
+		[82] = "Snow Cloak",
+		[83] = "Gluttony",
+		[84] = "Anger Point",
+		[85] = "Unburden",
+		[86] = "Heatproof",
+		[87] = "Simple",
+		[88] = "Dry Skin",
+		[89] = "Download",
+		[90] = "Iron Fist",
+		[91] = "Poison Heal",
+		[92] = "Adaptability",
+		[93] = "Skill Link",
+		[94] = "Hydration",
+		[95] = "Solar Power",
+		[96] = "Quick Feet",
+		[97] = "Normalize",
+		[98] = "Sniper",
+		[99] = "Magic Guard",
+		[100] = "No Guard",
+		[101] = "Stall",
+		[102] = "Technician",
+		[103] = "Leaf Guard",
+		[104] = "Klutz",
+		[105] = "Mold Breaker",
+		[106] = "Super Luck",
+		[107] = "Aftermath",
+		[108] = "Anticipation",
+		[109] = "Forewarn",
+		[110] = "Unaware",
+		[111] = "Tinted Lens",
+		[112] = "Filter",
+		[113] = "Slow Start",
+		[114] = "Scrappy",
+		[115] = "Storm Drain",
+		[116] = "Ice Body",
+		[117] = "Solid Rock",
+		[118] = "Snow Warning",
+		[119] = "Honey Gather",
+		[120] = "Frisk",
+		[121] = "Reckless",
+		[122] = "Multitype",
+		[123] = "Flower Gift",
+		[124] = "Bad Dreams",
+		[125] = "Pickpocket",
+		[126] = "Sheer Force",
+		[127] = "Contrary",
+		[128] = "Unnerve",
+		[129] = "Defiant",
+		[130] = "Defeatist",
+		[131] = "Cursed Body",
+		[132] = "Healer",
+		[133] = "Friend Guard",
+		[134] = "Weak Armor",
+		[135] = "Heavy Metal",
+		[136] = "Light Metal",
+		[137] = "Multiscale",
+		[138] = "Toxic Boost",
+		[139] = "Flare Boost",
+		[140] = "Harvest",
+		[141] = "Telepathy",
+		[142] = "Moody",
+		[143] = "Overcoat",
+		[144] = "Poison Touch",
+		[145] = "Regenerator",
+		[146] = "Big Pecks",
+		[147] = "Sand Rush",
+		[148] = "Wonder Skin",
+		[149] = "Analytic",
+		[150] = "Illusion",
+		[151] = "Imposter",
+		[152] = "Infiltrator",
+		[153] = "Mummy",
+		[154] = "Moxie",
+		[155] = "Justified",
+		[156] = "Rattled",
+		[157] = "Magic Bounce",
+		[158] = "Sap Sipper",
+		[159] = "Prankster",
+		[160] = "Sand Force",
+		[161] = "Iron Barbs",
+		[162] = "Zen Mode",
+		[163] = "Victory Star",
+		[164] = "Turboblaze",
+		[165] = "Teravolt",
+		[166] = "Aroma Veil",
+		[167] = "Flower Veil",
+		[168] = "Cheek Pouch",
+		[169] = "Protean",
+		[170] = "Fur Coat",
+		[171] = "Magician",
+		[172] = "Bulletproof",
+		[173] = "Competitive",
+		[174] = "Strong Jaw",
+		[175] = "Refrigerate",
+		[176] = "Sweet Veil",
+		[177] = "Stance Change",
+		[178] = "Gale Wings",
+		[179] = "Mega Launcher",
+		[180] = "Grass Pelt",
+		[181] = "Symbiosis",
+		[182] = "Tough Claws",
+		[183] = "Pixilate",
+		[184] = "Gooey",
+		[185] = "Aerilate",
+		[186] = "Parental Bond",
+		[187] = "Dark Aura",
+		[188] = "Fairy Aura",
+		[189] = "Aura Break",
+		[190] = "Primordial Sea",
+		[191] = "Desolate Land",
+		[192] = "Delta Stream",
+		[193] = "Stamina",
+		[194] = "Wimp Out",
+		[195] = "Emergency Exit",
+		[196] = "Water Compaction",
+		[197] = "Merciless",
+		[198] = "Shields Down",
+		[199] = "Stakeout",
+		[200] = "Water Bubble",
+		[201] = "Steelworker",
+		[202] = "Berserk",
+		[203] = "Slush Rush",
+		[204] = "Long Reach",
+		[205] = "Liquid Voice",
+		[206] = "Triage",
+		[207] = "Galvanize",
+		[208] = "Surge Surfer",
+		[209] = "Schooling",
+		[210] = "Disguise",
+		[211] = "Battle Bond",
+		[212] = "Power Construct",
+		[213] = "Corrosion",
+		[214] = "Comatose",
+		[215] = "Queenly Majesty",
+		[216] = "Innards Out",
+		[217] = "Dancer",
+		[218] = "Battery",
+		[219] = "Fluffy",
+		[220] = "Dazzling",
+		[221] = "Soul-Heart",
+		[222] = "Tangling Hair",
+		[223] = "Receiver",
+		[224] = "Power Of Alchemy",
+		[225] = "Beast Boost",
+		[226] = "RKS System",
+		[227] = "Electric Surge",
+		[228] = "Psychic Surge",
+		[229] = "Misty Surge",
+		[230] = "Grassy Surge",
+		[231] = "Full Metal Body",
+		[232] = "Shadow Shield",
+		[233] = "Prism Armor",
+		[234] = "Neuroforce",
+		[235] = "Intrepid Sword",
+		[236] = "Dauntless Shield",
+		[237] = "Libero",
+		[238] = "Ball Fetch",
+		[239] = "Cotton Down",
+		[240] = "Propeller Tail",
+		[241] = "Mirror Armor",
+		[242] = "Gulp Missile",
+		[243] = "Stalwart",
+		[244] = "Steam Engine",
+		[245] = "Punk Rock",
+		[246] = "Sand Spit",
+		[247] = "Ice Scales",
+		[248] = "Ripen",
+		[249] = "Ice Face",
+		[250] = "Power Spot",
+		[251] = "Mimicry",
+		[252] = "Screen Cleaner",
+		[253] = "Steely Spirit",
+		[254] = "Perish Body",
+		[255] = "Wandering Spirit",
+		[256] = "Gorilla Tactics",
+		[257] = "Neutralizing Gas",
+		[258] = "Pastel Veil",
+		[259] = "Hunger Switch",
+		[260] = "Quick Draw",
+		[261] = "Unseen Fist",
+		[262] = "Curious Medicine",
+		[263] = "Transistor",
+		[264] = "Dragon's Maw",
+		[265] = "Chilling Neigh",
+		[266] = "Grim Neigh",
+		[267] = "As One-I",
+		[268] = "As One-S",
+		[269] = "Lingering Aroma",
+		[270] = "Seed Sower",
+		[271] = "Thermal Exchange",
+		[272] = "Anger Shell",
+		[273] = "Purifying Salt",
+		[274] = "Well-Baked Body",
+		[275] = "Wind Rider",
+		[276] = "Guard Dog",
+		[277] = "Rocky Payload",
+		[278] = "Wind Power",
+		[279] = "Zero to Hero",
+		[280] = "Commander",
+		[281] = "Electromorphosis",
+		[282] = "Protosynthesis",
+		[283] = "Quark Drive",
+		[284] = "Good as Gold",
+		[285] = "Vessel of Ruin",
+		[286] = "Sword of Ruin",
+		[287] = "Tablets of Ruin",
+		[288] = "Beads of Ruin",
+		[289] = "Orichalcum Pulse",
+		[290] = "Hadron Engine",
+		[291] = "Opportunist",
+		[292] = "Cud Chew",
+		[293] = "Sharpness",
+		[294] = "Supreme Overlord",
+		[295] = "Costar",
+		[296] = "Toxic Debris",
+		[297] = "Armor Tail",
+		[298] = "Earth Eater",
+		[299] = "Mycelium Might",
+		[300] = "Hospitality",
+		[301] = "Mind's Eye",
+		[302] = "Embody Aspect-T",
+		[303] = "Embody Aspect-H",
+		[304] = "Embody Aspect-W",
+		[305] = "Embody Aspect-C",
+		[306] = "Toxic Chain",
+		[307] = "Supersweet Syrup",
+		[308] = "Tera Shift",
+		[309] = "Tera Shell",
+		[310] = "Teraform Zero",
+		[311] = "Poison Puppeteer",
+	}
+
+	self.Data.natDexAbilityDescriptions = {
+		[78] = {
+			NameKey = "Tangled Feet",
+			Description = "Not implemented yet.",
+		},
+		[79] = {
+			NameKey = "Motor Drive",
+			Description = "Not implemented yet.",
+		},
+		[80] = {
+			NameKey = "Rivalry",
+			Description = "Not implemented yet.",
+		},
+		[81] = {
+			NameKey = "Steadfast",
+			Description = "Not implemented yet.",
+		},
+		[82] = {
+			NameKey = "Snow Cloak",
+			Description = "Not implemented yet.",
+		},
+		[83] = {
+			NameKey = "Gluttony",
+			Description = "Not implemented yet.",
+		},
+		[84] = {
+			NameKey = "Anger Point",
+			Description = "Not implemented yet.",
+		},
+		[85] = {
+			NameKey = "Unburden",
+			Description = "Not implemented yet.",
+		},
+		[86] = {
+			NameKey = "Heatproof",
+			Description = "Not implemented yet.",
+		},
+		[87] = {
+			NameKey = "Simple",
+			Description = "Not implemented yet.",
+		},
+		[88] = {
+			NameKey = "Dry Skin",
+			Description = "Not implemented yet.",
+		},
+		[89] = {
+			NameKey = "Download",
+			Description = "Not implemented yet.",
+		},
+		[90] = {
+			NameKey = "Iron Fist",
+			Description = "Not implemented yet.",
+		},
+		[91] = {
+			NameKey = "Poison Heal",
+			Description = "Not implemented yet.",
+		},
+		[92] = {
+			NameKey = "Adaptability",
+			Description = "Not implemented yet.",
+		},
+		[93] = {
+			NameKey = "Skill Link",
+			Description = "Not implemented yet.",
+		},
+		[94] = {
+			NameKey = "Hydration",
+			Description = "Not implemented yet.",
+		},
+		[95] = {
+			NameKey = "Solar Power",
+			Description = "Not implemented yet.",
+		},
+		[96] = {
+			NameKey = "Quick Feet",
+			Description = "Not implemented yet.",
+		},
+		[97] = {
+			NameKey = "Normalize",
+			Description = "Not implemented yet.",
+		},
+		[98] = {
+			NameKey = "Sniper",
+			Description = "Not implemented yet.",
+		},
+		[99] = {
+			NameKey = "Magic Guard",
+			Description = "Not implemented yet.",
+		},
+		[100] = {
+			NameKey = "No Guard",
+			Description = "Not implemented yet.",
+		},
+		[101] = {
+			NameKey = "Stall",
+			Description = "Not implemented yet.",
+		},
+		[102] = {
+			NameKey = "Technician",
+			Description = "Not implemented yet.",
+		},
+		[103] = {
+			NameKey = "Leaf Guard",
+			Description = "Not implemented yet.",
+		},
+		[104] = {
+			NameKey = "Klutz",
+			Description = "Not implemented yet.",
+		},
+		[105] = {
+			NameKey = "Mold Breaker",
+			Description = "Not implemented yet.",
+		},
+		[106] = {
+			NameKey = "Super Luck",
+			Description = "Not implemented yet.",
+		},
+		[107] = {
+			NameKey = "Aftermath",
+			Description = "Not implemented yet.",
+		},
+		[108] = {
+			NameKey = "Anticipation",
+			Description = "Not implemented yet.",
+		},
+		[109] = {
+			NameKey = "Forewarn",
+			Description = "Not implemented yet.",
+		},
+		[110] = {
+			NameKey = "Unaware",
+			Description = "Not implemented yet.",
+		},
+		[111] = {
+			NameKey = "Tinted Lens",
+			Description = "Not implemented yet.",
+		},
+		[112] = {
+			NameKey = "Filter",
+			Description = "Not implemented yet.",
+		},
+		[113] = {
+			NameKey = "Slow Start",
+			Description = "Not implemented yet.",
+		},
+		[114] = {
+			NameKey = "Scrappy",
+			Description = "Not implemented yet.",
+		},
+		[115] = {
+			NameKey = "Storm Drain",
+			Description = "Not implemented yet.",
+		},
+		[116] = {
+			NameKey = "Ice Body",
+			Description = "Not implemented yet.",
+		},
+		[117] = {
+			NameKey = "Solid Rock",
+			Description = "Not implemented yet.",
+		},
+		[118] = {
+			NameKey = "Snow Warning",
+			Description = "Not implemented yet.",
+		},
+		[119] = {
+			NameKey = "Honey Gather",
+			Description = "Not implemented yet.",
+		},
+		[120] = {
+			NameKey = "Frisk",
+			Description = "Not implemented yet.",
+		},
+		[121] = {
+			NameKey = "Reckless",
+			Description = "Not implemented yet.",
+		},
+		[122] = {
+			NameKey = "Multitype",
+			Description = "Not implemented yet.",
+		},
+		[123] = {
+			NameKey = "Flower Gift",
+			Description = "Not implemented yet.",
+		},
+		[124] = {
+			NameKey = "Bad Dreams",
+			Description = "Not implemented yet.",
+		},
+		[125] = {
+			NameKey = "Pickpocket",
+			Description = "Not implemented yet.",
+		},
+		[126] = {
+			NameKey = "Sheer Force",
+			Description = "Not implemented yet.",
+		},
+		[127] = {
+			NameKey = "Contrary",
+			Description = "Not implemented yet.",
+		},
+		[128] = {
+			NameKey = "Unnerve",
+			Description = "Not implemented yet.",
+		},
+		[129] = {
+			NameKey = "Defiant",
+			Description = "Not implemented yet.",
+		},
+		[130] = {
+			NameKey = "Defeatist",
+			Description = "Not implemented yet.",
+		},
+		[131] = {
+			NameKey = "Cursed Body",
+			Description = "Not implemented yet.",
+		},
+		[132] = {
+			NameKey = "Healer",
+			Description = "Not implemented yet.",
+		},
+		[133] = {
+			NameKey = "Friend Guard",
+			Description = "Not implemented yet.",
+		},
+		[134] = {
+			NameKey = "Weak Armor",
+			Description = "Not implemented yet.",
+		},
+		[135] = {
+			NameKey = "Heavy Metal",
+			Description = "Not implemented yet.",
+		},
+		[136] = {
+			NameKey = "Light Metal",
+			Description = "Not implemented yet.",
+		},
+		[137] = {
+			NameKey = "Multiscale",
+			Description = "Not implemented yet.",
+		},
+		[138] = {
+			NameKey = "Toxic Boost",
+			Description = "Not implemented yet.",
+		},
+		[139] = {
+			NameKey = "Flare Boost",
+			Description = "Not implemented yet.",
+		},
+		[140] = {
+			NameKey = "Harvest",
+			Description = "Not implemented yet.",
+		},
+		[141] = {
+			NameKey = "Telepathy",
+			Description = "Not implemented yet.",
+		},
+		[142] = {
+			NameKey = "Moody",
+			Description = "Not implemented yet.",
+		},
+		[143] = {
+			NameKey = "Overcoat",
+			Description = "Not implemented yet.",
+		},
+		[144] = {
+			NameKey = "Poison Touch",
+			Description = "Not implemented yet.",
+		},
+		[145] = {
+			NameKey = "Regenerator",
+			Description = "Not implemented yet.",
+		},
+		[146] = {
+			NameKey = "Big Pecks",
+			Description = "Not implemented yet.",
+		},
+		[147] = {
+			NameKey = "Sand Rush",
+			Description = "Not implemented yet.",
+		},
+		[148] = {
+			NameKey = "Wonder Skin",
+			Description = "Not implemented yet.",
+		},
+		[149] = {
+			NameKey = "Analytic",
+			Description = "Not implemented yet.",
+		},
+		[150] = {
+			NameKey = "Illusion",
+			Description = "Not implemented yet.",
+		},
+		[151] = {
+			NameKey = "Imposter",
+			Description = "Not implemented yet.",
+		},
+		[152] = {
+			NameKey = "Infiltrator",
+			Description = "Not implemented yet.",
+		},
+		[153] = {
+			NameKey = "Mummy",
+			Description = "Not implemented yet.",
+		},
+		[154] = {
+			NameKey = "Moxie",
+			Description = "Not implemented yet.",
+		},
+		[155] = {
+			NameKey = "Justified",
+			Description = "Not implemented yet.",
+		},
+		[156] = {
+			NameKey = "Rattled",
+			Description = "Not implemented yet.",
+		},
+		[157] = {
+			NameKey = "Magic Bounce",
+			Description = "Not implemented yet.",
+		},
+		[158] = {
+			NameKey = "Sap Sipper",
+			Description = "Not implemented yet.",
+		},
+		[159] = {
+			NameKey = "Prankster",
+			Description = "Not implemented yet.",
+		},
+		[160] = {
+			NameKey = "Sand Force",
+			Description = "Not implemented yet.",
+		},
+		[161] = {
+			NameKey = "Iron Barbs",
+			Description = "Not implemented yet.",
+		},
+		[162] = {
+			NameKey = "Zen Mode",
+			Description = "Not implemented yet.",
+		},
+		[163] = {
+			NameKey = "Victory Star",
+			Description = "Not implemented yet.",
+		},
+		[164] = {
+			NameKey = "Turboblaze",
+			Description = "Not implemented yet.",
+		},
+		[165] = {
+			NameKey = "Teravolt",
+			Description = "Not implemented yet.",
+		},
+		[166] = {
+			NameKey = "Aroma Veil",
+			Description = "Not implemented yet.",
+		},
+		[167] = {
+			NameKey = "Flower Veil",
+			Description = "Not implemented yet.",
+		},
+		[168] = {
+			NameKey = "Cheek Pouch",
+			Description = "Not implemented yet.",
+		},
+		[169] = {
+			NameKey = "Protean",
+			Description = "Not implemented yet.",
+		},
+		[170] = {
+			NameKey = "Fur Coat",
+			Description = "Not implemented yet.",
+		},
+		[171] = {
+			NameKey = "Magician",
+			Description = "Not implemented yet.",
+		},
+		[172] = {
+			NameKey = "Bulletproof",
+			Description = "Not implemented yet.",
+		},
+		[173] = {
+			NameKey = "Competitive",
+			Description = "Not implemented yet.",
+		},
+		[174] = {
+			NameKey = "Strong Jaw",
+			Description = "Not implemented yet.",
+		},
+		[175] = {
+			NameKey = "Refrigerate",
+			Description = "Not implemented yet.",
+		},
+		[176] = {
+			NameKey = "Sweet Veil",
+			Description = "Not implemented yet.",
+		},
+		[177] = {
+			NameKey = "Stance Change",
+			Description = "Not implemented yet.",
+		},
+		[178] = {
+			NameKey = "Gale Wings",
+			Description = "Not implemented yet.",
+		},
+		[179] = {
+			NameKey = "Mega Launcher",
+			Description = "Not implemented yet.",
+		},
+		[180] = {
+			NameKey = "Grass Pelt",
+			Description = "Not implemented yet.",
+		},
+		[181] = {
+			NameKey = "Symbiosis",
+			Description = "Not implemented yet.",
+		},
+		[182] = {
+			NameKey = "Tough Claws",
+			Description = "Not implemented yet.",
+		},
+		[183] = {
+			NameKey = "Pixilate",
+			Description = "Not implemented yet.",
+		},
+		[184] = {
+			NameKey = "Gooey",
+			Description = "Not implemented yet.",
+		},
+		[185] = {
+			NameKey = "Aerilate",
+			Description = "Not implemented yet.",
+		},
+		[186] = {
+			NameKey = "Parental Bond",
+			Description = "Not implemented yet.",
+		},
+		[187] = {
+			NameKey = "Dark Aura",
+			Description = "Not implemented yet.",
+		},
+		[188] = {
+			NameKey = "Fairy Aura",
+			Description = "Not implemented yet.",
+		},
+		[189] = {
+			NameKey = "Aura Break",
+			Description = "Not implemented yet.",
+		},
+		[190] = {
+			NameKey = "Primordial Sea",
+			Description = "Not implemented yet.",
+		},
+		[191] = {
+			NameKey = "Desolate Land",
+			Description = "Not implemented yet.",
+		},
+		[192] = {
+			NameKey = "Delta Stream",
+			Description = "Not implemented yet.",
+		},
+		[193] = {
+			NameKey = "Stamina",
+			Description = "Not implemented yet.",
+		},
+		[194] = {
+			NameKey = "Wimp Out",
+			Description = "Not implemented yet.",
+		},
+		[195] = {
+			NameKey = "Emergency Exit",
+			Description = "Not implemented yet.",
+		},
+		[196] = {
+			NameKey = "Water Compaction",
+			Description = "Not implemented yet.",
+		},
+		[197] = {
+			NameKey = "Merciless",
+			Description = "Not implemented yet.",
+		},
+		[198] = {
+			NameKey = "Shields Down",
+			Description = "Not implemented yet.",
+		},
+		[199] = {
+			NameKey = "Stakeout",
+			Description = "Not implemented yet.",
+		},
+		[200] = {
+			NameKey = "Water Bubble",
+			Description = "Not implemented yet.",
+		},
+		[201] = {
+			NameKey = "Steelworker",
+			Description = "Not implemented yet.",
+		},
+		[202] = {
+			NameKey = "Berserk",
+			Description = "Not implemented yet.",
+		},
+		[203] = {
+			NameKey = "Slush Rush",
+			Description = "Not implemented yet.",
+		},
+		[204] = {
+			NameKey = "Long Reach",
+			Description = "Not implemented yet.",
+		},
+		[205] = {
+			NameKey = "Liquid Voice",
+			Description = "Not implemented yet.",
+		},
+		[206] = {
+			NameKey = "Triage",
+			Description = "Not implemented yet.",
+		},
+		[207] = {
+			NameKey = "Galvanize",
+			Description = "Not implemented yet.",
+		},
+		[208] = {
+			NameKey = "Surge Surfer",
+			Description = "Not implemented yet.",
+		},
+		[209] = {
+			NameKey = "Schooling",
+			Description = "Not implemented yet.",
+		},
+		[210] = {
+			NameKey = "Disguise",
+			Description = "Not implemented yet.",
+		},
+		[211] = {
+			NameKey = "Battle Bond",
+			Description = "Not implemented yet.",
+		},
+		[212] = {
+			NameKey = "Power Construct",
+			Description = "Not implemented yet.",
+		},
+		[213] = {
+			NameKey = "Corrosion",
+			Description = "Not implemented yet.",
+		},
+		[214] = {
+			NameKey = "Comatose",
+			Description = "Not implemented yet.",
+		},
+		[215] = {
+			NameKey = "Queenly Majesty",
+			Description = "Not implemented yet.",
+		},
+		[216] = {
+			NameKey = "Innards Out",
+			Description = "Not implemented yet.",
+		},
+		[217] = {
+			NameKey = "Dancer",
+			Description = "Not implemented yet.",
+		},
+		[218] = {
+			NameKey = "Battery",
+			Description = "Not implemented yet.",
+		},
+		[219] = {
+			NameKey = "Fluffy",
+			Description = "Not implemented yet.",
+		},
+		[220] = {
+			NameKey = "Dazzling",
+			Description = "Not implemented yet.",
+		},
+		[221] = {
+			NameKey = "Soul-Heart",
+			Description = "Not implemented yet.",
+		},
+		[222] = {
+			NameKey = "Tangling Hair",
+			Description = "Not implemented yet.",
+		},
+		[223] = {
+			NameKey = "Receiver",
+			Description = "Not implemented yet.",
+		},
+		[224] = {
+			NameKey = "Power Of Alchemy",
+			Description = "Not implemented yet.",
+		},
+		[225] = {
+			NameKey = "Beast Boost",
+			Description = "Not implemented yet.",
+		},
+		[226] = {
+			NameKey = "RKS System",
+			Description = "Not implemented yet.",
+		},
+		[227] = {
+			NameKey = "Electric Surge",
+			Description = "Not implemented yet.",
+		},
+		[228] = {
+			NameKey = "Psychic Surge",
+			Description = "Not implemented yet.",
+		},
+		[229] = {
+			NameKey = "Misty Surge",
+			Description = "Not implemented yet.",
+		},
+		[230] = {
+			NameKey = "Grassy Surge",
+			Description = "Not implemented yet.",
+		},
+		[231] = {
+			NameKey = "Full Metal Body",
+			Description = "Not implemented yet.",
+		},
+		[232] = {
+			NameKey = "Shadow Shield",
+			Description = "Not implemented yet.",
+		},
+		[233] = {
+			NameKey = "Prism Armor",
+			Description = "Not implemented yet.",
+		},
+		[234] = {
+			NameKey = "Neuroforce",
+			Description = "Not implemented yet.",
+		},
+		[235] = {
+			NameKey = "Intrepid Sword",
+			Description = "Not implemented yet.",
+		},
+		[236] = {
+			NameKey = "Dauntless Shield",
+			Description = "Not implemented yet.",
+		},
+		[237] = {
+			NameKey = "Libero",
+			Description = "Not implemented yet.",
+		},
+		[238] = {
+			NameKey = "Ball Fetch",
+			Description = "Not implemented yet.",
+		},
+		[239] = {
+			NameKey = "Cotton Down",
+			Description = "Not implemented yet.",
+		},
+		[240] = {
+			NameKey = "Propeller Tail",
+			Description = "Not implemented yet.",
+		},
+		[241] = {
+			NameKey = "Mirror Armor",
+			Description = "Not implemented yet.",
+		},
+		[242] = {
+			NameKey = "Gulp Missile",
+			Description = "Not implemented yet.",
+		},
+		[243] = {
+			NameKey = "Stalwart",
+			Description = "Not implemented yet.",
+		},
+		[244] = {
+			NameKey = "Steam Engine",
+			Description = "Not implemented yet.",
+		},
+		[245] = {
+			NameKey = "Punk Rock",
+			Description = "Not implemented yet.",
+		},
+		[246] = {
+			NameKey = "Sand Spit",
+			Description = "Not implemented yet.",
+		},
+		[247] = {
+			NameKey = "Ice Scales",
+			Description = "Not implemented yet.",
+		},
+		[248] = {
+			NameKey = "Ripen",
+			Description = "Not implemented yet.",
+		},
+		[249] = {
+			NameKey = "Ice Face",
+			Description = "Not implemented yet.",
+		},
+		[250] = {
+			NameKey = "Power Spot",
+			Description = "Not implemented yet.",
+		},
+		[251] = {
+			NameKey = "Mimicry",
+			Description = "Not implemented yet.",
+		},
+		[252] = {
+			NameKey = "Screen Cleaner",
+			Description = "Not implemented yet.",
+		},
+		[253] = {
+			NameKey = "Steely Spirit",
+			Description = "Not implemented yet.",
+		},
+		[254] = {
+			NameKey = "Perish Body",
+			Description = "Not implemented yet.",
+		},
+		[255] = {
+			NameKey = "Wandering Spirit",
+			Description = "Not implemented yet.",
+		},
+		[256] = {
+			NameKey = "Gorilla Tactics",
+			Description = "Not implemented yet.",
+		},
+		[257] = {
+			NameKey = "Neutralizing Gas",
+			Description = "Not implemented yet.",
+		},
+		[258] = {
+			NameKey = "Pastel Veil",
+			Description = "Not implemented yet.",
+		},
+		[259] = {
+			NameKey = "Hunger Switch",
+			Description = "Not implemented yet.",
+		},
+		[260] = {
+			NameKey = "Quick Draw",
+			Description = "Not implemented yet.",
+		},
+		[261] = {
+			NameKey = "Unseen Fist",
+			Description = "Not implemented yet.",
+		},
+		[262] = {
+			NameKey = "Curious Medicine",
+			Description = "Not implemented yet.",
+		},
+		[263] = {
+			NameKey = "Transistor",
+			Description = "Not implemented yet.",
+		},
+		[264] = {
+			NameKey = "Dragon's Maw",
+			Description = "Not implemented yet.",
+		},
+		[265] = {
+			NameKey = "Chilling Neigh",
+			Description = "Not implemented yet.",
+		},
+		[266] = {
+			NameKey = "Grim Neigh",
+			Description = "Not implemented yet.",
+		},
+		[267] = {
+			NameKey = "As One-I",
+			Description = "Not implemented yet.",
+		},
+		[268] = {
+			NameKey = "As One-S",
+			Description = "Not implemented yet.",
+		},
+		[269] = {
+			NameKey = "Lingering Aroma",
+			Description = "Not implemented yet.",
+		},
+		[270] = {
+			NameKey = "Seed Sower",
+			Description = "Not implemented yet.",
+		},
+		[271] = {
+			NameKey = "Thermal Exchange",
+			Description = "Not implemented yet.",
+		},
+		[272] = {
+			NameKey = "Anger Shell",
+			Description = "Not implemented yet.",
+		},
+		[273] = {
+			NameKey = "Purifying Salt",
+			Description = "Not implemented yet.",
+		},
+		[274] = {
+			NameKey = "Well-Baked Body",
+			Description = "Not implemented yet.",
+		},
+		[275] = {
+			NameKey = "Wind Rider",
+			Description = "Not implemented yet.",
+		},
+		[276] = {
+			NameKey = "Guard Dog",
+			Description = "Not implemented yet.",
+		},
+		[277] = {
+			NameKey = "Rocky Payload",
+			Description = "Not implemented yet.",
+		},
+		[278] = {
+			NameKey = "Wind Power",
+			Description = "Not implemented yet.",
+		},
+		[279] = {
+			NameKey = "Zero to Hero",
+			Description = "Not implemented yet.",
+		},
+		[280] = {
+			NameKey = "Commander",
+			Description = "Not implemented yet.",
+		},
+		[281] = {
+			NameKey = "Electromorphosis",
+			Description = "Not implemented yet.",
+		},
+		[282] = {
+			NameKey = "Protosynthesis",
+			Description = "Not implemented yet.",
+		},
+		[283] = {
+			NameKey = "Quark Drive",
+			Description = "Not implemented yet.",
+		},
+		[284] = {
+			NameKey = "Good as Gold",
+			Description = "Not implemented yet.",
+		},
+		[285] = {
+			NameKey = "Vessel of Ruin",
+			Description = "Not implemented yet.",
+		},
+		[286] = {
+			NameKey = "Sword of Ruin",
+			Description = "Not implemented yet.",
+		},
+		[287] = {
+			NameKey = "Tablets of Ruin",
+			Description = "Not implemented yet.",
+		},
+		[288] = {
+			NameKey = "Beads of Ruin",
+			Description = "Not implemented yet.",
+		},
+		[289] = {
+			NameKey = "Orichalcum Pulse",
+			Description = "Not implemented yet.",
+		},
+		[290] = {
+			NameKey = "Hadron Engine",
+			Description = "Not implemented yet.",
+		},
+		[291] = {
+			NameKey = "Opportunist",
+			Description = "Not implemented yet.",
+		},
+		[292] = {
+			NameKey = "Cud Chew",
+			Description = "Not implemented yet.",
+		},
+		[293] = {
+			NameKey = "Sharpness",
+			Description = "Not implemented yet.",
+		},
+		[294] = {
+			NameKey = "Supreme Overlord",
+			Description = "Not implemented yet.",
+		},
+		[295] = {
+			NameKey = "Costar",
+			Description = "Not implemented yet.",
+		},
+		[296] = {
+			NameKey = "Toxic Debris",
+			Description = "Not implemented yet.",
+		},
+		[297] = {
+			NameKey = "Armor Tail",
+			Description = "Not implemented yet.",
+		},
+		[298] = {
+			NameKey = "Earth Eater",
+			Description = "Not implemented yet.",
+		},
+		[299] = {
+			NameKey = "Mycelium Might",
+			Description = "Not implemented yet.",
+		},
+		[300] = {
+			NameKey = "Hospitality",
+			Description = "Not implemented yet.",
+		},
+		[301] = {
+			NameKey = "Mind's Eye",
+			Description = "Not implemented yet.",
+		},
+		[302] = {
+			NameKey = "Embody Aspect-T",
+			Description = "Not implemented yet.",
+		},
+		[303] = {
+			NameKey = "Embody Aspect-H",
+			Description = "Not implemented yet.",
+		},
+		[304] = {
+			NameKey = "Embody Aspect-W",
+			Description = "Not implemented yet.",
+		},
+		[305] = {
+			NameKey = "Embody Aspect-C",
+			Description = "Not implemented yet.",
+		},
+		[306] = {
+			NameKey = "Toxic Chain",
+			Description = "Not implemented yet.",
+		},
+		[307] = {
+			NameKey = "Supersweet Syrup",
+			Description = "Not implemented yet.",
+		},
+		[308] = {
+			NameKey = "Tera Shift",
+			Description = "Not implemented yet.",
+		},
+		[309] = {
+			NameKey = "Tera Shell",
+			Description = "Not implemented yet.",
+		},
+		[310] = {
+			NameKey = "Teraform Zero",
+			Description = "Not implemented yet.",
+		},
+		[311] = {
+			NameKey = "Poison Puppeteer",
+			Description = "Not implemented yet.",
 		},
 	}
 
@@ -490,13 +4105,13 @@ local function NatDexExtension()
 		},
 		[192] = {
 			id = 192,
-			name = "DeepSeaTooth",
+			name = "Deep Sea Tooth",
 			--icon = "deapseatooth",
 			pocket = MiscData.BagPocket.Items,
 		},
 		[193] = {
 			id = 193,
-			name = "DeepSeaScale",
+			name = "Deep Sea Scale",
 			--icon = "deapseascale",
 			pocket = MiscData.BagPocket.Items,
 		},
@@ -516,6 +4131,24 @@ local function NatDexExtension()
 			id = 218,
 			name = "Up-Grade",
 			--icon = "up-grade",
+			pocket = MiscData.BagPocket.Items,
+		},
+	}
+
+	self.Data.natDexBattleItems = {
+		[82] = {
+			id = 82,
+			name = "X Sp. Def",
+			icon = "x-item",
+			pocket = MiscData.BagPocket.Items,
+		},
+	}
+
+	self.Data.natDexOtherItems = {
+		[52] = {
+			id = 52,
+			name = "Regional Mineral",
+			--icon = "unknown",
 			pocket = MiscData.BagPocket.Items,
 		},
 	}
@@ -677,7 +4310,7 @@ local function NatDexExtension()
 		DEEPSEA = {
 			abbreviation = "DEEPSEA",
 			short = { "D.S.Tooth", "D.S.Scale", },
-			detailed = { "DeepSeaTooth", "DeepSeaScale", },
+			detailed = { "Deep Sea Tooth", "Deep Sea Scale", },
 			evoItemIds = { 192, 193 },
 		},
 		-- Various evolution stone items
@@ -2478,7 +6111,7 @@ local function NatDexExtension()
 			name = "Larvesta",
 			evolution = "59",
 			bst = 360,
-			movelvls = { { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, }, { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, } },
+			movelvls = { { 6, 12, 18, 30, 36, 42, 48, 54, 60, 66, }, { 6, 12, 18, 30, 36, 42, 48, 54, 60, 66, } },
 			weight = 28.8,
 		},
 		{
@@ -2966,7 +6599,7 @@ local function NatDexExtension()
 			name = "Goomy",
 			evolution = "40",
 			bst = 300,
-			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, } },
+			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 41, 45, 50, }, { 5, 10, 15, 20, 25, 30, 35, 41, 45, 50, } },
 			weight = 2.8,
 			friendshipBase = 35
 		},
@@ -2982,7 +6615,7 @@ local function NatDexExtension()
 			name = "Goodra",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
-			movelvls = { { 15, 20, 25, 30, 35, 43, 49, 58, 67, }, { 15, 20, 25, 30, 35, 43, 49, 58, 67, } },
+			movelvls = { { 15, 20, 25, 30, 43, 49, 58, 67, }, { 15, 20, 25, 30, 43, 49, 58, 67, } },
 			weight = 150.5,
 			friendshipBase = 35
 		},
@@ -5160,7 +8793,7 @@ local function NatDexExtension()
 			name = "Miraidon",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 670,
-			movelvls = { { 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, }, { 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, } },
+			movelvls = { { 7, 14, 21, 28, 35, 42, 56, 63, 70, 77, 84, 91, 98, }, { 7, 14, 21, 28, 35, 42, 56, 63, 70, 77, 84, 91, 98, } },
 			weight = 240.0,
 			friendshipBase = 0,
 		},
@@ -5294,98 +8927,98 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Venusaur M",
+			name = "Venusaur-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 625,
 			movelvls = { { 9, 12, 15, 15, 20, 25, 30, 37, 44, 51, 58, }, { 9, 12, 15, 15, 20, 25, 30, 37, 44, 51, 58, } },
 			weight = 155.5,
 		},
 		{
-			name = "Charizard X",
+			name = "Charizard-X",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 634,
 			movelvls = { { 12, 19, 24, 30, 39, 46, 54, 62, }, { 12, 19, 24, 30, 39, 46, 54, 62, } },
 			weight = 110.5,
 		},
 		{
-			name = "Charizard Y",
+			name = "Charizard-Y",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 634,
 			movelvls = { { 12, 19, 24, 30, 39, 46, 54, 62, }, { 12, 19, 24, 30, 39, 46, 54, 62, } },
 			weight = 100.5,
 		},
 		{
-			name = "Blastoise M",
+			name = "Blastoise-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 630,
 			movelvls = { { 9, 12, 15, 20, 25, 30, 35, 42, 49, 56, }, { 9, 12, 15, 20, 25, 30, 35, 42, 49, 56, } },
 			weight = 101.1,
 		},
 		{
-			name = "Beedrill M",
+			name = "Beedrill-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 495,
 			movelvls = { { 11, 14, 17, 20, 23, 26, 29, 32, 35, 38, 41, 44, }, { 11, 14, 17, 20, 23, 26, 29, 32, 35, 38, 41, 44, } },
 			weight = 40.5,
 		},
 		{
-			name = "Pidgeot M",
+			name = "Pidgeot-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 579,
 			movelvls = { { 5, 9, 13, 17, 22, 27, 32, 38, 44, 50, 56, 62, 68, }, { 5, 9, 13, 17, 22, 27, 32, 38, 44, 50, 56, 62, 68, } },
 			weight = 50.5,
 		},
 		{
-			name = "Alakazam M",
+			name = "Alakazam-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, } },
 			weight = 48.0,
 		},
 		{
-			name = "Slowbro M",
+			name = "Slowbro-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 590,
 			movelvls = { { 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 41, 46, 51, }, { 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 41, 46, 51, } },
 			weight = 120.0,
 		},
 		{
-			name = "Gengar M",
+			name = "Gengar-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 12, 16, 20, 24, 30, 36, 42, 48, 54, 60, }, { 12, 16, 20, 24, 30, 36, 42, 48, 54, 60, } },
 			weight = 40.5,
 		},
 		{
-			name = "Kangaskhan M",
+			name = "Kangaskhan-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 590,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, } },
 			weight = 100.0,
 		},
 		{
-			name = "Pinsir M",
+			name = "Pinsir-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, } },
 			weight = 59.0,
 		},
 		{
-			name = "Gyarados M",
+			name = "Gyarados-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 640,
 			movelvls = { { 4, 8, 12, 16, 21, 24, 28, 32, 36, 40, 44, 48, 52, }, { 4, 8, 12, 16, 21, 24, 28, 32, 36, 40, 44, 48, 52, } },
 			weight = 305.0,
 		},
 		{
-			name = "Aerodactyl M",
+			name = "Aerodactyl-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 615,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, } },
 			weight = 79.0,
 		},
 		{
-			name = "Mewtwo X",
+			name = "Mewtwo-X",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 780,
 			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 56, 64, 72, 80, 88, } },
@@ -5393,7 +9026,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Mewtwo Y",
+			name = "Mewtwo-Y",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 780,
 			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 56, 64, 72, 80, 88, } },
@@ -5401,35 +9034,35 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Ampharos M",
+			name = "Ampharos-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 610,
 			movelvls = { { 11, 16, 20, 25, 29, 35, 40, 46, 51, 57, 62, }, { 11, 16, 20, 25, 29, 35, 40, 46, 51, 57, 62, } },
 			weight = 61.5,
 		},
 		{
-			name = "Steelix M",
+			name = "Steelix-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 610,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, } },
 			weight = 740.0,
 		},
 		{
-			name = "Scizor M",
+			name = "Scizor-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 12, 16, 20, 24, 28, 32, 36, 40, 44, }, { 12, 16, 20, 24, 28, 32, 36, 40, 44, } },
 			weight = 125.0,
 		},
 		{
-			name = "Heracross M",
+			name = "Heracross-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, } },
 			weight = 62.5,
 		},
 		{
-			name = "Houndoom M",
+			name = "Houndoom-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 13, 16, 20, 26, 30, 35, 41, 45, 50, 56, 62, }, { 13, 16, 20, 26, 30, 35, 41, 45, 50, 56, 62, } },
@@ -5437,7 +9070,7 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Tyranitar M",
+			name = "Tyranitar-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
 			movelvls = { { 9, 12, 15, 18, 21, 24, 27, 33, 37, 42, 47, 52, 59, }, { 9, 12, 15, 18, 21, 24, 27, 33, 37, 42, 47, 52, 59, } },
@@ -5445,28 +9078,28 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Sceptile M",
+			name = "Sceptile-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 630,
 			movelvls = { { 5, 12, 15, 20, 25, 30, 35, 42, 49, 56, }, { 5, 12, 15, 20, 25, 30, 35, 42, 49, 56, } },
 			weight = 55.2,
 		},
 		{
-			name = "Blaziken M",
+			name = "Blaziken-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 630,
 			movelvls = { { 9, 12, 15, 20, 25, 30, 35, 42, 49, 56, 63, }, { 9, 12, 15, 20, 25, 30, 35, 42, 49, 56, 63, } },
 			weight = 52.0,
 		},
 		{
-			name = "Swampert M",
+			name = "Swampert-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 635,
 			movelvls = { { 9, 12, 15, 20, 25, 30, 35, 42, 49, 56, 63, }, { 9, 12, 15, 20, 25, 30, 35, 42, 49, 56, 63, } },
 			weight = 102.0,
 		},
 		{
-			name = "Gardevoir M",
+			name = "Gardevoir-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 618,
 			movelvls = { { 9, 12, 15, 18, 23, 28, 35, 42, 49, 56, 63, }, { 9, 12, 15, 18, 23, 28, 35, 42, 49, 56, 63, } },
@@ -5474,7 +9107,7 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Sableye M",
+			name = "Sableye-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 480,
 			movelvls = { { 3, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, }, { 3, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, } },
@@ -5482,14 +9115,14 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Mawile M",
+			name = "Mawile-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 480,
 			movelvls = { { 4, 8, 12, 16, 16, 16, 20, 24, 28, 32, 36, 40, 44, 48, }, { 4, 8, 12, 16, 16, 16, 20, 24, 28, 32, 36, 40, 44, 48, } },
 			weight = 23.5,
 		},
 		{
-			name = "Aggron M",
+			name = "Aggron-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 630,
 			movelvls = { { 12, 16, 20, 24, 28, 35, 40, 48, 56, 64, 72, 80, 88, }, { 12, 16, 20, 24, 28, 35, 40, 48, 56, 64, 72, 80, 88, } },
@@ -5497,21 +9130,21 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Medicham M",
+			name = "Medicham-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 510,
 			movelvls = { { 12, 15, 17, 20, 23, 25, 28, 31, 33, 36, 47, 53, 53, }, { 12, 15, 17, 20, 23, 25, 28, 31, 33, 36, 47, 53, 53, } },
 			weight = 31.5,
 		},
 		{
-			name = "Manectric M",
+			name = "Manectric-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 575,
 			movelvls = { { 12, 16, 20, 24, 30, 36, 42, 48, 54, 60, }, { 12, 16, 20, 24, 30, 36, 42, 48, 54, 60, } },
 			weight = 44.0,
 		},
 		{
-			name = "Sharpedo M",
+			name = "Sharpedo-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 560,
 			movelvls = { { 12, 16, 20, 24, 28, 34, 40, 46, 52, }, { 12, 16, 20, 24, 28, 34, 40, 46, 52, } },
@@ -5519,21 +9152,21 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Camerupt M",
+			name = "Camerupt-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 560,
 			movelvls = { { 12, 15, 19, 22, 26, 29, 31, 39, 46, }, { 12, 15, 19, 22, 26, 29, 31, 39, 46, } },
 			weight = 320.5,
 		},
 		{
-			name = "Altaria M",
+			name = "Altaria-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 590,
 			movelvls = { { 12, 16, 20, 24, 28, 32, 38, 44, 50, 56, }, { 12, 16, 20, 24, 28, 32, 38, 44, 50, 56, } },
 			weight = 20.6,
 		},
 		{
-			name = "Banette M",
+			name = "Banette-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 555,
 			movelvls = { { 16, 19, 22, 26, 30, 34, 40, 46, 53, }, { 16, 19, 22, 26, 30, 34, 40, 46, 53, } },
@@ -5541,7 +9174,7 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Absol M",
+			name = "Absol-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 565,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, } },
@@ -5549,14 +9182,14 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Glalie M",
+			name = "Glalie-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 580,
 			movelvls = { { 15, 20, 25, 30, 35, 40, 47, 54, 61, 68, }, { 15, 20, 25, 30, 35, 40, 47, 54, 61, 68, } },
 			weight = 350.2,
 		},
 		{
-			name = "Salamence M",
+			name = "Salamence-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
 			movelvls = { { 15, 20, 25, 33, 39, 46, 55, 73, }, { 15, 20, 25, 33, 39, 46, 55, 73, } },
@@ -5564,7 +9197,7 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Metagross M",
+			name = "Metagross-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
 			movelvls = { { 6, 12, 16, 26, 34, 42, 52, 62, 72, 82, }, { 6, 12, 16, 26, 34, 42, 52, 62, 72, 82, } },
@@ -5572,7 +9205,7 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Latias M",
+			name = "Latias-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, } },
@@ -5580,7 +9213,7 @@ local function NatDexExtension()
 			friendshipBase = 90,
 		},
 		{
-			name = "Latios M",
+			name = "Latios-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, } },
@@ -5588,7 +9221,7 @@ local function NatDexExtension()
 			friendshipBase = 90,
 		},
 		{
-			name = "Lopunny M",
+			name = "Lopunny-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 580,
 			movelvls = { { 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, }, { 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, } },
@@ -5596,28 +9229,28 @@ local function NatDexExtension()
 			friendshipBase = 140,
 		},
 		{
-			name = "Garchomp M",
+			name = "Garchomp-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
 			movelvls = { { 18, 27, 34, 42, 52, 62, 72, 82, }, { 18, 27, 34, 42, 52, 62, 72, 82, } },
 			weight = 95.0,
 		},
 		{
-			name = "Lucario M",
+			name = "Lucario-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 625,
 			movelvls = { { 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, }, { 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, } },
 			weight = 57.5,
 		},
 		{
-			name = "Abomasnow M",
+			name = "Abomasnow-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 594,
 			movelvls = { { 15, 20, 25, 30, 35, 43, 49, 56, }, { 15, 20, 25, 30, 35, 43, 49, 56, } },
 			weight = 185.0,
 		},
 		{
-			name = "Gallade M",
+			name = "Gallade-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 618,
 			movelvls = { { 9, 12, 15, 18, 23, 28, 35, 42, 49, 56, 56, 63, }, { 9, 12, 15, 18, 23, 28, 35, 42, 49, 56, 56, 63, } },
@@ -5625,21 +9258,21 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Audino M",
+			name = "Audino-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 545,
 			movelvls = { { 4, 9, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, }, { 4, 9, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, } },
 			weight = 32.0,
 		},
 		{
-			name = "Diancie M",
+			name = "Diancie-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
 			movelvls = { { 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77, 84, }, { 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77, 84, } },
 			weight = 27.8,
 		},
 		{
-			name = "Rayquaza M",
+			name = "Rqyquaza-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 780,
 			movelvls = { { 9, 18, 27, 36, 45, 54, 63, 72, 81, 90, }, { 9, 18, 27, 36, 45, 54, 63, 72, 81, 90, } },
@@ -5647,7 +9280,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Kyogre P",
+			name = "Kyogre-P",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 770,
 			movelvls = { { 9, 18, 27, 36, 45, 54, 72, 81, 90, }, { 9, 18, 27, 36, 45, 54, 72, 81, 90, } },
@@ -5655,7 +9288,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Groudon P",
+			name = "Groudon-P",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 770,
 			movelvls = { { 9, 18, 27, 36, 45, 54, 72, 81, 90, }, { 9, 18, 27, 36, 45, 54, 72, 81, 90, } },
@@ -5663,189 +9296,189 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Rattata A",
+			name = "Rattata-A",
 			evolution = "20",
 			bst = 253,
 			movelvls = { { 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, }, { 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, } },
 			weight = 3.8,
 		},
 		{
-			name = "Raticate A",
+			name = "Raticate-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 413,
 			movelvls = { { 4, 7, 10, 13, 16, 19, 24, 29, 34, 39, 44, }, { 4, 7, 10, 13, 16, 19, 24, 29, 34, 39, 44, } },
 			weight = 25.5,
 		},
 		{
-			name = "Raichu A",
+			name = "Raichu-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 485,
 			movelvls = { { 5, }, { 5, } },
 			weight = 21.0,
 		},
 		{
-			name = "Sandshrew A",
+			name = "Sandshrew-A",
 			evolution = PokemonData.Evolutions.ICE,
 			bst = 300,
 			movelvls = { { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, }, { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, } },
 			weight = 40.0,
 		},
 		{
-			name = "Sandslash A",
+			name = "Sandslash-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 450,
 			movelvls = { { }, { } },
 			weight = 55.0,
 		},
 		{
-			name = "Vulpix A",
+			name = "Vulpix-A",
 			evolution = PokemonData.Evolutions.ICE,
 			bst = 299,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, } },
 			weight = 9.9,
 		},
 		{
-			name = "Ninetales A",
+			name = "Ninetales-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 505,
 			movelvls = { { }, { } },
 			weight = 19.9,
 		},
 		{
-			name = "Diglett A",
+			name = "Diglett-A",
 			evolution = "26",
 			bst = 265,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, } },
 			weight = 1.0,
 		},
 		{
-			name = "Dugtrio A",
+			name = "Dugtrio-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 425,
 			movelvls = { { 12, 16, 20, 24, 30, 36, 42, 48, 54, }, { 12, 16, 20, 24, 30, 36, 42, 48, 54, } },
 			weight = 66.6,
 		},
 		{
-			name = "Meowth A",
+			name = "Meowth-A",
 			evolution = PokemonData.Evolutions.FRIEND,
 			bst = 290,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 29, 32, 36, 40, 44, }, { 4, 8, 12, 16, 20, 24, 29, 32, 36, 40, 44, } },
 			weight = 4.2,
 		},
 		{
-			name = "Persian A",
+			name = "Persian-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 440,
 			movelvls = { { 12, 16, 20, 24, 31, 36, 42, 48, 54, }, { 12, 16, 20, 24, 31, 36, 42, 48, 54, } },
 			weight = 33.0,
 		},
 		{
-			name = "Geodude A",
+			name = "Geodude-A",
 			evolution = "25",
 			bst = 300,
 			movelvls = { { 4, 6, 10, 12, 16, 18, 22, 24, 28, 30, 34, 36, 40, 42, }, { 4, 6, 10, 12, 16, 18, 22, 24, 28, 30, 34, 36, 40, 42, } },
 			weight = 20.3,
 		},
 		{
-			name = "Graveler A",
+			name = "Graveler-A",
 			evolution = PokemonData.Evolutions.LINKING_CORD,
 			bst = 390,
 			movelvls = { { 10, 12, 16, 18, 22, 24, 30, 34, 40, 44, 50, 54, }, { 10, 12, 16, 18, 22, 24, 30, 34, 40, 44, 50, 54, } },
 			weight = 110.0,
 		},
 		{
-			name = "Golem A",
+			name = "Golem-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 495,
 			movelvls = { { 12, 16, 18, 22, 24, 30, 34, 40, 44, 50, 54, }, { 12, 16, 18, 22, 24, 30, 34, 40, 44, 50, 54, } },
 			weight = 316.0,
 		},
 		{
-			name = "Grimer A",
+			name = "Grimer-A",
 			evolution = "38",
 			bst = 325,
 			movelvls = { { 4, 7, 12, 15, 18, 21, 26, 29, 32, 37, 40, 43, 46, 48, }, { 4, 7, 12, 15, 18, 21, 26, 29, 32, 37, 40, 43, 46, 48, } },
 			weight = 42.0,
 		},
 		{
-			name = "Muk A",
+			name = "Muk-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 500,
 			movelvls = { { 12, 15, 18, 21, 26, 29, 32, 37, 40, 46, 52, 57, }, { 12, 15, 18, 21, 26, 29, 32, 37, 40, 46, 52, 57, } },
 			weight = 52.0,
 		},
 		{
-			name = "Exeggutor A",
+			name = "Exeggutor-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 530,
 			movelvls = { { }, { } },
 			weight = 415.6,
 		},
 		{
-			name = "Marowak A",
+			name = "Marowak-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 425,
 			movelvls = { { 12, 16, 20, 24, 31, 36, 42, 48, 54, 60, }, { 12, 16, 20, 24, 31, 36, 42, 48, 54, 60, } },
 			weight = 34.0,
 		},
 		{
-			name = "Meowth G",
+			name = "Meowth-G",
 			evolution = "28",
 			bst = 290,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 29, 32, 36, 40, 44, }, { 4, 8, 12, 16, 20, 24, 29, 32, 36, 40, 44, } },
 			weight = 7.5,
 		},
 		{
-			name = "Ponyta G",
+			name = "Ponyta-G",
 			evolution = "40",
 			bst = 410,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 41, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 41, 45, 50, 55, } },
 			weight = 24.0,
 		},
 		{
-			name = "Rapidash G",
+			name = "Rapidash-G",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 500,
 			movelvls = { { 15, 20, 25, 30, 35, 43, 49, 56, 63, }, { 15, 20, 25, 30, 35, 43, 49, 56, 63, } },
 			weight = 80.0,
 		},
 		{
-			name = "Slowpoke G",
+			name = "Slowpoke-G",
 			evolution = PokemonData.Evolutions.WATER_ROCK,
 			bst = 315,
 			movelvls = { { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, }, { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, } },
 			weight = 36.0,
 		},
 		{
-			name = "Slowbro G",
+			name = "Slowbro-G",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 490,
 			movelvls = { { 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 41, 46, 51, }, { 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 41, 46, 51, } },
 			weight = 70.5,
 		},
 		{
-			name = "Farfetch'd G",
+			name = "Farfetch'd-G",
 			evolution = "34",
 			bst = 377,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, } },
 			weight = 42.0,
 		},
 		{
-			name = "Weezing G",
+			name = "Weezing-G",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 490,
 			movelvls = { { 12, 16, 20, 24, 28, 32, 38, 44, 50, 56, 62, 68, }, { 12, 16, 20, 24, 28, 32, 38, 44, 50, 56, 62, 68, } },
 			weight = 16.0,
 		},
 		{
-			name = "Mr. Mime G",
+			name = "Mr. Mime-G",
 			evolution = "42",
 			bst = 460,
 			movelvls = { { 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, }, { 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, } },
 			weight = 56.8,
 		},
 		{
-			name = "Articuno G",
+			name = "Articuno-G",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 580,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, } },
@@ -5853,7 +9486,7 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Zapdos G",
+			name = "Zapdos-G",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 580,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, } },
@@ -5861,7 +9494,7 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Moltres G",
+			name = "Moltres-G",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 580,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, } },
@@ -5869,105 +9502,105 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Slowking G",
+			name = "Slowking-G",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 490,
 			movelvls = { { 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, }, { 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, } },
 			weight = 79.5,
 		},
 		{
-			name = "Corsola G",
+			name = "Corsola-G",
 			evolution = "38",
 			bst = 410,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, } },
 			weight = 0.5,
 		},
 		{
-			name = "Zigzagoon G",
+			name = "Zigzagoon-G",
 			evolution = "20",
 			bst = 240,
 			movelvls = { { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, }, { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, } },
 			weight = 17.5,
 		},
 		{
-			name = "Linoone G",
+			name = "Linoone-G",
 			evolution = "35",
 			bst = 420,
 			movelvls = { { 9, 12, 15, 18, 23, 28, 33, 38, 43, 48, }, { 9, 12, 15, 18, 23, 28, 33, 38, 43, 48, } },
 			weight = 32.5,
 		},
 		{
-			name = "Darumaka G",
+			name = "Darumaka-G",
 			evolution = PokemonData.Evolutions.ICE,
 			bst = 315,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, } },
 			weight = 40.0,
 		},
 		{
-			name = "Darmanitan G",
+			name = "Darmanitan-G",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 480,
 			movelvls = { { 12, 16, 20, 24, 28, 32, 38, 44, 50, 56, }, { 12, 16, 20, 24, 28, 32, 38, 44, 50, 56, } },
 			weight = 120.0,
 		},
 		{
-			name = "Yamask G",
+			name = "Yamask-G",
 			evolution = "34",
 			bst = 303,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 48, 52, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 48, 52, } },
 			weight = 1.5,
 		},
 		{
-			name = "Stunfisk G",
+			name = "Stunfisk-G",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 471,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, } },
 			weight = 20.5,
 		},
 		{
-			name = "Growlithe H",
+			name = "Growlithe-H",
 			evolution = PokemonData.Evolutions.FIRE,
 			bst = 350,
 			movelvls = { { 4, 8, 12, 16, 24, 28, 32, 36, 40, 44, 48, 52, 56, }, { 4, 8, 12, 16, 24, 28, 32, 36, 40, 44, 48, 52, 56, } },
 			weight = 22.7,
 		},
 		{
-			name = "Arcanine H",
+			name = "Arcanine-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 555,
 			movelvls = { { 5, 64, }, { 5, 64, } },
 			weight = 168.0,
 		},
 		{
-			name = "Voltorb H",
+			name = "Voltorb-H",
 			evolution = PokemonData.Evolutions.LEAF,
 			bst = 330,
 			movelvls = { { 4, 6, 9, 11, 13, 16, 20, 22, 26, 29, 34, 34, 41, 46, 50, }, { 4, 6, 9, 11, 13, 16, 20, 22, 26, 29, 34, 34, 41, 46, 50, } },
 			weight = 13.0,
 		},
 		{
-			name = "Electrode H",
+			name = "Electrode-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 490,
 			movelvls = { { 4, 6, 9, 11, 13, 16, 20, 22, 26, 29, 34, 34, 41, 46, 50, }, { 4, 6, 9, 11, 13, 16, 20, 22, 26, 29, 34, 34, 41, 46, 50, } },
 			weight = 71.0,
 		},
 		{
-			name = "Typhlosion H",
+			name = "Typhlosion-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 534,
 			movelvls = { { 13, 20, 24, 31, 35, 43, 48, 56, 61, 74, }, { 13, 20, 24, 31, 35, 43, 48, 56, 61, 74, } },
 			weight = 69.8,
 		},
 		{
-			name = "Qwilfish H",
+			name = "Qwilfish-H",
 			evolution = "28",
 			bst = 440,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 40, 44, 48, 52, 56, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 40, 44, 48, 52, 56, } },
 			weight = 3.9,
 		},
 		{
-			name = "Sneasel H",
+			name = "Sneasel-H",
 			evolution = PokemonData.Evolutions.RAZOR_CLAW,
 			bst = 430,
 			movelvls = { { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, }, { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, } },
@@ -5975,42 +9608,42 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Samurott H",
+			name = "Samurott-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 528,
 			movelvls = { { 13, 18, 21, 25, 29, 34, 39, 46, 51, 58, 63, }, { 13, 18, 21, 25, 29, 34, 39, 46, 51, 58, 63, } },
 			weight = 58.2,
 		},
 		{
-			name = "Lilligant H",
+			name = "Lilligant-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 480,
 			movelvls = { { 5, }, { 5, } },
 			weight = 19.2,
 		},
 		{
-			name = "Zorua H",
+			name = "Zorua-H",
 			evolution = "30",
 			bst = 330,
-			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, } },
+			movelvls = { { 4, 8, 12, 16, 20, 24, 32, 36, 40, 44, 48, }, { 4, 8, 12, 16, 20, 24, 32, 36, 40, 44, 48, } },
 			weight = 12.5,
 		},
 		{
-			name = "Zoroark H",
+			name = "Zoroark-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 510,
 			movelvls = { { 12, 16, 20, 24, 28, 34, 40, 46, 52, 58, }, { 12, 16, 20, 24, 28, 34, 40, 46, 52, 58, } },
 			weight = 73.0,
 		},
 		{
-			name = "Braviary H",
+			name = "Braviary-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 510,
 			movelvls = { { 18, 24, 30, 36, 42, 48, 57, 64, 72, 80, }, { 18, 24, 30, 36, 42, 48, 57, 64, 72, 80, } },
 			weight = 43.4,
 		},
 		{
-			name = "Sliggoo H",
+			name = "Sliggoo-H",
 			evolution = "50",
 			bst = 452,
 			movelvls = { { 15, 20, 25, 30, 35, 43, 49, 56, }, { 15, 20, 25, 30, 35, 43, 49, 56, } },
@@ -6018,7 +9651,7 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Goodra H",
+			name = "Goodra-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 15, 20, 25, 30, 35, 43, 49, 49, 58, 67, }, { 15, 20, 25, 30, 35, 43, 49, 49, 58, 67, } },
@@ -6026,98 +9659,98 @@ local function NatDexExtension()
 			friendshipBase = 35,
 		},
 		{
-			name = "Avalugg H",
+			name = "Avalugg-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 514,
 			movelvls = { { 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 41, 46, 51, 61, }, { 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 41, 46, 51, 61, } },
 			weight = 262.4,
 		},
 		{
-			name = "Decidueye H",
+			name = "Decidueye-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 530,
 			movelvls = { { 9, 12, 15, 20, 25, 30, 37, 44, 51, 58, }, { 9, 12, 15, 20, 25, 30, 37, 44, 51, 58, } },
 			weight = 37.0,
 		},
 		{
-			name = "Tauros P",
+			name = "Tauros-P",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 490,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, } },
 			weight = 115.0,
 		},
 		{
-			name = "Wooper P",
+			name = "Wooper-P",
 			evolution = "20",
 			bst = 210,
 			movelvls = { { 4, 8, 12, 16, 21, 24, 28, 32, 36, 40, }, { 4, 8, 12, 16, 21, 24, 28, 32, 36, 40, } },
 			weight = 11.0,
 		},
 		{
-			name = "Pikachu C",
+			name = "Pikachu-C",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 320,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, } },
 			weight = 6.0,
 		},
 		{
-			name = "Pikachu P",
+			name = "Pikachu-P",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 430,
-			movelvls = { { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, }, { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, } },
+			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, } },
 			weight = 6.0,
 		},
 		{
-			name = "Tauros P F",
+			name = "Tauros-PF",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 490,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, } },
 			weight = 85.0,
 		},
 		{
-			name = "Tauros P W",
+			name = "Tauros-PW",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 490,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, } },
 			weight = 110.0,
 		},
 		{
-			name = "Eevee P",
+			name = "Eevee-P",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 435,
-			movelvls = { { 3, 6, 10, 14, 17, 21, 24, 28, 31, }, { 3, 6, 10, 14, 17, 21, 24, 28, 31, } },
+			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, } },
 			weight = 6.5,
 		},
 		{
-			name = "Pichu S",
+			name = "Pichu-S",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 205,
 			movelvls = { { 4, 8, 12, 16, 20, }, { 4, 8, 12, 16, 20, } },
 			weight = 2.0,
 		},
 		{
-			name = "Castform F",
+			name = "Castform-F",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 420,
 			movelvls = { { 10, 10, 10, 15, 20, 20, 20, 25, 35, 35, 35, 45, }, { 10, 10, 10, 15, 20, 20, 20, 25, 35, 35, 35, 45, } },
 			weight = 0.8,
 		},
 		{
-			name = "Castform W",
+			name = "Castform-W",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 420,
 			movelvls = { { 10, 10, 10, 15, 20, 20, 20, 25, 35, 35, 35, 45, }, { 10, 10, 10, 15, 20, 20, 20, 25, 35, 35, 35, 45, } },
 			weight = 0.8,
 		},
 		{
-			name = "Castform I",
+			name = "Castform-I",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 420,
 			movelvls = { { 10, 10, 10, 15, 20, 20, 20, 25, 35, 35, 35, 45, }, { 10, 10, 10, 15, 20, 20, 20, 25, 35, 35, 35, 45, } },
 			weight = 0.8,
 		},
 		{
-			name = "Deoxys Atk",
+			name = "Deoxys-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 7, 13, 19, 25, 31, 37, 43, 49, 55, 61, 67, 73, }, { 7, 13, 19, 25, 31, 37, 43, 49, 55, 61, 67, 73, } },
@@ -6125,7 +9758,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Deoxys Def",
+			name = "Deoxys-D",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 7, 13, 19, 25, 31, 37, 43, 49, 55, 55, 61, 67, 73, 73, }, { 7, 13, 19, 25, 31, 37, 43, 49, 55, 55, 61, 67, 73, 73, } },
@@ -6133,7 +9766,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Deoxys Spe",
+			name = "Deoxys-S",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 7, 13, 19, 25, 31, 37, 43, 49, 55, 61, 67, 73, }, { 7, 13, 19, 25, 31, 37, 43, 49, 55, 61, 67, 73, } },
@@ -6141,77 +9774,77 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Burmy S",
+			name = "Burmy-S",
 			evolution = "20",
 			bst = 224,
 			movelvls = { { 10, 15, 20, }, { 10, 15, 20, } },
 			weight = 3.4,
 		},
 		{
-			name = "Burmy T",
+			name = "Burmy-T",
 			evolution = "20",
 			bst = 224,
 			movelvls = { { 10, 15, 20, }, { 10, 15, 20, } },
 			weight = 3.4,
 		},
 		{
-			name = "Wormadam S",
+			name = "Wormadam-S",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 424,
 			movelvls = { { 10, 15, 20, 23, 26, 29, 32, 35, 38, 41, 44, 47, 50, }, { 10, 15, 20, 23, 26, 29, 32, 35, 38, 41, 44, 47, 50, } },
 			weight = 6.5,
 		},
 		{
-			name = "Wormadam T",
+			name = "Wormadam-T",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 424,
 			movelvls = { { 10, 15, 20, 23, 26, 29, 32, 35, 38, 41, 44, 47, 50, }, { 10, 15, 20, 23, 26, 29, 32, 35, 38, 41, 44, 47, 50, } },
 			weight = 6.5,
 		},
 		{
-			name = "Cherrim S",
+			name = "Cherrim-S",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 519,
 			movelvls = { { 15, 20, 28, 34, 41, 48, 55, 62, }, { 15, 20, 28, 34, 41, 48, 55, 62, } },
 			weight = 9.3,
 		},
 		{
-			name = "Rotom Heat",
+			name = "Rotom-Heat",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 520,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, } },
 			weight = 0.3,
 		},
 		{
-			name = "Rotom Wash",
+			name = "Rotom-Wash",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 520,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, } },
 			weight = 0.3,
 		},
 		{
-			name = "Rotom Frost",
+			name = "Rotom-Frost",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 520,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, } },
 			weight = 0.3,
 		},
 		{
-			name = "Rotom Fan",
+			name = "Rotom-Fan",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 520,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, } },
 			weight = 0.3,
 		},
 		{
-			name = "Rotom Mow",
+			name = "Rotom-Mow",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 520,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, } },
 			weight = 0.3,
 		},
 		{
-			name = "Dialga O",
+			name = "Dialga-O",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 680,
 			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, } },
@@ -6219,7 +9852,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Palkia O",
+			name = "Palkia-O",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 680,
 			movelvls = { { 8, 16, 24, 32, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 48, 56, 64, 72, 80, 88, } },
@@ -6227,7 +9860,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Giratina O",
+			name = "Giratina-O",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 680,
 			movelvls = { { 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77, 84, }, { 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77, 84, } },
@@ -6235,7 +9868,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Shaymin S",
+			name = "Shaymin-S",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 10, 19, 28, 37, 46, 55, 64, 73, 82, 91, 100, }, { 10, 19, 28, 37, 46, 55, 64, 73, 82, 91, 100, } },
@@ -6243,35 +9876,35 @@ local function NatDexExtension()
 			friendshipBase = 100,
 		},
 		{
-			name = "Basculin B",
+			name = "Basculin-B",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 460,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, } },
 			weight = 18.0,
 		},
 		{
-			name = "Basculin W",
+			name = "Basculin-W",
 			evolution = "35",
 			bst = 460,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, } },
 			weight = 18.0,
 		},
 		{
-			name = "Darmanitan Z",
+			name = "Darmanitan-Z",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 540,
 			movelvls = { { 12, 16, 20, 24, 28, 32, 38, 44, 50, 56, }, { 12, 16, 20, 24, 28, 32, 38, 44, 50, 56, } },
 			weight = 92.9,
 		},
 		{
-			name = "Darmanitan Z G",
+			name = "Darmanitan-GZ",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 540,
 			movelvls = { { 12, 16, 20, 24, 28, 32, 38, 44, 50, 56, }, { 12, 16, 20, 24, 28, 32, 38, 44, 50, 56, } },
 			weight = 120.0,
 		},
 		{
-			name = "Tornadus T",
+			name = "Tornadus-T",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 580,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 77, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 77, } },
@@ -6279,7 +9912,7 @@ local function NatDexExtension()
 			friendshipBase = 90,
 		},
 		{
-			name = "Thundurus T",
+			name = "Thundurus-T",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 580,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, } },
@@ -6287,7 +9920,7 @@ local function NatDexExtension()
 			friendshipBase = 90,
 		},
 		{
-			name = "Landorus T",
+			name = "Landorus-T",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 5, 10, 15, 20, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, }, { 5, 10, 15, 20, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, } },
@@ -6295,7 +9928,7 @@ local function NatDexExtension()
 			friendshipBase = 90,
 		},
 		{
-			name = "Kyurem W",
+			name = "Kyurem-W",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
 			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, } },
@@ -6303,7 +9936,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Kyurem B",
+			name = "Kyurem-B",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
 			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, } },
@@ -6311,7 +9944,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Meloetta P",
+			name = "Meloetta-P",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 21, 26, 31, 36, 43, 50, 57, 64, 71, 78, 85, }, { 21, 26, 31, 36, 43, 50, 57, 64, 71, 78, 85, } },
@@ -6319,77 +9952,77 @@ local function NatDexExtension()
 			friendshipBase = 100,
 		},
 		{
-			name = "Greninja A",
+			name = "Greninja-A",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 640,
 			movelvls = { { 10, 14, 19, 23, 28, 33, 42, 49, 56, 68, }, { 10, 14, 19, 23, 28, 33, 42, 49, 56, 68, } },
 			weight = 40.0,
 		},
 		{
-			name = "Floette E",
+			name = "Floette-E",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 551,
 			movelvls = { { 10, 15, 20, 25, 27, 33, 38, 43, 46, 50, 51, 58, }, { 10, 15, 20, 25, 27, 33, 38, 43, 46, 50, 51, 58, } },
 			weight = 0.9,
 		},
 		{
-			name = "Meowstic F",
+			name = "Meowstic-F",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 466,
 			movelvls = { { 9, 12, 15, 18, 21, 24, 29, 34, 34, 39, 44, 49, 54, 59, }, { 9, 12, 15, 18, 21, 24, 29, 34, 34, 39, 44, 49, 54, 59, } },
 			weight = 8.5,
 		},
 		{
-			name = "Aegislash B",
+			name = "Aegislash-B",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 500,
 			movelvls = { { }, { } },
 			weight = 53.0,
 		},
 		{
-			name = "Pumpkaboo S",
+			name = "Pumpkaboo-S",
 			evolution = PokemonData.Evolutions.LINKING_CORD,
 			bst = 335,
 			movelvls = { { 4, 8, 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, }, { 4, 8, 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, } },
 			weight = 3.5,
 		},
 		{
-			name = "Pumpkaboo L",
+			name = "Pumpkaboo-L",
 			evolution = PokemonData.Evolutions.LINKING_CORD,
 			bst = 335,
 			movelvls = { { 4, 8, 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, }, { 4, 8, 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, } },
 			weight = 7.5,
 		},
 		{
-			name = "Pumpkaboo X",
+			name = "Pumpkaboo-X",
 			evolution = PokemonData.Evolutions.LINKING_CORD,
 			bst = 335,
 			movelvls = { { 4, 8, 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, }, { 4, 8, 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, } },
 			weight = 15.0,
 		},
 		{
-			name = "Gourgeist S",
+			name = "Gourgeist-S",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 494,
 			movelvls = { { 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, 48, }, { 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, 48, } },
 			weight = 9.5,
 		},
 		{
-			name = "Gourgeist L",
+			name = "Gourgeist-L",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 494,
 			movelvls = { { 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, 48, }, { 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, 48, } },
 			weight = 14.0,
 		},
 		{
-			name = "Gourgeist X",
+			name = "Gourgeist-X",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 494,
 			movelvls = { { 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, 48, }, { 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, 48, } },
 			weight = 39.0,
 		},
 		{
-			name = "Zygarde 10",
+			name = "Zygarde-10",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 486,
 			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, } },
@@ -6397,7 +10030,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Zygarde C",
+			name = "Zygarde-C",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 708,
 			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, } },
@@ -6405,63 +10038,63 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Hoopa U",
+			name = "Hoopa-U",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 680,
 			movelvls = { { 6, 10, 15, 19, 25, 29, 29, 46, 50, 50, 55, 75, 85, }, { 6, 10, 15, 19, 25, 29, 29, 46, 50, 50, 55, 75, 85, } },
 			weight = 490.0,
 		},
 		{
-			name = "Oricorio E",
+			name = "Oricorio-E",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 476,
 			movelvls = { { 4, 6, 10, 13, 16, 20, 23, 26, 30, 33, 36, 40, 43, 47, }, { 4, 6, 10, 13, 16, 20, 23, 26, 30, 33, 36, 40, 43, 47, } },
 			weight = 3.4,
 		},
 		{
-			name = "Oricorio P",
+			name = "Oricorio-P",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 476,
 			movelvls = { { 4, 6, 10, 13, 16, 20, 23, 26, 30, 33, 36, 40, 43, 47, }, { 4, 6, 10, 13, 16, 20, 23, 26, 30, 33, 36, 40, 43, 47, } },
 			weight = 3.4,
 		},
 		{
-			name = "Oricorio G",
+			name = "Oricorio-G",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 476,
 			movelvls = { { 4, 6, 10, 13, 16, 20, 23, 26, 30, 33, 36, 40, 43, 47, }, { 4, 6, 10, 13, 16, 20, 23, 26, 30, 33, 36, 40, 43, 47, } },
 			weight = 3.4,
 		},
 		{
-			name = "Lycanroc M",
+			name = "Lycanroc-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 487,
 			movelvls = { { 12, 16, 20, 24, 30, 36, 42, 48, 54, 60, }, { 12, 16, 20, 24, 30, 36, 42, 48, 54, 60, } },
 			weight = 25.0,
 		},
 		{
-			name = "Lycanroc D",
+			name = "Lycanroc-D",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 487,
 			movelvls = { { 12, 16, 20, 24, 30, 36, 42, 48, 54, 60, }, { 12, 16, 20, 24, 30, 36, 42, 48, 54, 60, } },
 			weight = 25.0,
 		},
 		{
-			name = "Wishiwashi S",
+			name = "Wishiwashi-S",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 620,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, } },
 			weight = 78.6,
 		},
 		{
-			name = "Minior C",
+			name = "Minior-C",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 500,
 			movelvls = { { 3, 8, 10, 15, 17, 22, 24, 29, 31, 36, 38, 43, 45, 50, }, { 3, 8, 10, 15, 17, 22, 24, 29, 31, 36, 38, 43, 45, 50, } },
 			weight = 0.3,
 		},
 		{
-			name = "Necrozma DM",
+			name = "Necrozma-DM",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 680,
 			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, } },
@@ -6469,7 +10102,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Necrozma DW",
+			name = "Necrozma-DW",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 680,
 			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, } },
@@ -6477,7 +10110,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Necrozma U",
+			name = "Necrozma-U",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 754,
 			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, } },
@@ -6485,21 +10118,21 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Toxtricity L",
+			name = "Toxtricity-L",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 502,
 			movelvls = { { 4, 8, 12, 16, 24, 28, 32, 36, 40, 44, 48, 52, }, { 4, 8, 12, 16, 24, 28, 32, 36, 40, 44, 48, 52, } },
 			weight = 40.0,
 		},
 		{
-			name = "Eiscue N",
+			name = "Eiscue-N",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 470,
 			movelvls = { { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, }, { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, } },
 			weight = 89.0,
 		},
 		{
-			name = "Indeedee F",
+			name = "Indeedee-F",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 475,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, } },
@@ -6507,14 +10140,14 @@ local function NatDexExtension()
 			friendshipBase = 140,
 		},
 		{
-			name = "Morpeko H",
+			name = "Morpeko-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 436,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, } },
 			weight = 3.0,
 		},
 		{
-			name = "Zacian C",
+			name = "Zacian-C",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
 			movelvls = { { 11, 22, 33, 44, 55, 66, 77, 88, }, { 11, 22, 33, 44, 55, 66, 77, 88, } },
@@ -6522,7 +10155,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Zamazenta C",
+			name = "Zamazenta-C",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
 			movelvls = { { 11, 22, 33, 44, 55, 66, 77, 88, }, { 11, 22, 33, 44, 55, 66, 77, 88, } },
@@ -6530,7 +10163,7 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Eternatus E",
+			name = "Eternatus-E",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 1125,
 			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, } },
@@ -6538,14 +10171,14 @@ local function NatDexExtension()
 			friendshipBase = 0,
 		},
 		{
-			name = "Urshifu R",
+			name = "Urshifu-R",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 550,
 			movelvls = { { 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, }, { 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, } },
 			weight = 105.0,
 		},
 		{
-			name = "Calyrex I",
+			name = "Calyrex-I",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 680,
 			movelvls = { { 8, 16, 24, 32, 40, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 40, 48, 56, 64, 72, 80, 88, } },
@@ -6553,7 +10186,7 @@ local function NatDexExtension()
 			friendshipBase = 100,
 		},
 		{
-			name = "Calyrex S",
+			name = "Calyrex-S",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 680,
 			movelvls = { { 8, 16, 24, 32, 40, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 40, 48, 56, 64, 72, 80, 88, } },
@@ -6561,21 +10194,21 @@ local function NatDexExtension()
 			friendshipBase = 100,
 		},
 		{
-			name = "Ursaluna B",
+			name = "Ursaluna-B",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 555,
 			movelvls = { { 8, 13, 17, 22, 25, 35, 41, 41, 48, 56, 64, 70, }, { 8, 13, 17, 22, 25, 35, 41, 41, 48, 56, 64, 70, } },
 			weight = 333.0,
 		},
 		{
-			name = "Basculegion F",
+			name = "Basculegion-F",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 530,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, } },
 			weight = 110.0,
 		},
 		{
-			name = "Enamorus T",
+			name = "Enamorus-T",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 580,
 			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, } },
@@ -6583,59 +10216,59 @@ local function NatDexExtension()
 			friendshipBase = 90,
 		},
 		{
-			name = "Oinkologne F",
+			name = "Oinkologne-F",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 489,
 			movelvls = { { 3, 6, 9, 12, 15, 17, 23, 28, 30, 34, 39, 45, 51, }, { 3, 6, 9, 12, 15, 17, 23, 28, 30, 34, 39, 45, 51, } },
 			weight = 120.0,
 		},
 		{
-			name = "Palafin H",
+			name = "Palafin-H",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 650,
 			movelvls = { { 7, 10, 13, 17, 21, 25, 29, 34, 39, 44, 50, 55, 61, }, { 7, 10, 13, 17, 21, 25, 29, 34, 39, 44, 50, 55, 61, } },
 			weight = 97.4,
 		},
 		{
-			name = "Gimmighoul R",
+			name = "Gimmighoul-R",
 			evolution = "50",
 			bst = 300,
 			movelvls = { { }, { } },
 			weight = 0.1,
 		},
 		{
-			name = "Ogerpon W",
+			name = "Ogerpon-W",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 550,
 			movelvls = { { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, }, { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, } },
 			weight = 39.8,
 		},
 		{
-			name = "Ogerpon F",
+			name = "Ogerpon-F",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 550,
 			movelvls = { { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, }, { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, } },
 			weight = 39.8,
 		},
 		{
-			name = "Ogerpon R",
+			name = "Ogerpon-R",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 550,
 			movelvls = { { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, }, { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, } },
 			weight = 39.8,
 		},
 		{
-			name = "Terapagos T",
+			name = "Terapagos-T",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 600,
 			movelvls = { { 10, 20, 30, 40, 50, 60, 70, 80, 90, }, { 10, 20, 30, 40, 50, 60, 70, 80, 90, } },
 			weight = 16.0,
 		},
 		{
-			name = "Terapagos S",
+			name = "Terapagos-S",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 700,
-			movelvls = { { 10, 20, 30, 40, 50, 60, 70, 80, 90, }, { 10, 20, 30, 40, 50, 60, 70, 80, 90, } },
+			movelvls = { { 10, 20, 30, 40, 50, 60, 70, 80, 90, }, { 10, 20, 30, 40, 50, 60, 70, 80, 90, } }, 
 			weight = 77.0,
 		},
 	}
@@ -6643,6 +10276,1979 @@ local function NatDexExtension()
 	self.Data.natDexMoves = {
 		{
 			id = "355",
+			name = "Roost",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "356",
+			name = "Gravity",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "357",
+			name = "Miracle Eye",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "358",
+			name = "Wake-Up Slap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "359",
+			name = "Hammer Arm",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "360",
+			name = "Gyro Ball",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "361",
+			name = "Healing Wish",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "362",
+			name = "Brine",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "363",
+			name = "Natural Gift",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "364",
+			name = "Feint",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "365",
+			name = "Pluck",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "366",
+			name = "Tailwind",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "367",
+			name = "Acupressure",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "368",
+			name = "Metal Burst",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "369",
+			name = "U-turn",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "370",
+			name = "Close Combat",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "371",
+			name = "Payback",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "372",
+			name = "Assurance",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "373",
+			name = "Embargo",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "374",
+			name = "Fling",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "375",
+			name = "Psycho Shift",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "376",
+			name = "Trump Card",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "377",
+			name = "Heal Block",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "378",
+			name = "Wring Out",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "379",
+			name = "Power Trick",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "380",
+			name = "Gastro Acid",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "381",
+			name = "Lucky Chant",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "382",
+			name = "Me First",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "383",
+			name = "Copycat",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "384",
+			name = "Power Swap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "385",
+			name = "Guard Swap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "386",
+			name = "Punishment",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "387",
+			name = "Last Resort",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "388",
+			name = "Worry Seed",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "389",
+			name = "Sucker Punch",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "390",
+			name = "Toxic Spikes",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "391",
+			name = "Heart Swap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "392",
+			name = "Aqua Ring",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "393",
+			name = "Magnet Rise",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "394",
+			name = "Flare Blitz",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "395",
+			name = "Force Palm",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "396",
+			name = "Aura Sphere",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "397",
+			name = "Rock Polish",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "398",
+			name = "Poison Jab",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "399",
+			name = "Dark Pulse",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "400",
+			name = "Night Slash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "401",
+			name = "Aqua Tail",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "402",
+			name = "Seed Bomb",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "403",
+			name = "Air Slash",
+			type = PokemonData.Types.FLYING,
+			power = "75",
+			pp = "20",
+			accuracy = "95",
+			category = MoveData.Categories.PHYSICAL,
+		},
+		{
+			id = "404",
+			name = "X-Scissor",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "405",
+			name = "Bug Buzz",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "406",
+			name = "Dragon Pulse",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "407",
+			name = "Dragon Rush",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "408",
+			name = "Power Gem",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "409",
+			name = "Drain Punch",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "410",
+			name = "Vacuum Wave",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "411",
+			name = "Focus Blast",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "412",
+			name = "Energy Ball",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "413",
+			name = "Brave Bird",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "414",
+			name = "Earth Power",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "415",
+			name = "Switcheroo",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "416",
+			name = "Giga Impact",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "417",
+			name = "Nasty Plot",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "418",
+			name = "Bullet Punch",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "419",
+			name = "Avalanche",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "420",
+			name = "Ice Shard",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "421",
+			name = "Shadow Claw",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "422",
+			name = "Thunder Fang",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "423",
+			name = "Ice Fang",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "424",
+			name = "Fire Fang",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "425",
+			name = "Shadow Sneak",
+			type = PokemonData.Types.GHOST,
+			power = "40",
+			pp = "30",
+			accuracy = "100",
+			category = MoveData.Categories.PHYSICAL,
+			isContact = true,
+			priority = "+ 1",
+		},
+		{
+			id = "426",
+			name = "Mud Bomb",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "427",
+			name = "Psycho Cut",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "428",
+			name = "Zen Headbutt",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "429",
+			name = "Mirror Shot",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "430",
+			name = "Flash Cannon",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "431",
+			name = "Rock Climb",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "432",
+			name = "Defog",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "433",
+			name = "Trick Room",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "434",
+			name = "Draco Meteor",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "435",
+			name = "Discharge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "436",
+			name = "Lava Plume",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "437",
+			name = "Leaf Storm",
+			type = PokemonData.Types.GRASS,
+			power = "140",
+			pp = "5",
+			accuracy = "90",
+			category = MoveData.Categories.SPECIAL,
+		},
+		{
+			id = "438",
+			name = "Power Whip",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "439",
+			name = "Rock Wrecker",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "440",
+			name = "Cross Poison",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "441",
+			name = "Gunk Shot",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "442",
+			name = "Iron Head",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "443",
+			name = "Magnet Bomb",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "444",
+			name = "Stone Edge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "445",
+			name = "Captivate",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "446",
+			name = "Stealth Rock",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "447",
+			name = "Grass Knot",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "448",
+			name = "Chatter",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "449",
+			name = "Judgment",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "450",
+			name = "Bug Bite",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "451",
+			name = "Charge Beam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "452",
+			name = "Wood Hammer",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "453",
+			name = "Aqua Jet",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "454",
+			name = "Attack Order",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "455",
+			name = "Defend Order",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "456",
+			name = "Heal Order",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "457",
+			name = "Head Smash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "458",
+			name = "Double Hit",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "459",
+			name = "Roar of Time",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "460",
+			name = "Spacial Rend",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "461",
+			name = "Lunar Dance",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "462",
+			name = "Crush Grip",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "463",
+			name = "Magma Storm",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "464",
+			name = "Dark Void",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "465",
+			name = "Seed Flare",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "466",
+			name = "Ominous Wind",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "467",
+			name = "Shadow Force",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "468",
+			name = "Hone Claws",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "469",
+			name = "Wide Guard",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "470",
+			name = "Guard Split",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "471",
+			name = "Power Split",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "472",
+			name = "Wonder Room",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "473",
+			name = "Psyshock",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "474",
+			name = "Venoshock",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "475",
+			name = "Autotomize",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "476",
+			name = "Rage Powder",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "477",
+			name = "Telekinesis",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "478",
+			name = "Magic Room",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "479",
+			name = "Smack Down",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "480",
+			name = "Storm Throw",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "481",
+			name = "Flame Burst",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "482",
+			name = "Sludge Wave",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "483",
+			name = "Quiver Dance",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "484",
+			name = "Heavy Slam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "485",
+			name = "Synchronoise",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "486",
+			name = "Electro Ball",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "487",
+			name = "Soak",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "488",
+			name = "Flame Charge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "489",
+			name = "Coil",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "490",
+			name = "Low Sweep",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "491",
+			name = "Acid Spray",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "492",
+			name = "Foul Play",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "493",
+			name = "Simple Beam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "494",
+			name = "Entrainment",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "495",
+			name = "After You",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "496",
+			name = "Round",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "497",
+			name = "Echoed Voice",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "498",
+			name = "Chip Away",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "499",
+			name = "Clear Smog",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "500",
+			name = "Stored Power",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "501",
+			name = "Quick Guard",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "502",
+			name = "Ally Switch",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "503",
+			name = "Scald",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "504",
+			name = "Shell Smash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "505",
+			name = "Heal Pulse",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "506",
+			name = "Hex",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "507",
+			name = "Sky Drop",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "508",
+			name = "Shift Gear",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "509",
+			name = "Circle Throw",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "510",
+			name = "Incinerate",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "511",
+			name = "Quash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "512",
+			name = "Acrobatics",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "513",
+			name = "Reflect Type",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "514",
+			name = "Retaliate",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "515",
+			name = "Final Gambit",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "516",
+			name = "Bestow",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "517",
+			name = "Inferno",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "518",
+			name = "Water Pledge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "519",
+			name = "Fire Pledge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "520",
+			name = "Grass Pledge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "521",
+			name = "Volt Switch",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "522",
+			name = "Struggle Bug",
+			type = PokemonData.Types.BUG,
+			power = "30",
+			pp = "20",
+			accuracy = "100",
+			category = MoveData.Categories.PHYSICAL,
+		},
+		{
+			id = "523",
+			name = "Bulldoze",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "524",
+			name = "Frost Breath",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "525",
+			name = "Dragon Tail",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "526",
+			name = "Work Up",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "527",
+			name = "Electroweb",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "528",
+			name = "Wild Charge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "529",
+			name = "Drill Run",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "530",
+			name = "Dual Chop",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "531",
+			name = "Heart Stamp",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "532",
+			name = "Horn Leech",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "533",
+			name = "Sacred Sword",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "534",
+			name = "Razor Shell",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "535",
+			name = "Heat Crash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "536",
+			name = "Leaf Tornado",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "537",
+			name = "Steamroller",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "538",
+			name = "Cotton Guard",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "539",
+			name = "Night Daze",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "540",
+			name = "Psystrike",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "541",
+			name = "Tail Slap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "542",
+			name = "Hurricane",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "543",
+			name = "Head Charge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "544",
+			name = "Gear Grind",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "545",
+			name = "Searing Shot",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "546",
+			name = "Techno Blast",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "547",
+			name = "Relic Song",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "548",
+			name = "Secret Sword",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "549",
+			name = "Glaciate",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "550",
+			name = "Bolt Strike",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "551",
+			name = "Blue Flare",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "552",
+			name = "Fiery Dance",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "553",
+			name = "Freeze Shock",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "554",
+			name = "Ice Burn",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "555",
+			name = "Snarl",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "556",
+			name = "Icicle Crash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "557",
+			name = "V-create",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "558",
+			name = "Fusion Flare",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "559",
+			name = "Fusion Bolt",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "560",
+			name = "Flying Press",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "561",
+			name = "Mat Block",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "562",
+			name = "Belch",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "563",
+			name = "Rototiller",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "564",
+			name = "Sticky Web",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "565",
+			name = "Fell Stinger",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "566",
+			name = "Phantom Force",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "567",
+			name = "Trick-or-Treat",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "568",
+			name = "Noble Roar",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "569",
+			name = "Ion Deluge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "570",
+			name = "Parabolic Charge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "571",
+			name = "Forest's Curse",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "572",
+			name = "Petal Blizzard",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "573",
+			name = "Freeze-Dry",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "574",
 			name = "Disarming Voice",
 			type = PokemonData.Types.FAIRY,
 			power = "40",
@@ -6651,7 +12257,25 @@ local function NatDexExtension()
 			category = MoveData.Categories.SPECIAL,
 		},
 		{
-			id = "356",
+			id = "575",
+			name = "Parting Shot",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "576",
+			name = "Topsy-Turvy",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "577",
 			name = "Draining Kiss",
 			type = PokemonData.Types.FAIRY,
 			power = "50",
@@ -6661,7 +12285,52 @@ local function NatDexExtension()
 			iscontact = true,
 		},
 		{
-			id = "357",
+			id = "578",
+			name = "Crafty Shield",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "579",
+			name = "Flower Shield",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "580",
+			name = "Grassy Terrain",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "581",
+			name = "Misty Terrain",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "582",
+			name = "Electrify",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "583",
 			name = "Play Rough",
 			type = PokemonData.Types.FAIRY,
 			power = "90",
@@ -6671,7 +12340,7 @@ local function NatDexExtension()
 			iscontact = true,
 		},
 		{
-			id = "358",
+			id = "584",
 			name = "Fairy Wind",
 			type = PokemonData.Types.FAIRY,
 			power = "40",
@@ -6680,7 +12349,7 @@ local function NatDexExtension()
 			category = MoveData.Categories.SPECIAL,
 		},
 		{
-			id = "359",
+			id = "585",
 			name = "Moonblast",
 			type = PokemonData.Types.FAIRY,
 			power = "95",
@@ -6689,13 +12358,3301 @@ local function NatDexExtension()
 			category = MoveData.Categories.SPECIAL,
 		},
 		{
-			id = "360",
+			id = "586",
+			name = "Boomburst",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "587",
+			name = "Fairy Lock",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "588",
+			name = "King's Shield",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "589",
+			name = "Play Nice",
+			type = PokemonData.Types.NORMAL,
+			power = "0",
+			pp = "20",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "590",
+			name = "Confide",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "591",
+			name = "Diamond Storm",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "592",
+			name = "Steam Eruption",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "593",
+			name = "Hyperspace Hole",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "594",
+			name = "Water Shuriken",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "595",
+			name = "Mystical Fire",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "596",
+			name = "Spiky Shield",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "597",
+			name = "Aromatic Mist",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "598",
+			name = "Eerie Impulse",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "599",
+			name = "Venom Drench",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "600",
+			name = "Powder",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "601",
+			name = "Geomancy",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "602",
+			name = "Magnetic Flux",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "603",
+			name = "Happy Hour",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "604",
+			name = "Electric Terrain",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "605",
 			name = "Dazzling Gleam",
 			type = PokemonData.Types.FAIRY,
 			power = "80",
 			pp = "10",
 			accuracy = "100",
 			category = MoveData.Categories.SPECIAL,
+		},
+		{
+			id = "606",
+			name = "Celebrate",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "607",
+			name = "Hold Hands",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "608",
+			name = "Baby-Doll Eyes",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "609",
+			name = "Nuzzle",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "610",
+			name = "Hold Back",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "611",
+			name = "Infestation",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "612",
+			name = "Power-Up Punch",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "613",
+			name = "Oblivion Wing",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "614",
+			name = "Thousand Arrows",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "615",
+			name = "Thousand Waves",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "616",
+			name = "Land's Wrath",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "617",
+			name = "Light Of Ruin",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "618",
+			name = "Origin Pulse",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "619",
+			name = "Precipice Blades",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "620",
+			name = "Dragon Ascent",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "621",
+			name = "Hyperspace Fury",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "622",
+			name = "Shore Up",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "623",
+			name = "First Impression",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "624",
+			name = "Baneful Bunker",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "625",
+			name = "Spirit Shackle",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "626",
+			name = "Darkest Lariat",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "627",
+			name = "Sparkling Aria",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "628",
+			name = "Ice Hammer",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "629",
+			name = "Floral Healing",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "630",
+			name = "High Horsepower",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "631",
+			name = "Strength Sap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "632",
+			name = "Solar Blade",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "633",
+			name = "Leafage",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "634",
+			name = "Spotlight",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "635",
+			name = "Toxic Thread",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "636",
+			name = "Laser Focus",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "637",
+			name = "Gear Up",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "638",
+			name = "Throat Chop",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "639",
+			name = "Pollen Puff",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "640",
+			name = "Anchor Shot",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "641",
+			name = "Psychic Terrain",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "642",
+			name = "Lunge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "643",
+			name = "Fire Lash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "644",
+			name = "Power Trip",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "645",
+			name = "Burn Up",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "646",
+			name = "Speed Swap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "647",
+			name = "Smart Strike",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "648",
+			name = "Purify",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "649",
+			name = "Revelation Dance",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "650",
+			name = "Core Enforcer",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "651",
+			name = "Trop Kick",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "652",
+			name = "Instruct",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "653",
+			name = "Beak Blast",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "654",
+			name = "Clanging Scales",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "655",
+			name = "Dragon Hammer",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "656",
+			name = "Brutal Swing",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "657",
+			name = "Aurora Veil",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "658",
+			name = "Shell Trap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "659",
+			name = "Fleur Cannon",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "660",
+			name = "Psychic Fangs",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "661",
+			name = "Stomping Tantrum",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "662",
+			name = "Shadow Bone",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "663",
+			name = "Accelerock",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "664",
+			name = "Liquidation",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "665",
+			name = "Prismatic Laser",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "666",
+			name = "Spectral Thief",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "667",
+			name = "Sunsteel Strike",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "668",
+			name = "Moongeist Beam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "669",
+			name = "Tearful Look",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "670",
+			name = "Zing Zap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "671",
+			name = "Nature's Madness",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "672",
+			name = "Multi-Attack",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "673",
+			name = "Mind Blown",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "674",
+			name = "Plasma Fists",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "675",
+			name = "Photon Geyser",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "676",
+			name = "Zippy Zap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "677",
+			name = "Splishy Splash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "678",
+			name = "Floaty Fall",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "679",
+			name = "Pika Papow",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "680",
+			name = "Bouncy Bubble",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "681",
+			name = "Buzzy Buzz",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "682",
+			name = "Sizzly Slide",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "683",
+			name = "Glitzy Glow",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "684",
+			name = "Baddy Bad",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "685",
+			name = "Sappy Seed",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "686",
+			name = "Freezy Frost",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "687",
+			name = "Sparkly Swirl",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "688",
+			name = "Veevee Volley",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "689",
+			name = "Double Iron Bash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "690",
+			name = "Dynamax Cannon",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "691",
+			name = "Snipe Shot",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "692",
+			name = "Jaw Lock",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "693",
+			name = "Stuff Cheeks",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "694",
+			name = "No Retreat",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "695",
+			name = "Tar Shot",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "696",
+			name = "Magic Powder",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "697",
+			name = "Dragon Darts",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "698",
+			name = "Teatime",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "699",
+			name = "Octolock",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "700",
+			name = "Bolt Beak",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "701",
+			name = "Fishious Rend",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "702",
+			name = "Court Change",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "703",
+			name = "Clangorous Soul",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "704",
+			name = "Body Press",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "705",
+			name = "Decorate",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "706",
+			name = "Drum Beating",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "707",
+			name = "Snap Trap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "708",
+			name = "Pyro Ball",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "709",
+			name = "Behemoth Blade",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "710",
+			name = "Behemoth Bash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "711",
+			name = "Aura Wheel",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "712",
+			name = "Breaking Swipe",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "713",
+			name = "Branch Poke",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "714",
+			name = "Overdrive",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "715",
+			name = "Apple Acid",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "716",
+			name = "Grav Apple",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "717",
+			name = "Spirit Break",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "718",
+			name = "Strange Steam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "719",
+			name = "Life Dew",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "720",
+			name = "Obstruct",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "721",
+			name = "False Surrender",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "722",
+			name = "Meteor Assault",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "723",
+			name = "Eternabeam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "724",
+			name = "Steel Beam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "725",
+			name = "Expanding Force",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "726",
+			name = "Steel Roller",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "727",
+			name = "Scale Shot",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "728",
+			name = "Meteor Beam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "729",
+			name = "Shell Side Arm",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "730",
+			name = "Misty Explosion",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "731",
+			name = "Grassy Glide",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "732",
+			name = "Rising Voltage",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "733",
+			name = "Terrain Pulse",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "734",
+			name = "Skitter Smack",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "735",
+			name = "Burning Jealousy",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "736",
+			name = "Lash Out",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "737",
+			name = "Poltergeist",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "738",
+			name = "Corrosive Gas",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "739",
+			name = "Coaching",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "740",
+			name = "Flip Turn",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "741",
+			name = "Triple Axel",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "742",
+			name = "Dual Wingbeat",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "743",
+			name = "Scorching Sands",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "744",
+			name = "Jungle Healing",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "745",
+			name = "Wicked Blow",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "746",
+			name = "Surging Strikes",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "747",
+			name = "Thunder Cage",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "748",
+			name = "Dragon Energy",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "749",
+			name = "Freezing Glare",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "750",
+			name = "Fiery Wrath",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "751",
+			name = "Thunderous Kick",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "752",
+			name = "Glacial Lance",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "753",
+			name = "Astral Barrage",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "754",
+			name = "Eerie Spell",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "755",
+			name = "Dire Claw",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "756",
+			name = "Psyshield Bash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "757",
+			name = "Power Shift",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "758",
+			name = "Stone Axe",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "759",
+			name = "Springtide Storm",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "760",
+			name = "Mystical Power",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "761",
+			name = "Raging Fury",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "762",
+			name = "Wave Crash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "763",
+			name = "Chloroblast",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "764",
+			name = "Mountain Gale",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "765",
+			name = "Victory Dance",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "766",
+			name = "Headlong Rush",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "767",
+			name = "Barb Barrage",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "768",
+			name = "Esper Wing",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "769",
+			name = "Bitter Malice",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "770",
+			name = "Shelter",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "771",
+			name = "Triple Arrows",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "772",
+			name = "Infernal Parade",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "773",
+			name = "Ceaseless Edge",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "774",
+			name = "Bleakwind Storm",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "775",
+			name = "Wildbolt Storm",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "776",
+			name = "Sandsear Storm",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "777",
+			name = "Lunar Blessing",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "778",
+			name = "Take Heart",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "779",
+			name = "Tera Blast",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "780",
+			name = "Silk Trap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "781",
+			name = "Axe Kick",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "782",
+			name = "Last Respects",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "783",
+			name = "Lumina Crash",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "784",
+			name = "Order Up",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "785",
+			name = "Jet Punch",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "786",
+			name = "Spicy Extract",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "787",
+			name = "Spin Out",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "788",
+			name = "Population Bomb",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "789",
+			name = "Ice Spinner",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "790",
+			name = "Glaive Rush",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "791",
+			name = "Revival Blessing",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "792",
+			name = "Salt Cure",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "793",
+			name = "Triple Dive",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "794",
+			name = "Mortal Spin",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "795",
+			name = "Doodle",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "796",
+			name = "Fillet Away",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "797",
+			name = "Kowtow Cleave",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "798",
+			name = "Flower Trick",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "799",
+			name = "Torch Song",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "800",
+			name = "Aqua Step",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "801",
+			name = "Raging Bull",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "802",
+			name = "Make It Rain",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "803",
+			name = "Ruination",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "804",
+			name = "Collision Course",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "805",
+			name = "Electro Drift",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "806",
+			name = "Shed Tail",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "807",
+			name = "Chilly Reception",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "808",
+			name = "Tidy Up",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "809",
+			name = "Snowscape",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "810",
+			name = "Pounce",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "811",
+			name = "Trailblaze",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "812",
+			name = "Chilling Water",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "813",
+			name = "Hyper Drill",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "814",
+			name = "Twin Beam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "815",
+			name = "Rage Fist",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "816",
+			name = "Armor Cannon",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "817",
+			name = "Bitter Blade",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "818",
+			name = "Double Shock",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "819",
+			name = "Gigaton Hammer",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "820",
+			name = "Comeuppance",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "821",
+			name = "Aqua Cutter",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "822",
+			name = "Blazing Torque",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "823",
+			name = "Wicked Torque",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "824",
+			name = "Noxious Torque",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "825",
+			name = "Combat Torque",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "826",
+			name = "Magical Torque",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "827",
+			name = "Psyblade",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "828",
+			name = "Hydro Steam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "829",
+			name = "Blood Moon",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "830",
+			name = "Matcha Gotcha",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "831",
+			name = "Syrup Bomb",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "832",
+			name = "Ivy Cudgel",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "833",
+			name = "Electro Shot",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "834",
+			name = "Tera Starstorm",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "835",
+			name = "Fickle Beam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "836",
+			name = "Burning Bulwark",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "837",
+			name = "Thunderclap",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "838",
+			name = "Mighty Cleave",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "839",
+			name = "Tachyon Cutter",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "840",
+			name = "Hard Press",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "841",
+			name = "Dragon Cheer",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "842",
+			name = "Alluring Voice",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "843",
+			name = "Temper Flare",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "844",
+			name = "Supercell Slam",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "845",
+			name = "Psychic Noise",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "846",
+			name = "Upper Hand",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+		{
+			id = "847",
+			name = "Malignant Chain",
+			type = PokemonData.Types.UNKNOWN,
+			power = "0",
+			pp = "0",
+			accuracy = "0",
+			category = MoveData.Categories.STATUS,
+		},
+	}
+
+	self.Data.natDexAbilities = {
+		{
+			id = 78,
+			name = "Tangled Feet",
+		},
+		{
+			id = 79,
+			name = "Motor Drive",
+		},
+		{
+			id = 80,
+			name = "Rivalry",
+		},
+		{
+			id = 81,
+			name = "Steadfast",
+		},
+		{
+			id = 82,
+			name = "Snow Cloak",
+		},
+		{
+			id = 83,
+			name = "Gluttony",
+		},
+		{
+			id = 84,
+			name = "Anger Point",
+		},
+		{
+			id = 85,
+			name = "Unburden",
+		},
+		{
+			id = 86,
+			name = "Heatproof",
+		},
+		{
+			id = 87,
+			name = "Simple",
+		},
+		{
+			id = 88,
+			name = "Dry Skin",
+		},
+		{
+			id = 89,
+			name = "Download",
+		},
+		{
+			id = 90,
+			name = "Iron Fist",
+		},
+		{
+			id = 91,
+			name = "Poison Heal",
+		},
+		{
+			id = 92,
+			name = "Adaptability",
+		},
+		{
+			id = 93,
+			name = "Skill Link",
+		},
+		{
+			id = 94,
+			name = "Hydration",
+		},
+		{
+			id = 95,
+			name = "Solar Power",
+		},
+		{
+			id = 96,
+			name = "Quick Feet",
+		},
+		{
+			id = 97,
+			name = "Normalize",
+		},
+		{
+			id = 98,
+			name = "Sniper",
+		},
+		{
+			id = 99,
+			name = "Magic Guard",
+		},
+		{
+			id = 100,
+			name = "No Guard",
+		},
+		{
+			id = 101,
+			name = "Stall",
+		},
+		{
+			id = 102,
+			name = "Technician",
+		},
+		{
+			id = 103,
+			name = "Leaf Guard",
+		},
+		{
+			id = 104,
+			name = "Klutz",
+		},
+		{
+			id = 105,
+			name = "Mold Breaker",
+		},
+		{
+			id = 106,
+			name = "Super Luck",
+		},
+		{
+			id = 107,
+			name = "Aftermath",
+		},
+		{
+			id = 108,
+			name = "Anticipation",
+		},
+		{
+			id = 109,
+			name = "Forewarn",
+		},
+		{
+			id = 110,
+			name = "Unaware",
+		},
+		{
+			id = 111,
+			name = "Tinted Lens",
+		},
+		{
+			id = 112,
+			name = "Filter",
+		},
+		{
+			id = 113,
+			name = "Slow Start",
+		},
+		{
+			id = 114,
+			name = "Scrappy",
+		},
+		{
+			id = 115,
+			name = "Storm Drain",
+		},
+		{
+			id = 116,
+			name = "Ice Body",
+		},
+		{
+			id = 117,
+			name = "Solid Rock",
+		},
+		{
+			id = 118,
+			name = "Snow Warning",
+		},
+		{
+			id = 119,
+			name = "Honey Gather",
+		},
+		{
+			id = 120,
+			name = "Frisk",
+		},
+		{
+			id = 121,
+			name = "Reckless",
+		},
+		{
+			id = 122,
+			name = "Multitype",
+		},
+		{
+			id = 123,
+			name = "Flower Gift",
+		},
+		{
+			id = 124,
+			name = "Bad Dreams",
+		},
+		{
+			id = 125,
+			name = "Pickpocket",
+		},
+		{
+			id = 126,
+			name = "Sheer Force",
+		},
+		{
+			id = 127,
+			name = "Contrary",
+		},
+		{
+			id = 128,
+			name = "Unnerve",
+		},
+		{
+			id = 129,
+			name = "Defiant",
+		},
+		{
+			id = 130,
+			name = "Defeatist",
+		},
+		{
+			id = 131,
+			name = "Cursed Body",
+		},
+		{
+			id = 132,
+			name = "Healer",
+		},
+		{
+			id = 133,
+			name = "Friend Guard",
+		},
+		{
+			id = 134,
+			name = "Weak Armor",
+		},
+		{
+			id = 135,
+			name = "Heavy Metal",
+		},
+		{
+			id = 136,
+			name = "Light Metal",
+		},
+		{
+			id = 137,
+			name = "Multiscale",
+		},
+		{
+			id = 138,
+			name = "Toxic Boost",
+		},
+		{
+			id = 139,
+			name = "Flare Boost",
+		},
+		{
+			id = 140,
+			name = "Harvest",
+		},
+		{
+			id = 141,
+			name = "Telepathy",
+		},
+		{
+			id = 142,
+			name = "Moody",
+		},
+		{
+			id = 143,
+			name = "Overcoat",
+		},
+		{
+			id = 144,
+			name = "Poison Touch",
+		},
+		{
+			id = 145,
+			name = "Regenerator",
+		},
+		{
+			id = 146,
+			name = "Big Pecks",
+		},
+		{
+			id = 147,
+			name = "Sand Rush",
+		},
+		{
+			id = 148,
+			name = "Wonder Skin",
+		},
+		{
+			id = 149,
+			name = "Analytic",
+		},
+		{
+			id = 150,
+			name = "Illusion",
+		},
+		{
+			id = 151,
+			name = "Imposter",
+		},
+		{
+			id = 152,
+			name = "Infiltrator",
+		},
+		{
+			id = 153,
+			name = "Mummy",
+		},
+		{
+			id = 154,
+			name = "Moxie",
+		},
+		{
+			id = 155,
+			name = "Justified",
+		},
+		{
+			id = 156,
+			name = "Rattled",
+		},
+		{
+			id = 157,
+			name = "Magic Bounce",
+		},
+		{
+			id = 158,
+			name = "Sap Sipper",
+		},
+		{
+			id = 159,
+			name = "Prankster",
+		},
+		{
+			id = 160,
+			name = "Sand Force",
+		},
+		{
+			id = 161,
+			name = "Iron Barbs",
+		},
+		{
+			id = 162,
+			name = "Zen Mode",
+		},
+		{
+			id = 163,
+			name = "Victory Star",
+		},
+		{
+			id = 164,
+			name = "Turboblaze",
+		},
+		{
+			id = 165,
+			name = "Teravolt",
+		},
+		{
+			id = 166,
+			name = "Aroma Veil",
+		},
+		{
+			id = 167,
+			name = "Flower Veil",
+		},
+		{
+			id = 168,
+			name = "Cheek Pouch",
+		},
+		{
+			id = 169,
+			name = "Protean",
+		},
+		{
+			id = 170,
+			name = "Fur Coat",
+		},
+		{
+			id = 171,
+			name = "Magician",
+		},
+		{
+			id = 172,
+			name = "Bulletproof",
+		},
+		{
+			id = 173,
+			name = "Competitive",
+		},
+		{
+			id = 174,
+			name = "Strong Jaw",
+		},
+		{
+			id = 175,
+			name = "Refrigerate",
+		},
+		{
+			id = 176,
+			name = "Sweet Veil",
+		},
+		{
+			id = 177,
+			name = "Stance Change",
+		},
+		{
+			id = 178,
+			name = "Gale Wings",
+		},
+		{
+			id = 179,
+			name = "Mega Launcher",
+		},
+		{
+			id = 180,
+			name = "Grass Pelt",
+		},
+		{
+			id = 181,
+			name = "Symbiosis",
+		},
+		{
+			id = 182,
+			name = "Tough Claws",
+		},
+		{
+			id = 183,
+			name = "Pixilate",
+		},
+		{
+			id = 184,
+			name = "Gooey",
+		},
+		{
+			id = 185,
+			name = "Aerilate",
+		},
+		{
+			id = 186,
+			name = "Parental Bond",
+		},
+		{
+			id = 187,
+			name = "Dark Aura",
+		},
+		{
+			id = 188,
+			name = "Fairy Aura",
+		},
+		{
+			id = 189,
+			name = "Aura Break",
+		},
+		{
+			id = 190,
+			name = "Primordial Sea",
+		},
+		{
+			id = 191,
+			name = "Desolate Land",
+		},
+		{
+			id = 192,
+			name = "Delta Stream",
+		},
+		{
+			id = 193,
+			name = "Stamina",
+		},
+		{
+			id = 194,
+			name = "Wimp Out",
+		},
+		{
+			id = 195,
+			name = "Emergency Exit",
+		},
+		{
+			id = 196,
+			name = "Water Compaction",
+		},
+		{
+			id = 197,
+			name = "Merciless",
+		},
+		{
+			id = 198,
+			name = "Shields Down",
+		},
+		{
+			id = 199,
+			name = "Stakeout",
+		},
+		{
+			id = 200,
+			name = "Water Bubble",
+		},
+		{
+			id = 201,
+			name = "Steelworker",
+		},
+		{
+			id = 202,
+			name = "Berserk",
+		},
+		{
+			id = 203,
+			name = "Slush Rush",
+		},
+		{
+			id = 204,
+			name = "Long Reach",
+		},
+		{
+			id = 205,
+			name = "Liquid Voice",
+		},
+		{
+			id = 206,
+			name = "Triage",
+		},
+		{
+			id = 207,
+			name = "Galvanize",
+		},
+		{
+			id = 208,
+			name = "Surge Surfer",
+		},
+		{
+			id = 209,
+			name = "Schooling",
+		},
+		{
+			id = 210,
+			name = "Disguise",
+		},
+		{
+			id = 211,
+			name = "Battle Bond",
+		},
+		{
+			id = 212,
+			name = "Power Construct",
+		},
+		{
+			id = 213,
+			name = "Corrosion",
+		},
+		{
+			id = 214,
+			name = "Comatose",
+		},
+		{
+			id = 215,
+			name = "Queenly Majesty",
+		},
+		{
+			id = 216,
+			name = "Innards Out",
+		},
+		{
+			id = 217,
+			name = "Dancer",
+		},
+		{
+			id = 218,
+			name = "Battery",
+		},
+		{
+			id = 219,
+			name = "Fluffy",
+		},
+		{
+			id = 220,
+			name = "Dazzling",
+		},
+		{
+			id = 221,
+			name = "Soul-Heart",
+		},
+		{
+			id = 222,
+			name = "Tangling Hair",
+		},
+		{
+			id = 223,
+			name = "Receiver",
+		},
+		{
+			id = 224,
+			name = "Power Of Alchemy",
+		},
+		{
+			id = 225,
+			name = "Beast Boost",
+		},
+		{
+			id = 226,
+			name = "RKS System",
+		},
+		{
+			id = 227,
+			name = "Electric Surge",
+		},
+		{
+			id = 228,
+			name = "Psychic Surge",
+		},
+		{
+			id = 229,
+			name = "Misty Surge",
+		},
+		{
+			id = 230,
+			name = "Grassy Surge",
+		},
+		{
+			id = 231,
+			name = "Full Metal Body",
+		},
+		{
+			id = 232,
+			name = "Shadow Shield",
+		},
+		{
+			id = 233,
+			name = "Prism Armor",
+		},
+		{
+			id = 234,
+			name = "Neuroforce",
+		},
+		{
+			id = 235,
+			name = "Intrepid Sword",
+		},
+		{
+			id = 236,
+			name = "Dauntless Shield",
+		},
+		{
+			id = 237,
+			name = "Libero",
+		},
+		{
+			id = 238,
+			name = "Ball Fetch",
+		},
+		{
+			id = 239,
+			name = "Cotton Down",
+		},
+		{
+			id = 240,
+			name = "Propeller Tail",
+		},
+		{
+			id = 241,
+			name = "Mirror Armor",
+		},
+		{
+			id = 242,
+			name = "Gulp Missile",
+		},
+		{
+			id = 243,
+			name = "Stalwart",
+		},
+		{
+			id = 244,
+			name = "Steam Engine",
+		},
+		{
+			id = 245,
+			name = "Punk Rock",
+		},
+		{
+			id = 246,
+			name = "Sand Spit",
+		},
+		{
+			id = 247,
+			name = "Ice Scales",
+		},
+		{
+			id = 248,
+			name = "Ripen",
+		},
+		{
+			id = 249,
+			name = "Ice Face",
+		},
+		{
+			id = 250,
+			name = "Power Spot",
+		},
+		{
+			id = 251,
+			name = "Mimicry",
+		},
+		{
+			id = 252,
+			name = "Screen Cleaner",
+		},
+		{
+			id = 253,
+			name = "Steely Spirit",
+		},
+		{
+			id = 254,
+			name = "Perish Body",
+		},
+		{
+			id = 255,
+			name = "Wandering Spirit",
+		},
+		{
+			id = 256,
+			name = "Gorilla Tactics",
+		},
+		{
+			id = 257,
+			name = "Neutralizing Gas",
+		},
+		{
+			id = 258,
+			name = "Pastel Veil",
+		},
+		{
+			id = 259,
+			name = "Hunger Switch",
+		},
+		{
+			id = 260,
+			name = "Quick Draw",
+		},
+		{
+			id = 261,
+			name = "Unseen Fist",
+		},
+		{
+			id = 262,
+			name = "Curious Medicine",
+		},
+		{
+			id = 263,
+			name = "Transistor",
+		},
+		{
+			id = 264,
+			name = "Dragon's Maw",
+		},
+		{
+			id = 265,
+			name = "Chilling Neigh",
+		},
+		{
+			id = 266,
+			name = "Grim Neigh",
+		},
+		{
+			id = 267,
+			name = "As One-I",
+		},
+		{
+			id = 268,
+			name = "As One-S",
+		},
+		{
+			id = 269,
+			name = "Lingering Aroma",
+		},
+		{
+			id = 270,
+			name = "Seed Sower",
+		},
+		{
+			id = 271,
+			name = "Thermal Exchange",
+		},
+		{
+			id = 272,
+			name = "Anger Shell",
+		},
+		{
+			id = 273,
+			name = "Purifying Salt",
+		},
+		{
+			id = 274,
+			name = "Well-Baked Body",
+		},
+		{
+			id = 275,
+			name = "Wind Rider",
+		},
+		{
+			id = 276,
+			name = "Guard Dog",
+		},
+		{
+			id = 277,
+			name = "Rocky Payload",
+		},
+		{
+			id = 278,
+			name = "Wind Power",
+		},
+		{
+			id = 279,
+			name = "Zero to Hero",
+		},
+		{
+			id = 280,
+			name = "Commander",
+		},
+		{
+			id = 281,
+			name = "Electromorphosis",
+		},
+		{
+			id = 282,
+			name = "Protosynthesis",
+		},
+		{
+			id = 283,
+			name = "Quark Drive",
+		},
+		{
+			id = 284,
+			name = "Good as Gold",
+		},
+		{
+			id = 285,
+			name = "Vessel of Ruin",
+		},
+		{
+			id = 286,
+			name = "Sword of Ruin",
+		},
+		{
+			id = 287,
+			name = "Tablets of Ruin",
+		},
+		{
+			id = 288,
+			name = "Beads of Ruin",
+		},
+		{
+			id = 289,
+			name = "Orichalcum Pulse",
+		},
+		{
+			id = 290,
+			name = "Hadron Engine",
+		},
+		{
+			id = 291,
+			name = "Opportunist",
+		},
+		{
+			id = 292,
+			name = "Cud Chew",
+		},
+		{
+			id = 293,
+			name = "Sharpness",
+		},
+		{
+			id = 294,
+			name = "Supreme Overlord",
+		},
+		{
+			id = 295,
+			name = "Costar",
+		},
+		{
+			id = 296,
+			name = "Toxic Debris",
+		},
+		{
+			id = 297,
+			name = "Armor Tail",
+		},
+		{
+			id = 298,
+			name = "Earth Eater",
+		},
+		{
+			id = 299,
+			name = "Mycelium Might",
+		},
+		{
+			id = 300,
+			name = "Hospitality",
+		},
+		{
+			id = 301,
+			name = "Mind's Eye",
+		},
+		{
+			id = 302,
+			name = "Embody Aspect-T",
+		},
+		{
+			id = 303,
+			name = "Embody Aspect-H",
+		},
+		{
+			id = 304,
+			name = "Embody Aspect-W",
+		},
+		{
+			id = 305,
+			name = "Embody Aspect-C",
+		},
+		{
+			id = 306,
+			name = "Toxic Chain",
+		},
+		{
+			id = 307,
+			name = "Supersweet Syrup",
+		},
+		{
+			id = 308,
+			name = "Tera Shift",
+		},
+		{
+			id = 309,
+			name = "Tera Shell",
+		},
+		{
+			id = 310,
+			name = "Teraform Zero",
+		},
+		{
+			id = 311,
+			name = "Poison Puppeteer",
 		},
 	}
 
@@ -6734,6 +15691,17 @@ local function NatDexExtension()
 		end
 	end
 
+	function self.addNewAbilities()
+		-- Don't add new moves if they've already been added
+		if AbilityData.Abilities[78] ~= nil then
+			return
+		end
+
+		for _, move in ipairs(self.Data.natDexAbilities) do
+			table.insert(AbilityData.Abilities, move)
+		end
+	end
+
 	function self.addNewSprites()
 		-- New Pokemon icons
 		Drawing.ImagePaths.PokemonIcon.getOverridePath = function(this, value)
@@ -6761,6 +15729,26 @@ local function NatDexExtension()
 		end
 		for id, item in pairs(self.Data.natDexEvoStones) do
 			MiscData.EvolutionStones[id] = item
+		end
+	end
+
+	function self.addNewBattleItems()
+		-- Don't add new stones if they've already been added
+		if MiscData.BattleItems[82] ~= nil then
+			return
+		end
+		for id, item in pairs(self.Data.natDexBattleItems) do
+			MiscData.BattleItems[id] = item
+		end
+	end
+
+	function self.addNewOtherItems()
+		-- Don't add new stones if they've already been added
+		if MiscData.OtherItems[52] ~= nil then
+			return
+		end
+		for id, item in pairs(self.Data.natDexOtherItems) do
+			MiscData.OtherItems[id] = item
 		end
 	end
 
@@ -6816,16 +15804,49 @@ local function NatDexExtension()
 			moveDesc[id] = name
 		end
 
+		local abilityNames = Resources.Game.AbilityNames
+		for id, name in pairs(self.Data.abilityNameList) do
+			abilityNames[id] = name
+		end
+
+		local abilityDesc = Resources.Game.AbilityDescriptions
+		for id, name in pairs(self.Data.natDexAbilityDescriptions) do
+			abilityDesc[id] = name
+		end
+
 		local itemNames = Resources.Game.ItemNames
+		itemNames[18] = "Paralyze Heal"
+		itemNames[30] = "Energy Powder"
+		itemNames[52] = "Regional Mineral"
+		itemNames[76] = "X Defense"
+		itemNames[79] = "X Sp. Atk"
+		itemNames[82] = "X Sp. Def"
 		itemNames[89] = "Dubious Disc"
 		itemNames[90] = "Razor Claw"
 		itemNames[91] = "Razor Fang"
 		itemNames[92] = "Linking Cord"
+		itemNames[96] = "Thunder Stone"
 		itemNames[99] = "Shiny Stone"
 		itemNames[100] = "Dusk Stone"
 		itemNames[101] = "Dawn Stone"
 		itemNames[102] = "Ice Stone"
-		itemNames[226] = "FairyFeather"
+		itemNames[103] = "Tiny Mushroom"
+		itemNames[179] = "Bright Powder"
+		itemNames[188] = "Silver Powder"
+		itemNames[192] = "Deep Sea Tooth"
+		itemNames[193] = "Deep Sea Scale"
+		itemNames[206] = "Black Glasses"
+		itemNames[212] = "Never-Melt Ice"
+		itemNames[214] = "Twisted Spoon"
+		itemNames[218] = "Upgrade"
+		itemNames[225] = "Leek"
+		itemNames[226] = "Fairy Feather"
+		itemNames[261] = "Dowsing Machine"
+		itemNames[269] = "Devon Parts"
+		itemNames[281] = "Key to Room 1"
+		itemNames[282] = "Key to Room 2"
+		itemNames[283] = "Key to Room 4"
+		itemNames[284] = "Key to Room 6"
 
 		Resources.sanitizeTable(Resources.Data)
 	end
@@ -6837,7 +15858,7 @@ local function NatDexExtension()
 		box = { Constants.SCREEN.WIDTH + 80, 7, 32, 16 },
 		-- Text to show on the button
 		getText = function(_thisBtnObj)
-			return string.format("[v%s]", self.version)
+			return string.format("[v%s]", self.version_fake)
 		end,
 		-- Color used for the text only; must pick a color from Theme
 		textColor = "Intermediate text",
@@ -6863,8 +15884,6 @@ local function NatDexExtension()
 	function self.updatePokeData()
 		local PE = PokemonData.Evolutions
 
-		PokemonData.Addresses.offsetExpYield = 0x1a
-		PokemonData.Addresses.sizeofExpYield = 2
 		PokemonData.Values.EggId = 1236
 		PokemonData.Values.GhostId = 1237
 		PokemonData.Values.DefaultBaseFriendship = 50
@@ -7034,7 +16053,7 @@ local function NatDexExtension()
 		mon[161].movelvls = { { 4, 7, 13, 16, 19, 25, 28, 31, 36, 39, 42, 47, }, { 4, 7, 13, 16, 19, 25, 28, 31, 36, 39, 42, 47, } }
 		mon[162].movelvls = { { 13, 17, 21, 28, 32, 36, 42, 46, 50, 56, }, { 13, 17, 21, 28, 32, 36, 42, 46, 50, 56, } }
 		mon[163].movelvls = { { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, }, { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, } }
-		mon[164].movelvls = { { 9, 12, 18, 23, 28, 33, 38, 43, 48, 53, }, { 9, 12, 18, 23, 28, 33, 38, 43, 48, 53, } }
+		mon[164].movelvls = { { 9, 12, 15, 18, 23, 28, 33, 38, 43, 48, 53, }, { 9, 12, 15, 18, 23, 28, 33, 38, 43, 48, 53, } }
 		mon[165].movelvls = { { 5, 8, 12, 12, 12, 15, 19, 22, 26, 29, 33, 36, 40, }, { 5, 8, 12, 12, 12, 15, 19, 22, 26, 29, 33, 36, 40, } }
 		mon[166].movelvls = { { 5, 8, 12, 12, 12, 15, 20, 24, 29, 33, 38, 42, 47, }, { 5, 8, 12, 12, 12, 15, 20, 24, 29, 33, 38, 42, 47, } }
 		mon[167].movelvls = { { 5, 8, 12, 15, 19, 22, 26, 29, 33, 36, 40, 44, 47, 51, }, { 5, 8, 12, 15, 19, 22, 26, 29, 33, 36, 40, 44, 47, 51, } }
@@ -7484,13 +16503,102 @@ local function NatDexExtension()
 		abilDesc[14].NameKey = "Compound Eyes"
 		abilDesc[31].NameKey = "Lightning Rod"
 		abilDesc[43].Description = "Immune to sound-based moves. These moves are: Grass Whistle, Growl, Heal Bell, Hyper Voice, Metal Sound, Perish Song, Roar, Screech, Sing, Snore, Supersonic, Uproar, Disarming Voice"
-		abilDesc[76].Description = "Immune to sound-based moves. These moves are: Grass Whistle, Growl, Heal Bell, Hyper Voice, Metal Sound, Perish Song, Roar, Screech, Sing, Snore, Supersonic, Uproar, Disarming Voice"
+		abilDesc[76].Description = "Does nothing, despite its in-game description."
 	end
 
 	function self.updateProgramAddresses()
 		local PA = Program.Addresses
-		PA.offsetStarterMonChoiceRSE = 0x56
-		PA.offsetRepelStepCountRSE = 0x52
+		PA.offsetStarterMonChoiceFRLG = Memory.read16(0x080003ec)
+		PA.offsetStarterMonChoiceRSE = Memory.read16(0x080003ec)
+		PA.offsetRepelStepCountFRLG = Memory.read16(0x080003ee)
+		PA.offsetRepelStepCountRSE = Memory.read16(0x080003ee)
+		PA.offsetGrowthRateIndex = Memory.read16(0x080003f0)
+		PA.offsetMapHeaderLayoutId = Memory.read16(0x080003f2)
+		PA.offsetPokemonGettingExp = Memory.read16(0x080003f4)
+		PA.offsetBattlePokemonStatStages = Memory.read16(0x080003f6)
+		PA.offsetBattlePokemonTypes = Memory.read16(0x080003f8)
+		PA.offsetBattlePokemonDoublesPartner = Memory.read16(0x080003fa)
+		PA.offsetBattleMoves = Memory.read16(0x080003fc)
+		PA.offsetBattleMoveFlags = Memory.read16(0x080003fe)
+		PA.offsetEvoInfoTaskId = Memory.read16(0x08000400)
+		PA.offsetTaskIsActive = Memory.read16(0x08000402)
+		PA.offsetTrainerFlagStart = Memory.read16(0x08000404)
+		PA.offsetSysFlagStartFRLG = Memory.read16(0x08000406)
+		PA.offsetSysFlagStartRSE = Memory.read16(0x08000406)
+		PA.offsetSysFlagSafariModeFRLG = Memory.read16(0x08000408)
+		PA.offsetSysFlagSafariModeRSE = Memory.read16(0x08000408)
+		PA.offsetBattleResultsCurrentTurn = Memory.read16(0x0800040a)
+		PA.offsetBattleResultsEnemyMoveId = Memory.read16(0x0800040c)
+		PA.offsetBattleResultsLastAttackerMove = Memory.read16(0x0800040e)
+		PA.offsetBattleCommConfirmedCount = Memory.read16(0x08000410)
+		PA.offsetBattleCommLevitate = Memory.read16(0x08000412)
+		PA.offsetPokemonSubstruct = Memory.read16(0x08000414)
+		PA.offsetPokemonStatus = Memory.read16(0x08000416)
+		PA.offsetPokemonStatsLvCurHp = Memory.read16(0x08000418)
+		PA.offsetPokemonStatsMaxHpAtk = Memory.read16(0x0800041a)
+		PA.offsetPokemonStatsDefSpe = Memory.read16(0x0800041c)
+		PA.offsetPokemonStatsSpaSpd = Memory.read16(0x0800041e)
+		PA.offsetRivalName = Memory.read16(0x08000420)
+		PA.offsetOptionsButtonMode = Memory.read16(0x08000422)
+		PA.offsetPokedex = Memory.read32(0x08000158)
+		PA.offsetPokedexOwned = Memory.read16(0x08000424)
+		PA.offsetPokedexSeen = Memory.read16(0x08000426)
+
+		PA.sizeofBaseStatsPokemon = Memory.read16(0x08000428)
+		PA.sizeofExpTablePokemon = Memory.read16(0x0800042a)
+		PA.sizeofExpTableLevel = Memory.read16(0x0800042c)
+		PA.sizeofTrainer = Memory.read16(0x0800042e)
+		PA.sizeofTrainerName = Memory.read16(0x08000430)
+		PA.sizeofTrainerClass = Memory.read16(0x08000432)
+		PA.sizeofMaxTrainerItems = Memory.read16(0x08000434)
+		PA.sizeofBattlePokemon = Memory.read16(0x08000436)
+		PA.sizeofBattleMove = Memory.read16(0x08000438)
+		PA.sizeofTaskStruct = Memory.read16(0x0800043a)
+		PA.sizeofTMHMMoveId = Memory.read16(0x0800043c)
+		PA.sizeofGameStat = Memory.read16(0x0800043e)
+		PA.sizeofLastAttackerMove = Memory.read16(0x08000440)
+		PA.sizeofPokemonStruct = Memory.read16(0x08000442)
+		PA.sizeofPokemonNickname = Memory.read8(0x08000176)
+
+		local BDSA = BattleDetailsScreen.Addresses
+		BDSA.offsetBattleMonsStatus2 = Memory.read16(0x08000448)
+		BDSA.offsetBattleStructWrappedBy = Memory.read16(0x0800044a)
+		BDSA.sizeofStatus3 = Memory.read16(0x0800044c)
+		BDSA.sizeofSideStatuses = Memory.read16(0x0800044e)
+		BDSA.sizeofSideTimers = Memory.read16(0x08000450)
+		BDSA.sizeofDisableStruct = Memory.read16(0x08000452)
+		BDSA.offsetTimerReflect = Memory.read16(0x08000454)
+		BDSA.offsetTimerLightScreen = Memory.read16(0x08000456)
+		BDSA.offsetTimerSpikes = Memory.read16(0x08000458)
+		BDSA.offsetTimerSafeguard = Memory.read16(0x0800045a)
+		BDSA.offsetTimerMist = Memory.read16(0x0800045c)
+		BDSA.offsetWishStructFutureCounter = Memory.read16(0x0800045e)
+		BDSA.offsetWishStructFutureSource = Memory.read16(0x08000460)
+		BDSA.offsetWishStructWishCounter = Memory.read16(0x08000462)
+		BDSA.offsetWishStructWishSource = Memory.read16(0x08000464)
+		BDSA.offsetWishStructKnockOff = Memory.read16(0x08000466)
+
+		local PDA = PokemonData.Addresses
+		PDA.offsetBaseStats = Memory.read16(0x08000468)
+		PDA.offsetTypes = Memory.read16(0x0800046a)
+		PDA.offsetCatchRate = Memory.read16(0x0800046c)
+		PDA.offsetExpYield = Memory.read16(0x0800046e)
+		PDA.offsetGenderRatio = Memory.read16(0x08000470)
+		PDA.offsetBaseFriendship = Memory.read16(0x08000472)
+		PDA.offsetAbilities = Memory.read16(0x08000474)
+		PDA.offsetLevelUpMoveId = Memory.read16(0x08000476)
+		PDA.offsetLevelUpMoveLv = Memory.read16(0x08000478)
+		PDA.sizeofExpYield = Memory.read16(0x0800047a)
+		PDA.sizeofAbilityInBytes = Memory.read16(0x0800047c)
+		PDA.sizeofLevelUpLearnset = Memory.read16(0x0800047e)
+		PDA.sizeofLevelUpMove = Memory.read16(0x08000480)
+		PDA.sizeofLevelUpMoveId = Memory.read16(0x08000482)
+		PDA.sizeofLevelUpMoveLv = Memory.read16(0x08000484)
+		PDA.endFlagLevelUp = Memory.read32(0x08000488)
+
+		local PV = Program.Values
+		PV.ShinyOdds = Memory.read16(0x08000444)
+		PV.ButtonModeLR = Memory.read8(0x08000446)
 	end
 
 	function self.updateGameSettings()
@@ -7502,312 +16610,188 @@ local function NatDexExtension()
 		GS.ABILITIES.STATUS_INFLICT = {}
 		GS.ABILITIES.BATTLE_TARGET = {}
 
-		-- FireRed
-		if GS.game == 3 then
-			GS.gBattleTerrain = 0x02022b51
-			GS.gBattleStructPtr = 0x02023fec -- gBattleStruct
-			GS.gMoveToLearn = 0x02024026
-			GS.gPlayerPartyCount = 0x0202402d
-			GS.estats = 0x02024030 -- gEnemyParty
-			GS.pstats = 0x02024288 -- gPlayerParty
-			GS.gMapHeader = 0x020363bc
-			GS.gSpecialVar_Result = 0x02036690
-			GS.sSpecialFlags = 0x020366a0
-			GS.gTrainerBattleOpponent_A = 0x02037c6e
-			GS.sEvoStructPtr = 0x02038fe0
-			GS.sBattlerAbilities = 0x02038ff0
-			GS.sStartMenuWindowId = 0x0203a19c
-			GS.gSpecialVar_ItemId = 0x0203bafc
-			GS.sMonSummaryScreen = 0x0203bf08
-			GS.gameFlagsOffset = 0x1074
-			GS.gameStatsOffset = 0x1394
-			GS.gameVarsOffset = 0x1194
-			GS.badgeOffset = GS.gameFlagsOffset + 0x104
-			GS.bagPocket_Items_Size = 120
-			GS.bagPocket_KeyItems_offset = GS.bagPocket_Items_offset + GS.bagPocket_Items_Size * 4
-			GS.bagPocket_Balls_offset = GS.bagPocket_KeyItems_offset + GS.bagPocket_KeyItems_Size * 4
-			GS.bagPocket_TmHm_offset = GS.bagPocket_Balls_offset + GS.bagPocket_Balls_Size * 4
-			GS.bagPocket_Berries_offset = GS.bagPocket_TmHm_offset + GS.bagPocket_TmHm_Size * 4
-			GS.EncryptionKeyOffset = 0x400
+		GS.sBattleBuffersTransferData = Memory.read32(0x08000204)
+		GS.gBattleTextBuff1 =           Memory.read32(0x08000208)
+		GS.gBattleTypeFlags =           Memory.read32(0x0800020c)
+		GS.gBattleTerrain =             Memory.read32(0x08000210)
+		GS.gBattleControllerExecFlags = Memory.read32(0x08000214)
+		GS.gBattlersCount =             Memory.read32(0x08000218)
+		GS.gBattlerPartyIndexes =       Memory.read32(0x0800021c)
+		GS.gActionsByTurnOrder =        Memory.read32(0x08000220)
+		GS.gCurrentTurnActionNumber =   Memory.read32(0x08000224)
+		GS.gBattleMons =                Memory.read32(0x08000228)
+		GS.gTakenDmg =                  Memory.read32(0x0800022c)
+		GS.gBattlerAttacker =           Memory.read32(0x08000230)
+		GS.gBattlerTarget =             Memory.read32(0x08000234)
+		GS.gBattlescriptCurrInstr =     Memory.read32(0x08000238)
+		GS.gLockedMoves =               Memory.read32(0x0800023c)
+		GS.gMoveResultFlags =           Memory.read32(0x08000240)
+		GS.gHitMarker =                 Memory.read32(0x08000244)
+		GS.gSideStatuses =              Memory.read32(0x08000248)
+		GS.gSideTimers =                Memory.read32(0x0800024c)
+		GS.gStatuses3 =                 Memory.read32(0x08000250)
+		GS.gDisableStructs =            Memory.read32(0x08000254)
+		GS.gPaydayMoney =               Memory.read32(0x08000258)
+		GS.gBattleCommunication =       Memory.read32(0x0800025c)
+		GS.gBattleOutcome =             Memory.read32(0x08000260)
+		GS.gBattleWeather =             Memory.read32(0x08000264)
+		GS.gWishFutureKnock =           Memory.read32(0x08000268)
+		GS.gBattleScriptingBattler =    Memory.read32(0x0800026c) + 0x17 -- gBattleScripting.battler
+		GS.gBattleStructPtr =           Memory.read32(0x08000270) -- gBattleStruct
+		GS.gMoveToLearn =               Memory.read32(0x08000274)
+		GS.gPlayerPartyCount =          Memory.read32(0x08000278)
+		GS.pstats =                     Memory.read32(0x0800027c) -- gPlayerParty
+		GS.estats =                     Memory.read32(0x08000280) -- gEnemyParty
+		GS.gMapHeader =                 Memory.read32(0x08000284)
+		GS.gSpecialVar_Result =         Memory.read32(0x08000288)
+		GS.sSpecialFlags =              Memory.read32(0x0800028c)
+		GS.sSaveDialogDelay =           Memory.read32(0x08000290) -- Em: sSaveDialogTimer
+		GS.gTrainerBattleOpponent_A =   Memory.read32(0x08000294)
+		GS.gTrainerBattleOpponent_B =   Memory.read32(0x08000298)
+		GS.sEvoStructPtr =              Memory.read32(0x0800029c)
+		GS.sBattlerAbilities =          Memory.read32(0x080002a0)
+		GS.sStartMenuWindowId =         Memory.read32(0x080002a4)
+		GS.gSpecialVar_ItemId =         Memory.read32(0x080002a8)
+		GS.sMonSummaryScreen =          Memory.read32(0x080002ac)
+		GS.gameRegItemOffset =          Memory.read32(0x080002b0) -- registeredItem
+		GS.gameFlagsOffset =            Memory.read32(0x08000150)
+		GS.gameVarsOffset =             Memory.read32(0x08000154)
+		GS.gameStatsOffset =            Memory.read32(0x080002b4)
+		GS.badgeOffset =                Memory.read32(0x080002b8)
+		GS.bagPocket_Items_Size =       Memory.read8(0x080001e4)
+		GS.bagPocket_KeyItems_Size =    Memory.read8(0x080001e5)
+		GS.bagPocket_Balls_Size =       Memory.read8(0x080001e6)
+		GS.bagPocket_TmHm_Size =        Memory.read8(0x080001e7)
+		GS.bagPocket_Berries_Size =     Memory.read8(0x080001e8)
+		GS.bagPocket_Items_offset =     Memory.read32(0x080002bc)
+		GS.bagPocket_KeyItems_offset =  Memory.read32(0x080002c0)
+		GS.bagPocket_Balls_offset =     Memory.read32(0x080002c4)
+		GS.bagPocket_TmHm_offset =      Memory.read32(0x080002c8)
+		GS.bagPocket_Berries_offset =   Memory.read32(0x080002cc)
+		GS.EncryptionKeyOffset =        Memory.read32(0x080002d0)
 
-			GS.gBattleMainFunc = 0x03004bb4
-			GS.gBattleResults = 0x03004bc0
-			GS.gMultiUsePlayerCursor = 0x03004c24
-			GS.gSaveBlock1ptr = 0x03004c38 -- gSaveBlock1Ptr
-			GS.gSaveBlock2ptr = 0x03004c3c -- gSaveBlock2Ptr
-			GS.gTasks = 0x03004cc0
+		GS.gBattleMainFunc =       Memory.read32(0x080002d4)
+		GS.gBattleResults =        Memory.read32(0x080002d8)
+		GS.gMultiUsePlayerCursor = Memory.read32(0x080002dc)
+		GS.gSaveBlock1ptr =        Memory.read32(0x080002e0) -- gSaveBlock1Ptr
+		GS.gSaveBlock2ptr =        Memory.read32(0x080002e4) -- gSaveBlock2Ptr
+		GS.gTasks =                Memory.read32(0x080002e8)
 
-			GS.BattleIntroDrawPartySummaryScreens = 0x08013ef4 + 0x1 -- BattleIntroDrawPartySummaryScreens + 0x1
-			GS.BattleIntroOpponentSendsOutMonAnimation = 0x080141f0 + 0x1 -- BattleIntroRecordMonsToDex + 0x1
-			GS.HandleTurnActionSelectionState = 0x08014c04 + 0x1 -- HandleTurnActionSelectionState + 0x1
-			GS.ReturnFromBattleToOverworld = 0x0801671c + 0x1 -- ReturnFromBattleToOverworld + 0x1
-			GS.FriendshipRequiredToEvo = 0x08042f74 + 0x13e -- GetEvolutionTargetSpecies + 0x13e
-			GS.Task_EvolutionScene = 0x080d4c6c + 0x1 -- Task_EvolutionScene + 0x1
-			GS.gBattleMoves = 0x082635cc
-			GS.gExperienceTables = 0x0826995c
-			GS.gBaseStats = 0x0826a5fc -- gSpeciesInfo
-			GS.sTMHMMoves = 0x0849de74
+		GS.BattleIntroDrawPartySummaryScreens =      Memory.read32(0x080002ec)
+		GS.BattleIntroOpponentSendsOutMonAnimation = Memory.read32(0x080002f0) -- BattleIntroRecordMonsToDex
+		GS.HandleTurnActionSelectionState =          Memory.read32(0x080002f4)
+		GS.ReturnFromBattleToOverworld =             Memory.read32(0x080002f8)
+		GS.FriendshipRequiredToEvo =             	 Memory.read32(0x080002fc) + 0x155 -- GetEvolutionTargetSpecies
+		GS.Task_HandleConfirmStarterInput =          Memory.read32(0x08000300) - 0x1
+		GS.Task_EvolutionScene =                     Memory.read32(0x08000304)
+		GS.gBattleMoves =                            Memory.read32(0x080001cc)
+		GS.gExperienceTables =                       Memory.read32(0x08000308)
+		GS.gBaseStats =                              Memory.read32(0x080001bc) -- gSpeciesInfo
+		GS.gLevelUpLearnsets =                       Memory.read32(0x0800030c)
+		GS.gTrainerClassNames =                      Memory.read32(0x08000310)
+		GS.gTrainers =                               Memory.read32(0x08000314)
+		GS.sTMHMMoves =                              Memory.read32(0x08000318)
 
-			GS.BattleScript_RanAwayUsingMonAbility = 0x081ddbf8 + 0x3 -- BattleScript_RanAwayUsingMonAbility + 0x3
-			GS.BattleScript_LearnMoveLoop = 0x081ddcfa -- BattleScript_TryLearnMoveLoop + 0x0
-			GS.BattleScript_LearnMoveReturn = 0x081ddd4c -- BattleScript_LearnMoveReturn + 0x0
-			GS.BattleScript_SnatchedMove = 0x081de2b0 + 0xa -- BattleScript_SnatchedMove + 0xa
-			GS.BattleScript_FocusPunchSetUp = 0x081de303 + 0x10 -- BattleScript_FocusPunchSetUp + 0x10
-			GS.BattleScript_MoveUsedWokeUp = 0x081de324 + 0xe -- BattleScript_MoveUsedWokeUp + 0xe
-			GS.BattleScript_MoveUsedIsFrozen = 0x081de36e + 0x3 -- BattleScript_MoveUsedIsFrozen + 0x3
-			GS.BattleScript_MoveUsedIsFrozen2 = 0x081de36e + 0x6 -- BattleScript_MoveUsedIsFrozen + 0x6
-			GS.BattleScript_MoveUsedIsFrozen3 = 0x081de36e + 0x8 -- BattleScript_MoveUsedIsFrozen + 0x8
-			GS.BattleScript_MoveUsedUnfroze = 0x081de37b + 0x5 -- BattleScript_MoveUsedUnfroze + 0x5
-			GS.BattleScript_MoveUsedUnfroze2 = 0x081de37b + 0xa -- BattleScript_MoveUsedUnfroze + 0xa
-			GS.BattleScript_MoveUsedIsConfused = 0x081de3c1 + 0x3 -- BattleScript_MoveUsedIsConfused + 0x3
-			GS.BattleScript_MoveUsedIsConfused2 = 0x081de3c1 + 0xc -- BattleScript_MoveUsedIsConfused + 0xc
-			GS.BattleScript_MoveUsedIsConfusedNoMore = 0x081de404 + 0x3 -- BattleScript_MoveUsedIsConfusedNoMore + 0x3
-			GS.BattleScript_MoveUsedIsInLove = 0x081de42b + 0x3 -- BattleScript_MoveUsedIsInLove + 0x3
-			GS.BattleScript_MoveUsedIsInLove2 = 0x081de42b + 0xc -- BattleScript_MoveUsedIsInLove + 0xc
+		GS.BattleScript_RanAwayUsingMonAbility =   Memory.read32(0x0800031c) + 0x3
+		GS.BattleScript_LearnMoveLoop =            Memory.read32(0x08000320) -- BattleScript_TryLearnMoveLoop
+		GS.BattleScript_LearnMoveReturn =          Memory.read32(0x08000324)
+		GS.BattleScript_SnatchedMove =             Memory.read32(0x08000328) + 0xa
+		GS.BattleScript_FocusPunchSetUp =          Memory.read32(0x0800032c) + 0x10
+		GS.BattleScript_MoveUsedWokeUp =           Memory.read32(0x08000330) + 0xe
+		GS.BattleScript_MoveUsedIsFrozen =         Memory.read32(0x08000334) + 0x3
+		GS.BattleScript_MoveUsedIsFrozen2 =        Memory.read32(0x08000334) + 0x6 -- BattleScript_MoveUsedIsFrozen
+		GS.BattleScript_MoveUsedIsFrozen3 =        Memory.read32(0x08000334) + 0x8 -- BattleScript_MoveUsedIsFrozen
+		GS.BattleScript_MoveUsedUnfroze =          Memory.read32(0x08000338) + 0x5
+		GS.BattleScript_MoveUsedUnfroze2 =         Memory.read32(0x08000338) + 0xa -- BattleScript_MoveUsedUnfroze
+		GS.BattleScript_MoveUsedIsConfused =       Memory.read32(0x0800033c) + 0x3
+		GS.BattleScript_MoveUsedIsConfused2 =      Memory.read32(0x0800033c) + 0xc -- BattleScript_MoveUsedIsConfused
+		GS.BattleScript_MoveUsedIsConfusedNoMore = Memory.read32(0x08000340) + 0x3
+		GS.BattleScript_MoveUsedIsInLove =         Memory.read32(0x08000344) + 0x3
+		GS.BattleScript_MoveUsedIsInLove2 =        Memory.read32(0x08000344) + 0xc -- BattleScript_MoveUsedIsInLove
 
-			-- Insomnia ; Vital Spirit
-			GS.ABILITIES.ATTACKER[0x081dbc90 + 0x8] = {[15] = true, [72] = true} -- BattleScript_CantMakeAsleep + 0x8
-			-- Liquid Ooze (Drain Moves)
-			GS.ABILITIES.ATTACKER[0x081dbcfe + 0x14] = {[64] = true} -- BattleScript_AbsorbUpdateHp + 0x14
-			-- Insomnia ; Vital Spirit (Rest)
-			GS.ABILITIES.REVERSE_ATTACKER[0x081dc18a + 0x8] = {[15] = true, [72] = true} -- BattleScript_RestCantSleep + 0x8
-			-- Soundproof (Enemy uses Heal Bell)
-			GS.ABILITIES.BATTLE_TARGET[0x081dc87e + 0x29] = {[43] = true, scope = "self"} -- BattleScript_EffectHealBell + 0x29
-			-- Soundproof (Perish Song)
-			GS.ABILITIES.BATTLER[0x081dcb69 + 0x8] = {[43] = true} -- BattleScript_PerishSongNotAffected + 0x8
-			-- Insomnia ; Vital Spirit (Yawn)
-			GS.ABILITIES.ATTACKER[0x081dd53c + 0x8] = {[15] = true, [72] = true} -- BattleScript_PrintAbilityMadeIneffective + 0x8
-			-- Liquid Ooze (Leech Seed)
-			GS.ABILITIES.BATTLE_TARGET[0x081dde73 + 0x12] = {[64] = true, scope = "other"} -- BattleScript_LeechSeedTurnPrintAndUpdateHp + 0x12
-			-- Effect Spore (Sleep)
-			GS.ABILITIES.STATUS_INFLICT[0x081de4a7 + 0x7] = {[27] = true} -- BattleScript_MoveEffectSleep + 0x7
-			-- Effect Spore ; Synchronize ; Poison Point (Poison)
-			GS.ABILITIES.STATUS_INFLICT[0x081de4c3 + 0x7] = {[27] = true, [28] = true, [38] = true} -- BattleScript_MoveEffectPoison + 0x7
-			-- Synchronize ; Flame Body (Burn)
-			GS.ABILITIES.STATUS_INFLICT[0x081de4d2 + 0x7] = {[28] = true, [49] = true} -- BattleScript_MoveEffectBurn + 0x7
-			-- Static ; Effect Spore ; Synchronize (Paralysis)
-			GS.ABILITIES.STATUS_INFLICT[0x081de4f0 + 0x7] = {[9] = true, [27] = true, [28] = true} -- BattleScript_MoveEffectParalysis + 0x7
-			-- Drizzle
-			GS.ABILITIES.BATTLER[0x081de56d + 0x9] = {[2] = true} -- BattleScript_DrizzleActivates + 0x9
-			-- Speed Boost
-			GS.ABILITIES.BATTLER[0x081de5a5 + 0xc] = {[3] = true} -- BattleScript_SpeedBoostActivates + 0xc
-			-- Trace
-			GS.ABILITIES.BATTLER[0x081de5b8 + 0x8] = {[36] = true} -- BattleScript_TraceActivates + 0x8
-			-- Rain Dish
-			GS.ABILITIES.REVERSE_ATTACKER[0x081de5c7 + 0x8] = {[44] = true} -- BattleScript_RainDishActivates + 0x8
-			-- Sand Stream
-			GS.ABILITIES.BATTLER[0x081de5e0 + 0x9] = {[45] = true} -- BattleScript_SandstreamActivates + 0x9
-			-- Shed Skin
-			GS.ABILITIES.BATTLER[0x081de5f9 + 0x8] = {[61] = true} -- BattleScript_ShedSkinActivates + 0x8
-			-- Intimidate Success
-			GS.ABILITIES.BATTLER[0x081de658 + 0x3d] = {[22] = true} -- BattleScript_IntimidateActivationAnimLoop + 0x3d
-			-- Intimidate Fail
-			GS.ABILITIES.BATTLER[0x081de6a7 + 0xb] = {[22] = true} -- BattleScript_IntimidateAbilityFail + 0xb
-			GS.ABILITIES.REVERSE_BATTLER[0x081de6a7 + 0xb] = {[29] = true, [52] = true, [73] = true} -- Clear Body ; Hyper Cutter ; White Smoke
-			-- Drought
-			GS.ABILITIES.BATTLER[0x081de6ba + 0x9] = {[70] = true} -- BattleScript_DroughtActivates + 0x9
-			-- Lightning Rod
-			GS.ABILITIES.ATTACKER[0x081de6d3 + 0x9] = {[31] = true} -- BattleScript_TookAttack + 0x9
-			-- Sturdy
-			GS.ABILITIES.ATTACKER[0x081de6e9 + 0x8] = {[5] = true} -- BattleScript_SturdyPreventsOHKO + 0x8
-			-- Damp
-			GS.ABILITIES.BATTLE_TARGET[0x081de6f9 + 0x8] = {[6] = true, scope = "both"} -- BattleScript_DampStopsExplosion + 0x8
-			-- Volt Absorb ; Water Absorb (Heals HP)
-			GS.ABILITIES.ATTACKER[0x081de70a + 0x16] = {[10] = true; [11] = true} -- BattleScript_MoveHPDrain + 0x16
-			-- Volt Absorb ; Water Absorb (Nullifies move)
-			GS.ABILITIES.ATTACKER[0x081de72f + 0x9] = {[10] = true; [11] = true} -- BattleScript_MonMadeMoveUseless + 0x9
-			-- Flash Fire
-			GS.ABILITIES.ATTACKER[0x081de747 + 0xb] = {[18] = true} -- BattleScript_FlashFireBoost + 0xb
-			-- Suction Cups
-			GS.ABILITIES.ATTACKER[0x081de75a + 0x8] = {[21] = true} -- BattleScript_AbilityPreventsPhasingOut + 0x8
-			-- Clear Body ; White Smoke
-			GS.ABILITIES.BATTLER[0x081de76a + 0x8] = {[29] = true; [73] = true} -- BattleScript_AbilityNoStatLoss + 0x8
-			-- Synchronize ; Water Vail (Prevents burn)
-			GS.ABILITIES.ATTACKER[0x081de782 + 0x5] = {[28] = true; [41] = true} -- BattleScript_BRNPrevention + 0x5
-			-- Limber ; Synchronize (Prevents paralysis)
-			GS.ABILITIES.ATTACKER[0x081de7a6 + 0x5] = {[7] = true; [28] = true} -- BattleScript_PRLZPrevention + 0x5
-			-- Immunity ; Synchronize (Prevents poison)
-			GS.ABILITIES.ATTACKER[0x081de7ca + 0x5] = {[17] = true; [28] = true} -- BattleScript_PSNPrevention + 0x5
-			-- Oblivious
-			GS.ABILITIES.ATTACKER[0x081de7e2 + 0x8] = {[12] = true} -- BattleScript_ObliviousPreventsAttraction + 0x8
-			-- Inner Focus
-			GS.ABILITIES.ATTACKER[0x081de7f2 + 0x8] = {[39] = true} -- BattleScript_FlinchPrevention + 0x8
-			-- Own Tempo
-			GS.ABILITIES.ATTACKER[0x081de802 + 0x8] = {[20] = true} -- BattleScript_OwnTempoPrevents + 0x8
-			-- Soundproof (General)
-			GS.ABILITIES.BATTLE_TARGET[0x081de812 + 0xa] = {[43] = true, scope = "self"} -- BattleScript_SoundproofProtected + 0xa
-			-- Keen Eye; Hyper Cutter
-			GS.ABILITIES.BATTLER[0x081de824 + 0x8] = {[51] = true, [52] = true} -- BattleScript_AbilityNoSpecificStatLoss + 0x8
-			-- Sticky Hold
-			GS.ABILITIES.ATTACKER[0x081de836 + 0x8] = {[60] = true} -- BattleScript_StickyHoldActivates + 0x8
-			-- Color Change
-			GS.ABILITIES.ATTACKER[0x081de846 + 0x8] = {[16] = true} -- BattleScript_ColorChangeActivates + 0x8
-			-- Rough Skin
-			GS.ABILITIES.ATTACKER[0x081de852 + 0x15] = {[24] = true} -- BattleScript_RoughSkinActivates + 0x15
-			-- Cute Charm
-			GS.ABILITIES.ATTACKER[0x081de872 + 0xe] = {[56] = true} -- BattleScript_CuteCharmActivates + 0xe
-			-- Truant
-			GS.ABILITIES.REVERSE_ATTACKER[0x081de8ba + 0x5] = {[54] = true} -- BattleScript_MoveUsedLoafingAround + 0x5
-		-- Emerald
-		elseif GS.game == 2 then
-			GS.gBattleTypeFlags = 0x02022fe8
-			GS.gBattleTerrain = 0x02022fed
-			GS.gBattleControllerExecFlags = 0x02024064
-			GS.gBattlersCount = 0x02024068
-			GS.gBattlerPartyIndexes = 0x0202406a
-			GS.gActionsByTurnOrder = 0x02024076
-			GS.gCurrentTurnActionNumber = 0x0202407e
-			GS.gBattleMons = 0x02024080
-			GS.gTakenDmg = 0x020241f4
-			GS.gBattlerAttacker = 0x02024207
-			GS.gBattlerTarget = 0x02024208
-			GS.gBattlescriptCurrInstr = 0x02024210
-			GS.gMoveResultFlags = 0x02024278
-			GS.gHitMarker = 0x0202427c
-			GS.gBattleCommunication = 0x0202432e
-			GS.gBattleOutcome = 0x02024336
-			GS.gBattleWeather = 0x020243c8
-			GS.gBattleScriptingBattler = 0x02024470 + 0x17 -- gBattleScripting.battler
-			GS.gMapHeader = 0x020369d0
-			GS.gSpecialVar_Result = 0x02036ca8
-			GS.sSpecialFlags = 0x02036cb4
-			GS.sSaveDialogDelay = 0x02036cd8 -- sSaveDialogTimer
-			GS.gTrainerBattleOpponent_A = 0x02038282
-			GS.gTrainerBattleOpponent_B = 0x02038284
-			GS.sEvoStructPtr = 0x0203a238
-			GS.sBattlerAbilities = 0x0203a25c
-			GS.sStartMenuWindowId = 0x0203c444
-			GS.gSpecialVar_ItemId = 0x0203c534
-			GS.sMonSummaryScreen = 0x0203c5d4
-			GS.gameFlagsOffset = 0x1438
-			GS.gameStatsOffset = 0x1764
-			GS.gameVarsOffset = 0x1564
-			GS.badgeOffset = GS.gameFlagsOffset + 0x10c
-			GS.bagPocket_Items_Size = 120
-			GS.bagPocket_KeyItems_offset = GS.bagPocket_Items_offset + GS.bagPocket_Items_Size * 4
-			GS.bagPocket_Balls_offset = GS.bagPocket_KeyItems_offset + GS.bagPocket_KeyItems_Size * 4
-			GS.bagPocket_TmHm_offset = GS.bagPocket_Balls_offset + GS.bagPocket_Balls_Size * 4
-			GS.bagPocket_Berries_offset = GS.bagPocket_TmHm_offset + GS.bagPocket_TmHm_Size * 4
-			GS.EncryptionKeyOffset = 0x170
-
-			GS.gBattleMainFunc = 0x03004c34
-			GS.gBattleResults = 0x03004c40
-			GS.gMultiUsePlayerCursor = 0x03004ca4
-			GS.gSaveBlock1ptr = 0x03004cbc
-			GS.gSaveBlock2ptr = 0x03004cc0
-			GS.gTasks = 0x03004d30
-
-			GS.BattleIntroDrawPartySummaryScreens = 0x0803b328 + 0x1 -- BattleIntroDrawPartySummaryScreens + 0x1
-			GS.BattleIntroOpponentSendsOutMonAnimation = 0x0803b6c8 + 0x1 -- BattleIntroRecordMonsToDex + 0x1
-			GS.HandleTurnActionSelectionState = 0x0803c228 + 0x1 -- HandleTurnActionSelectionState + 0x1
-			GS.ReturnFromBattleToOverworld = 0x0803e338 + 0x1 -- ReturnFromBattleToOverworld + 0x1
-			GS.FriendshipRequiredToEvo = 0x0806d0b0 + 0x13e -- GetEvolutionTargetSpecies + 0x13e
-			GS.Task_EvolutionScene = 0x0813e560 + 0x1 -- Task_EvolutionScene + 0x1
-			GS.gExperienceTables = 0x08322ba0
-			GS.gBaseStats = 0x08323840 -- gSpeciesInfo
-			GS.sTMHMMoves = 0x08616d20
-
-			GS.BattleScript_RanAwayUsingMonAbility = 0x082dab0e + 0x3 -- BattleScript_RanAwayUsingMonAbility + 0x3
-			GS.BattleScript_LearnMoveLoop = 0x082dabfe -- BattleScript_TryLearnMoveLoop + 0x0
-			GS.BattleScript_LearnMoveReturn = 0x082dac50 -- BattleScript_LearnMoveReturn + 0x0
-			GS.BattleScript_SnatchedMove = 0x082db1d6 + 0xa -- BattleScript_SnatchedMove + 0xa
-			GS.BattleScript_FocusPunchSetUp = 0x082db229 + 0x10 -- BattleScript_FocusPunchSetUp + 0x10
-			GS.BattleScript_MoveUsedWokeUp = 0x082db24a + 0xe -- BattleScript_MoveUsedWokeUp + 0xe
-			GS.BattleScript_MoveUsedIsFrozen = 0x082db294 + 0x3 -- BattleScript_MoveUsedIsFrozen + 0x3
-			GS.BattleScript_MoveUsedIsFrozen2 = 0x082db294 + 0x6 -- BattleScript_MoveUsedIsFrozen + 0x6
-			GS.BattleScript_MoveUsedIsFrozen3 = 0x082db294 + 0x8 -- BattleScript_MoveUsedIsFrozen + 0x8
-			GS.BattleScript_MoveUsedUnfroze = 0x082db2a1 + 0x5 -- BattleScript_MoveUsedUnfroze + 0x5
-			GS.BattleScript_MoveUsedUnfroze2 = 0x082db2a1 + 0xa -- BattleScript_MoveUsedUnfroze + 0xa
-			GS.BattleScript_MoveUsedIsConfused = 0x082db2e7 + 0x3 -- BattleScript_MoveUsedIsConfused + 0x3
-			GS.BattleScript_MoveUsedIsConfused2 = 0x082db2e7 + 0xc -- BattleScript_MoveUsedIsConfused + 0xc
-			GS.BattleScript_MoveUsedIsConfusedNoMore = 0x082db32a + 0x3 -- BattleScript_MoveUsedIsConfusedNoMore + 0x3
-			GS.BattleScript_MoveUsedIsInLove = 0x082db351 + 0x3 -- BattleScript_MoveUsedIsInLove + 0x3
-			GS.BattleScript_MoveUsedIsInLove2 = 0x082db351 + 0xc -- BattleScript_MoveUsedIsInLove + 0xc
-
-			-- Insomnia ; Vital Spirit
-			GS.ABILITIES.ATTACKER[0x082d8acf + 0x8] = {[15] = true, [72] = true} -- BattleScript_CantMakeAsleep + 0x8
-			-- Liquid Ooze (Drain Moves)
-			GS.ABILITIES.ATTACKER[0x082d8b3d + 0x14] = {[64] = true} -- BattleScript_AbsorbUpdateHp + 0x14
-			-- Insomnia ; Vital Spirit (Rest)
-			GS.ABILITIES.REVERSE_ATTACKER[0x082d8fda + 0x8] = {[15] = true, [72] = true} -- BattleScript_RestCantSleep + 0x8
-			-- Soundproof (Enemy uses Heal Bell)
-			GS.ABILITIES.BATTLE_TARGET[0x082d96da + 0x29] = {[43] = true, scope = "self"} -- BattleScript_EffectHealBell + 0x29
-			-- Soundproof (Perish Song)
-			GS.ABILITIES.BATTLER[0x082d99c5 + 0x8] = {[43] = true} -- BattleScript_PerishSongNotAffected + 0x8
-			-- Insomnia ; Vital Spirit (Yawn)
-			GS.ABILITIES.ATTACKER[0x082da3a5 + 0x8] = {[15] = true, [72] = true} -- BattleScript_PrintAbilityMadeIneffective + 0x8
-			-- Liquid Ooze (Leech Seed)
-			GS.ABILITIES.BATTLE_TARGET[0x082dad77 + 0x12] = {[64] = true, scope = "other"} -- BattleScript_LeechSeedTurnPrintAndUpdateHp + 0x12
-			-- Effect Spore (Sleep)
-			GS.ABILITIES.STATUS_INFLICT[0x082db394 + 0x7] = {[27] = true} -- BattleScript_MoveEffectSleep + 0x7
-			-- Effect Spore ; Synchronize ; Poison Point (Poison)
-			GS.ABILITIES.STATUS_INFLICT[0x082db3b0 + 0x7] = {[27] = true, [28] = true, [38] = true} -- BattleScript_MoveEffectPoison + 0x7
-			-- Synchronize ; Flame Body (Burn)
-			GS.ABILITIES.STATUS_INFLICT[0x082db3bf + 0x7] = {[28] = true, [49] = true} -- BattleScript_MoveEffectBurn + 0x7
-			-- Static ; Effect Spore ; Synchronize (Paralysis)
-			GS.ABILITIES.STATUS_INFLICT[0x082db3dd + 0x7] = {[9] = true, [27] = true, [28] = true} -- BattleScript_MoveEffectParalysis + 0x7
-			-- Drizzle
-			GS.ABILITIES.BATTLER[0x082db45a + 0x9] = {[2] = true} -- BattleScript_DrizzleActivates + 0x9
-			-- Speed Boost
-			GS.ABILITIES.BATTLER[0x082db492 + 0xc] = {[3] = true} -- BattleScript_SpeedBoostActivates + 0xc
-			-- Trace
-			GS.ABILITIES.BATTLER[0x082db4a5 + 0x8] = {[36] = true} -- BattleScript_TraceActivates + 0x8
-			-- Rain Dish
-			GS.ABILITIES.REVERSE_ATTACKER[0x082db4b4 + 0x8] = {[44] = true} -- BattleScript_RainDishActivates + 0x8
-			-- Sand Stream
-			GS.ABILITIES.BATTLER[0x082db4cd + 0x9] = {[45] = true} -- BattleScript_SandstreamActivates + 0x9
-			-- Shed Skin
-			GS.ABILITIES.BATTLER[0x082db4e6 + 0x8] = {[61] = true} -- BattleScript_ShedSkinActivates + 0x8
-			-- Intimidate Success
-			GS.ABILITIES.BATTLER[0x082db545 + 0x3d] = {[22] = true} -- BattleScript_IntimidateActivatesLoop + 0x3d
-			-- Intimidate Fail
-			GS.ABILITIES.BATTLER[0x082db594 + 0xb] = {[22] = true} -- BattleScript_IntimidatePrevented + 0xb
-			GS.ABILITIES.REVERSE_BATTLER[0x082db594 + 0xb] = {[29] = true, [52] = true, [73] = true} -- Clear Body ; Hyper Cutter ; White Smoke
-			-- Drought
-			GS.ABILITIES.BATTLER[0x082db5a7 + 0x9] = {[70] = true} -- BattleScript_DroughtActivates + 0x9
-			-- Lightning Rod
-			GS.ABILITIES.ATTACKER[0x082db5c0 + 0x9] = {[31] = true} -- BattleScript_TookAttack + 0x9
-			-- Sturdy
-			GS.ABILITIES.ATTACKER[0x082db5d6 + 0x8] = {[5] = true} -- BattleScript_SturdyPreventsOHKO + 0x8
-			-- Damp
-			GS.ABILITIES.BATTLE_TARGET[0x082db5e6 + 0x8] = {[6] = true, scope = "both"} -- BattleScript_DampStopsExplosion + 0x8
-			-- Volt Absorb ; Water Absorb (Heals HP)
-			GS.ABILITIES.ATTACKER[0x082db5f7 + 0x16] = {[10] = true; [11] = true} -- BattleScript_MoveHPDrain + 0x16
-			-- Volt Absorb ; Water Absorb (Nullifies move)
-			GS.ABILITIES.ATTACKER[0x082db61c + 0x9] = {[10] = true; [11] = true} -- BattleScript_MonMadeMoveUseless + 0x9
-			-- Flash Fire
-			GS.ABILITIES.ATTACKER[0x082db634 + 0xb] = {[18] = true} -- BattleScript_FlashFireBoost + 0xb
-			-- Suction Cups
-			GS.ABILITIES.ATTACKER[0x082db647 + 0x8] = {[21] = true} -- BattleScript_AbilityPreventsPhasingOut + 0x8
-			-- Clear Body ; White Smoke
-			GS.ABILITIES.BATTLER[0x082db657 + 0x8] = {[29] = true; [73] = true} -- BattleScript_AbilityNoStatLoss + 0x8
-			-- Synchronize ; Water Vail (Prevents burn)
-			GS.ABILITIES.ATTACKER[0x082db66f + 0x5] = {[28] = true; [41] = true} -- BattleScript_BRNPrevention + 0x5
-			-- Limber ; Synchronize (Prevents paralysis)
-			GS.ABILITIES.ATTACKER[0x082db693 + 0x5] = {[7] = true; [28] = true} -- BattleScript_PRLZPrevention + 0x5
-			-- Immunity ; Synchronize (Prevents poison)
-			GS.ABILITIES.ATTACKER[0x082db6b7 + 0x5] = {[17] = true; [28] = true} -- BattleScript_PSNPrevention + 0x5
-			-- Oblivious
-			GS.ABILITIES.ATTACKER[0x082db6cf + 0x8] = {[12] = true} -- BattleScript_ObliviousPreventsAttraction + 0x8
-			-- Inner Focus
-			GS.ABILITIES.ATTACKER[0x082db6df + 0x8] = {[39] = true} -- BattleScript_FlinchPrevention + 0x8
-			-- Own Tempo
-			GS.ABILITIES.ATTACKER[0x082db6ef + 0x8] = {[20] = true} -- BattleScript_OwnTempoPrevents + 0x8
-			-- Soundproof (General)
-			GS.ABILITIES.BATTLE_TARGET[0x082db6ff + 0xa] = {[43] = true, scope = "self"} -- BattleScript_SoundproofProtected + 0xa
-			-- Keen Eye; Hyper Cutter
-			GS.ABILITIES.BATTLER[0x082db711 + 0x8] = {[51] = true, [52] = true} -- BattleScript_AbilityNoSpecificStatLoss + 0x8
-			-- Sticky Hold
-			GS.ABILITIES.ATTACKER[0x082db723 + 0x8] = {[60] = true} -- BattleScript_StickyHoldActivates + 0x8
-			-- Color Change
-			GS.ABILITIES.ATTACKER[0x082db733 + 0x8] = {[16] = true} -- BattleScript_ColorChangeActivates + 0x8
-			-- Rough Skin
-			GS.ABILITIES.ATTACKER[0x082db73f + 0x15] = {[24] = true} -- BattleScript_RoughSkinActivates + 0x15
-			-- Cute Charm
-			GS.ABILITIES.ATTACKER[0x082db75f + 0xe] = {[56] = true} -- BattleScript_CuteCharmActivates + 0xe
-			-- Truant
-			GS.ABILITIES.REVERSE_ATTACKER[0x082db7cb + 0x5] = {[54] = true} -- BattleScript_MoveUsedLoafingAroundMsg + 0x5
-		end
+		-- Insomnia ; Vital Spirit
+		GS.ABILITIES.ATTACKER[Memory.read32(0x08000348) + 0x5] = {[15] = true, [72] = true} -- BattleScript_CantMakeAsleep
+		-- Liquid Ooze (Drain Moves)
+		GS.ABILITIES.ATTACKER[Memory.read32(0x0800034c) + 0x14] = {[64] = true} -- BattleScript_AbsorbUpdateHp
+		-- Insomnia ; Vital Spirit (Rest)
+		GS.ABILITIES.REVERSE_ATTACKER[Memory.read32(0x08000350) + 0x5] = {[15] = true, [72] = true} -- BattleScript_RestCantSleep
+		-- Soundproof (Enemy uses Heal Bell)
+		GS.ABILITIES.BATTLE_TARGET[Memory.read32(0x08000354) + 0x2c] = {[43] = true, scope = "self"} -- BattleScript_EffectHealBell
+		-- Soundproof (Perish Song)
+		GS.ABILITIES.BATTLER[Memory.read32(0x08000358) + 0x8] = {[43] = true} -- BattleScript_PerishSongNotAffected
+		-- Insomnia ; Vital Spirit (Yawn)
+		GS.ABILITIES.ATTACKER[Memory.read32(0x0800035c) + 0x8] = {[15] = true, [72] = true} -- BattleScript_PrintAbilityMadeIneffective
+		-- Liquid Ooze (Leech Seed)
+		GS.ABILITIES.BATTLE_TARGET[Memory.read32(0x08000360) + 0x12] = {[64] = true, scope = "other"} -- BattleScript_LeechSeedTurnPrintAndUpdateHp
+		-- Effect Spore (Sleep)
+		GS.ABILITIES.STATUS_INFLICT[Memory.read32(0x08000364) + 0x7] = {[27] = true} -- BattleScript_MoveEffectSleep
+		-- Effect Spore ; Synchronize ; Poison Point (Poison)
+		GS.ABILITIES.STATUS_INFLICT[Memory.read32(0x08000368) + 0x7] = {[27] = true, [28] = true, [38] = true} -- BattleScript_MoveEffectPoison
+		-- Synchronize ; Flame Body (Burn)
+		GS.ABILITIES.STATUS_INFLICT[Memory.read32(0x0800036c) + 0x7] = {[28] = true, [49] = true} -- BattleScript_MoveEffectBurn
+		-- Static ; Effect Spore ; Synchronize (Paralysis)
+		GS.ABILITIES.STATUS_INFLICT[Memory.read32(0x08000370) + 0x7] = {[9] = true, [27] = true, [28] = true} -- BattleScript_MoveEffectParalysis
+		-- Drizzle
+		GS.ABILITIES.BATTLER[Memory.read32(0x08000374) + 0x9] = {[2] = true} -- BattleScript_DrizzleActivates
+		-- Speed Boost
+		GS.ABILITIES.BATTLER[Memory.read32(0x08000378) + 0xc] = {[3] = true} -- BattleScript_SpeedBoostActivates
+		-- Trace
+		GS.ABILITIES.BATTLER[Memory.read32(0x0800037c) + 0x9] = {[36] = true} -- BattleScript_TraceActivates
+		-- Rain Dish
+		GS.ABILITIES.REVERSE_ATTACKER[Memory.read32(0x08000380) + 0x5] = {[44] = true} -- BattleScript_RainDishActivates
+		-- Sand Stream
+		GS.ABILITIES.BATTLER[Memory.read32(0x08000384) + 0x9] = {[45] = true} -- BattleScript_SandstreamActivates
+		-- Shed Skin
+		GS.ABILITIES.BATTLER[Memory.read32(0x08000388) + 0x8] = {[61] = true} -- BattleScript_ShedSkinActivates
+		-- Intimidate Success
+		GS.ABILITIES.BATTLER[Memory.read32(0x0800038c) + 0x45] = {[22] = true} -- FR: BattleScript_IntimidateActivationAnimLoop ; Em: BattleScript_IntimidateActivatesLoop
+		-- Intimidate Fail
+		GS.ABILITIES.BATTLER[Memory.read32(0x08000390)] = {[22] = true} -- FR: BattleScript_IntimidateAbilityFail_End ; Em: BattleScript_IntimidatePrevented_End
+		GS.ABILITIES.REVERSE_BATTLER[Memory.read32(0x08000390)] = {[29] = true, [52] = true, [73] = true} -- Clear Body ; Hyper Cutter ; White Smoke
+		-- Drought
+		GS.ABILITIES.BATTLER[Memory.read32(0x08000394) + 0x9] = {[70] = true} -- BattleScript_DroughtActivates
+		-- Lightning Rod
+		GS.ABILITIES.ATTACKER[Memory.read32(0x08000398) + 0x9] = {[31] = true} -- BattleScript_TookAttack
+		-- Sturdy
+		GS.ABILITIES.ATTACKER[Memory.read32(0x0800039c) + 0x8] = {[5] = true} -- BattleScript_SturdyPreventsOHKO
+		-- Damp
+		GS.ABILITIES.BATTLE_TARGET[Memory.read32(0x080003a0) + 0x8] = {[6] = true, scope = "both"} -- BattleScript_DampStopsExplosion
+		-- Volt Absorb ; Water Absorb (Heals HP)
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003a4) + 0x16] = {[10] = true; [11] = true} -- BattleScript_MoveHPDrain
+		-- Volt Absorb ; Water Absorb (Nullifies move)
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003a8) + 0x9] = {[10] = true; [11] = true} -- BattleScript_MonMadeMoveUseless
+		-- Flash Fire
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003ac) + 0xb] = {[18] = true} -- BattleScript_FlashFireBoost
+		-- Suction Cups
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003b0) + 0x8] = {[21] = true} -- BattleScript_AbilityPreventsPhasingOut
+		-- Clear Body ; White Smoke
+		GS.ABILITIES.BATTLER[Memory.read32(0x080003b4) + 0x8] = {[29] = true; [73] = true} -- BattleScript_AbilityNoStatLoss
+		-- Synchronize ; Water Vail (Prevents burn)
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003b8) + 0x5] = {[28] = true; [41] = true} -- BattleScript_BRNPrevention
+		-- Limber ; Synchronize (Prevents paralysis)
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003bc) + 0x5] = {[7] = true; [28] = true} -- BattleScript_PRLZPrevention
+		-- Immunity ; Synchronize (Prevents poison)
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003c0) + 0x5] = {[17] = true; [28] = true} -- BattleScript_PSNPrevention
+		-- Oblivious
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003c4) + 0x8] = {[12] = true} -- BattleScript_ObliviousPreventsAttraction
+		-- Inner Focus
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003c8) + 0x8] = {[39] = true} -- BattleScript_FlinchPrevention
+		-- Own Tempo
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003cc) + 0x8] = {[20] = true} -- BattleScript_OwnTempoPrevents
+		-- Soundproof (General)
+		GS.ABILITIES.BATTLE_TARGET[Memory.read32(0x080003d0) + 0xa] = {[43] = true, scope = "self"} -- BattleScript_SoundproofProtected
+		-- Keen Eye; Hyper Cutter
+		GS.ABILITIES.BATTLER[Memory.read32(0x080003d4) + 0x8] = {[51] = true, [52] = true} -- BattleScript_AbilityNoSpecificStatLoss
+		-- Sticky Hold
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003d8) + 0x8] = {[60] = true} -- BattleScript_StickyHoldActivates
+		-- Color Change
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003dc) + 0x8] = {[16] = true} -- BattleScript_ColorChangeActivates
+		-- Rough Skin
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003e0) + 0x15] = {[24] = true} -- BattleScript_RoughSkinActivates
+		-- Cute Charm
+		GS.ABILITIES.ATTACKER[Memory.read32(0x080003e4) + 0xe] = {[56] = true} -- BattleScript_CuteCharmActivates
+		-- Truant
+		GS.ABILITIES.REVERSE_ATTACKER[Memory.read32(0x080003e8) + 0x5] = {[54] = true} -- FR: BattleScript_MoveUsedLoafingAround ; Em: BattleScript_MoveUsedLoafingAroundMsg
 	end
 
 	function self.updateFriendshipValues()
