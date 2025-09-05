@@ -1,7 +1,7 @@
 local function NatDexExtension()
 	local self = {
 		version = "1.2.0",
-		version_fake = "1.1.3-r166" -- temporary, for game over screen
+		version_fake = "1.1.3-r166", -- temporary, for game over screen
 		name = "Nat. Dex",
 		author = "CyanSixFour, UTDZac",
 		description = "Extension that allows for compatibility with the Emerald & FireRed Nat. Dex ROM hacks.",
