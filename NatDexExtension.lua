@@ -1,7 +1,6 @@
 local function NatDexExtension()
 	local self = {
 		version = "1.2.0",
-		version_fake = "1.1.3-r166", -- temporary, for game over screen
 		name = "Nat. Dex",
 		author = "CyanSixFour, UTDZac",
 		description = "Extension that allows for compatibility with the Emerald & FireRed Nat. Dex ROM hacks.",
@@ -12,6 +11,10 @@ local function NatDexExtension()
     	isNatDex = false, -- a stored verification check if this game rom is a nat. dex game rom
 		allowWarningPopup = true, -- if tracker doesn't support this extension, popup a warning
 		monCountAddress = 0x08000170,
+		romVersionMajorAddr = 0x0800048c,
+		romVersionMinorAddr = 0x0800048d,
+		romVersionPatchAddr = 0x0800048e,
+		romVersionBuildAddr = 0x08000490,
 	}
 	self.url = string.format("https://github.com/%s", self.github or "")
 
@@ -61,7 +64,7 @@ local function NatDexExtension()
 	-- Returns true if the loaded game rom is a Nat. Dex game rom
 	function self.checkIfNatDexROM()
 		local natDexMonCount = Memory.read32(self.monCountAddress)
-		return (natDexMonCount == 1210)
+		return (natDexMonCount == 1258)
     end
 
 	function self.buildExtensionPaths()
@@ -106,6 +109,18 @@ local function NatDexExtension()
 
 		self.currentDexMapNationalToInternal = PokemonData.dexMapNationalToInternal
 		PokemonData.dexMapNationalToInternal = self.overrideDexMapNationalToInternal
+
+		self.currentTrackAbility = Tracker.TrackAbility
+		Tracker.TrackAbility = self.overrideTrackAbility
+
+		self.currentSetAbilities = Tracker.setAbilities
+		Tracker.setAbilities = self.overrideSetAbilities
+
+		self.currentTrackStatMarking = Tracker.TrackStatMarking
+		Tracker.TrackStatMarking = self.overrideTrackStatMarking
+
+		self.currentTrackMove = Tracker.TrackMove
+		Tracker.TrackMove = self.overrideTrackMove
 	end
 
 	function self.undoOverrideCoreTrackerFunctions()
@@ -120,6 +135,476 @@ local function NatDexExtension()
 		end
 		if type(self.currentDexMapNationalToInternal) == "function" then
 			PokemonData.dexMapNationalToInternal = self.currentDexMapNationalToInternal
+		end
+		if type(self.currentTrackAbility) == "function" then
+			Tracker.TrackAbility = self.currentTrackAbility
+		end
+		if type(self.currentSetAbilities) == "function" then
+			Tracker.setAbilities = self.currentSetAbilities
+		end
+		if type(self.currentTrackStatMarking) == "function" then
+			Tracker.TrackStatMarking = self.currentTrackStatMarking
+		end
+		if type(self.currentTrackMove) == "function" then
+			Tracker.TrackMove = self.currentTrackMove
+		end
+	end
+
+	self.LinkedAbilityGroups = {
+		{ 25, 1156, }, -- Pikachu -C
+		{ 172, 1161, }, -- Pichu -S
+		{ 385, 1162, 1163, 1164, }, -- Castform -F -W -I
+		{ 410, 1165, 1166, 1167, }, -- Deoxys -A -D -S
+		{ 437, 1168, 1169, }, -- Burmy -S -T
+		{ 438, 1170, 1171, }, -- Wormadam -S -T
+		{ 446, 1172, }, -- Cherrim -S
+		{ 504, 1173, 1174, 1175, 1176, 1177, }, -- Rotom -Heat -Wash -Frost -Fan -Mow
+		{ 508, 1178, }, -- Dialga -O
+		{ 509, 1179, }, -- Palkia -O
+		{ 580, 1184, }, -- Darmanitan -Z
+		{ 673, 1191, }, -- Meloetta -P
+		{ 695, 1193, }, -- Floette -E
+		{ 706, 1195, }, -- Aegislash -B
+		{ 735, 1196, 1197, 1198, }, -- Pumpkaboo -S -L -J
+		{ 736, 1199, 1200, 1201, }, -- Gourgeist -S -L -J
+		{ 743, 1202, }, -- Zygarde -10
+		{ 745, 1204, }, -- Hoopa -U
+		{ 766, 1205, 1206, 1207, }, -- Oricorio -E -P -G
+		{ 771, 1210, }, -- Wishiwashi -S
+		{ 799, 1211, }, -- Minior -C
+		{ 825, 1212, 1213, }, -- Necrozma -DM -DW
+		{ 900, 1216, }, -- Eiscue -N
+		{ 902, 1218, }, -- Morpeko -H
+		{ 913, 1219, }, -- Zacian -C
+		{ 914, 1220, }, -- Zamazenta -C
+		{ 915, 1221, }, -- Eternatus -E
+		{ 917, 1222, }, -- Urshifu -R
+		{ 927, 1226, }, -- Basculegion -F
+		{ 989, 1229, }, -- Palafin -H
+		{ 1135, 1185, }, -- Darmanitan-G -GZ
+		{ 1192, 1236, }, -- Greninja-A -B
+	}
+
+	self.LinkedManualHpGroups = {
+		{ 3, 1051, }, -- Venusaur -M
+		{ 6, 1052, 1053, }, -- Charizard -X -Y
+		{ 9, 1054, }, -- Blastoise -M
+		{ 15, 1055, }, -- Beedrill -M
+		{ 18, 1056, }, -- Pidgeot -M
+		{ 26, 1264, 1265, }, -- Raichu -X -Y
+		{ 36, 1238, }, -- Clefable -M
+		{ 65, 1057, }, -- Alakazam -M
+		{ 71, 1239, }, -- Victreebel -M
+		{ 80, 1058, }, -- Slowbro -M
+		{ 94, 1059, }, -- Gengar -M
+		{ 115, 1060, }, -- Kangaskhan -M
+		{ 121, 1240, }, -- Starmie -M
+		{ 127, 1061, }, -- Pinsir -M
+		{ 130, 1062, }, -- Gyarados -M
+		{ 142, 1063, }, -- Aerodactyl -M
+		{ 149, 1241, }, -- Dragonite -M
+		{ 150, 1064, 1065, }, -- Mewtwo -X -Y
+		{ 154, 1242, }, -- Meganium -M
+		{ 160, 1243, }, -- Feraligatr -M
+		{ 181, 1066, }, -- Ampharos -M
+		{ 208, 1067, }, -- Steelix -M
+		{ 212, 1068, }, -- Scizor -M
+		{ 214, 1069, }, -- Heracross -M
+		{ 227, 1244, }, -- Skarmory -M
+		{ 229, 1070, }, -- Houndoom -M
+		{ 248, 1071, }, -- Tyranitar -M
+		{ 279, 1072, }, -- Sceptile -M
+		{ 282, 1073, }, -- Blaziken -M
+		{ 285, 1074, }, -- Swampert -M
+		{ 322, 1076, }, -- Sableye -M
+		{ 331, 1081, }, -- Sharpedo -M
+		{ 338, 1080, }, -- Manectric -M
+		{ 340, 1082, }, -- Camerupt -M
+		{ 347, 1086, }, -- Glalie -M
+		{ 355, 1077, }, -- Mawile -M
+		{ 357, 1079, }, -- Medicham -M
+		{ 359, 1083, }, -- Altaria -M
+		{ 376, 1085, 1267, }, -- Absol -M -Z
+		{ 378, 1084, }, -- Banette -M
+		{ 384, 1078, }, -- Aggron -M
+		{ 394, 1075, }, -- Gardevoir -M
+		{ 397, 1087, }, -- Salamence -M
+		{ 400, 1088, }, -- Metagross -M
+		{ 404, 1099, }, -- Kyogre -P
+		{ 405, 1100, }, -- Groudon -P
+		{ 406, 1098, }, -- Rayquaza -M
+		{ 407, 1089, }, -- Latias -M
+		{ 408, 1090, }, -- Latios -M
+		{ 410, 1165, 1166, 1167, }, -- Deoxys -A -D -S
+		{ 411, 1266, }, -- Chimecho -M
+		{ 423, 1268, }, -- Staraptor -M
+		{ 453, 1091, }, -- Lopunny -M
+		{ 470, 1092, 1269, }, -- Garchomp -M -Z
+		{ 473, 1093, 1270, }, -- Lucario -M -Z
+		{ 485, 1094, }, -- Abomasnow -M
+		{ 500, 1095, }, -- Gallade -M
+		{ 503, 1245, }, -- Froslass -M
+		{ 504, 1173, 1174, 1175, 1176, 1177, }, -- Rotom -Heat -Wash -Frost -Fan -Mow
+		{ 508, 1178, }, -- Dialga -O
+		{ 509, 1179, }, -- Palkia -O
+		{ 510, 1271, }, -- Heatran -M
+		{ 512, 1180, }, -- Giratina -O
+		{ 516, 1272, }, -- Darkrai -M
+		{ 517, 1181, }, -- Shaymin -S
+		{ 525, 1246, }, -- Emboar -M
+		{ 555, 1247, }, -- Excadrill -M
+		{ 556, 1096, }, -- Audino -M
+		{ 570, 1248, }, -- Scolipede -M
+		{ 580, 1184, }, -- Darmanitan -Z
+		{ 585, 1249, }, -- Scrafty -M
+		{ 629, 1250, }, -- Eelektross -M
+		{ 634, 1251, }, -- Chandelure -M
+		{ 648, 1273, }, -- Golurk -M
+		{ 666, 1186, }, -- Tornadus -T
+		{ 667, 1187, }, -- Thundurus -T
+		{ 670, 1188, }, -- Landorus -T
+		{ 671, 1189, 1190, }, -- Kyurem -W -B
+		{ 673, 1191, }, -- Meloetta -P
+		{ 677, 1252, }, -- Chesnaught -M
+		{ 680, 1253, }, -- Delphox -M
+		{ 683, 1192, 1254, }, -- Greninja -A -M
+		{ 693, 1255, }, -- Pyroar -M
+		{ 703, 1274, }, -- Meowstic -M
+		{ 706, 1195, }, -- Aegislash -B
+		{ 712, 1257, }, -- Malamar -M
+		{ 714, 1258, }, -- Barbaracle -M
+		{ 716, 1259, }, -- Dragalge -M
+		{ 726, 1260, }, -- Hawlucha -M
+		{ 744, 1097, }, -- Diancie -M
+		{ 745, 1204, }, -- Hoopa -U
+		{ 765, 1275, }, -- Crabominable -M
+		{ 771, 1210, }, -- Wishiwashi -S
+		{ 793, 1276, }, -- Golisopod -M
+		{ 799, 1211, }, -- Minior -C
+		{ 805, 1262, }, -- Drampa -M
+		{ 825, 1212, 1213, 1214, }, -- Necrozma -DM -DW -U
+		{ 826, 1277, }, -- Magearna -M
+		{ 832, 1278, }, -- Zeraora -M
+		{ 895, 1263, }, -- Falinks -M
+		{ 900, 1216, }, -- Eiscue -N
+		{ 913, 1219, }, -- Zacian -C
+		{ 914, 1220, }, -- Zamazenta -C
+		{ 930, 1227, }, -- Enamorus -T
+		{ 977, 1279, }, -- Scovillain -M
+		{ 989, 1229, }, -- Palafin -H
+		{ 995, 1280, }, -- Glimmora -M
+		{ 1003, 1281, }, -- Tatsugiri -M
+		{ 1023, 1282, }, -- Baxcalibur -M
+		{ 1135, 1185, }, -- Darmanitan-G -GZ
+		{ 1193, 1256, }, -- Floette-E -M
+		{ 1194, 1283, }, -- Meowstic-F -F-M
+		{ 1203, 1261, }, -- Zygarde-C -M
+	}
+
+	self.LinkedManualAllStatGroups = {
+		{ 25, 1156, }, -- Pikachu -C
+		{ 172, 1161, }, -- Pichu -S
+		{ 385, 1162, 1163, 1164, }, -- Castform -F -W -I
+		{ 437, 1168, 1169, }, -- Burmy -S -T
+		{ 446, 1172, }, -- Cherrim -S
+		{ 575, 1182, 1183, }, -- Basculin -B -W
+		{ 683, 1236, }, -- Greninja -B
+		{ 703, 1194, }, -- Meowstic -F
+		{ 766, 1205, 1206, 1207, }, -- Oricorio -E -P -G
+		{ 874, 1215, }, -- Toxtricity -L
+		{ 902, 1218, }, -- Morpeko -H
+		{ 917, 1222, }, -- Urshifu -R
+		{ 956, 1237, }, -- Squawkabilly-W
+		{ 1042, 1231, 1232, 1233, }, -- Ogerpon -W -F -R
+		{ 1173, 1174, 1175, 1176, 1177, }, -- Rotom-Heat -Wash -Frost -Fan -Mow
+		{ 1274, 1283, }, -- Meowstic-M -F-M
+	}
+
+	self.LinkedTrackedMoveGroups = {
+		{ 3, 1051, }, -- Venusaur -M
+		{ 6, 1052, 1053, }, -- Charizard -X -Y
+		{ 9, 1054, }, -- Blastoise -M
+		{ 15, 1055, }, -- Beedrill -M
+		{ 18, 1056, }, -- Pidgeot -M
+		{ 25, 1156, }, -- Pikachu -C
+		{ 26, 1264, 1265, }, -- Raichu -X -Y
+		{ 36, 1238, }, -- Clefable -M
+		{ 65, 1057, }, -- Alakazam -M
+		{ 71, 1239, }, -- Victreebel -M
+		{ 80, 1058, }, -- Slowbro -M
+		{ 94, 1059, }, -- Gengar -M
+		{ 115, 1060, }, -- Kangaskhan -M
+		{ 121, 1240, }, -- Starmie -M
+		{ 127, 1061, }, -- Pinsir -M
+		{ 130, 1062, }, -- Gyarados -M
+		{ 142, 1063, }, -- Aerodactyl -M
+		{ 149, 1241, }, -- Dragonite -M
+		{ 150, 1064, 1065, }, -- Mewtwo -X -Y
+		{ 154, 1242, }, -- Meganium -M
+		{ 160, 1243, }, -- Feraligatr -M
+		{ 172, 1161, }, -- Pichu -S
+		{ 181, 1066, }, -- Ampharos -M
+		{ 208, 1067, }, -- Steelix -M
+		{ 212, 1068, }, -- Scizor -M
+		{ 214, 1069, }, -- Heracross -M
+		{ 227, 1244, }, -- Skarmory -M
+		{ 229, 1070, }, -- Houndoom -M
+		{ 248, 1071, }, -- Tyranitar -M
+		{ 279, 1072, }, -- Sceptile -M
+		{ 282, 1073, }, -- Blaziken -M
+		{ 285, 1074, }, -- Swampert -M
+		{ 322, 1076, }, -- Sableye -M
+		{ 331, 1081, }, -- Sharpedo -M
+		{ 338, 1080, }, -- Manectric -M
+		{ 340, 1082, }, -- Camerupt -M
+		{ 347, 1086, }, -- Glalie -M
+		{ 355, 1077, }, -- Mawile -M
+		{ 357, 1079, }, -- Medicham -M
+		{ 359, 1083, }, -- Altaria -M
+		{ 376, 1085, 1267, }, -- Absol -M -Z
+		{ 378, 1084, }, -- Banette -M
+		{ 384, 1078, }, -- Aggron -M
+		{ 385, 1162, 1163, 1164, }, -- Castform -F -W -I
+		{ 394, 1075, }, -- Gardevoir -M
+		{ 397, 1087, }, -- Salamence -M
+		{ 400, 1088, }, -- Metagross -M
+		{ 404, 1099, }, -- Kyogre -P
+		{ 405, 1100, }, -- Groudon -P
+		{ 406, 1098, }, -- Rayquaza -M
+		{ 407, 1089, }, -- Latias -M
+		{ 408, 1090, }, -- Latios -M
+		{ 411, 1266, }, -- Chimecho -M
+		{ 423, 1268, }, -- Staraptor -M
+		{ 437, 1168, 1169, }, -- Burmy -S -T
+		{ 446, 1172, }, -- Cherrim -S
+		{ 453, 1091, }, -- Lopunny -M
+		{ 470, 1092, 1269, }, -- Garchomp -M -Z
+		{ 473, 1093, 1270, }, -- Lucario -M -Z
+		{ 485, 1094, }, -- Abomasnow -M
+		{ 500, 1095, }, -- Gallade -M
+		{ 503, 1245, }, -- Froslass -M
+		{ 504, 1173, 1174, 1175, 1176, 1177, }, -- Rotom -Heat -Wash -Frost -Fan -Mow
+		{ 508, 1178, }, -- Dialga -O
+		{ 509, 1179, }, -- Palkia -O
+		{ 510, 1271, }, -- Heatran -M
+		{ 512, 1180, }, -- Giratina -O
+		{ 516, 1272, }, -- Darkrai -M
+		{ 525, 1246, }, -- Emboar -M
+		{ 555, 1247, }, -- Excadrill -M
+		{ 556, 1096, }, -- Audino -M
+		{ 570, 1248, }, -- Scolipede -M
+		{ 575, 1182, }, -- Basculin -B
+		{ 585, 1249, }, -- Scrafty -M
+		{ 629, 1250, }, -- Eelektross -M
+		{ 634, 1251, }, -- Chandelure -M
+		{ 648, 1273, }, -- Golurk -M
+		{ 666, 1186, }, -- Tornadus -T
+		{ 667, 1187, }, -- Thundurus -T
+		{ 670, 1188, }, -- Landorus -T
+		{ 673, 1191, }, -- Meloetta -P
+		{ 677, 1252, }, -- Chesnaught -M
+		{ 680, 1253, }, -- Delphox -M
+		{ 683, 1192, 1236, 1254, }, -- Greninja -A -B -M
+		{ 693, 1255, }, -- Pyroar -M
+		{ 703, 1274, }, -- Meowstic -M
+		{ 712, 1257, }, -- Malamar -M
+		{ 714, 1258, }, -- Barbaracle -M
+		{ 716, 1259, }, -- Dragalge -M
+		{ 726, 1260, }, -- Hawlucha -M
+		{ 706, 1195, }, -- Aegislash -B
+		{ 735, 1196, 1197, 1198, }, -- Pumpkaboo -S -L -J
+		{ 736, 1199, 1200, 1201, }, -- Gourgeist -S -L -J
+		{ 743, 1202, 1203, 1261, }, -- Zygarde -10 -C -M
+		{ 744, 1097, }, -- Diancie -M
+		{ 765, 1275, }, -- Crabominable -M
+		{ 766, 1205, 1206, 1207, }, -- Oricorio -E -P -G
+		{ 771, 1210, }, -- Wishiwashi -S
+		{ 793, 1276, }, -- Golisopod -M
+		{ 799, 1211, }, -- Minior -C
+		{ 805, 1262, }, -- Drampa -M
+		{ 825, 1212, 1213, 1214, }, -- Necrozma -DM -DW -U
+		{ 826, 1277, }, -- Magearna -M
+		{ 832, 1278, }, -- Zeraora -M
+		{ 895, 1263, }, -- Falinks -M
+		{ 900, 1216, }, -- Eiscue -N
+		{ 902, 1218, }, -- Morpeko -H
+		{ 913, 1219, }, -- Zacian -C
+		{ 914, 1220, }, -- Zamazenta -C
+		{ 915, 1221, }, -- Eternatus -E
+		{ 927, 1226, }, -- Basculegion -F
+		{ 930, 1227, }, -- Enamorus -T
+		{ 956, 1237, }, -- Squawkabilly-W
+		{ 977, 1279, }, -- Scovillain -M
+		{ 989, 1229, }, -- Palafin -H
+		{ 995, 1280, }, -- Glimmora -M
+		{ 1003, 1281, }, -- Tatsugiri -M
+		{ 1023, 1282, }, -- Baxcalibur -M
+		{ 1024, 1230, }, -- Gimmighoul -R
+		{ 1042, 1231, 1232, 1233, }, -- Ogerpon -W -F -R
+		{ 1049, 1234, 1235, }, -- Terapagos -T -S
+		{ 1193, 1256, }, -- Floette-E -M
+		{ 1194, 1283, }, -- Meowstic-F -F-M
+	}
+
+	self.LinkedAbilitySpecies = {}
+	for groupIndex, speciesGroup in ipairs(self.LinkedAbilityGroups) do
+		for _, speciesId in ipairs(speciesGroup) do
+			self.LinkedAbilitySpecies[speciesId] = groupIndex
+		end
+	end
+
+	self.LinkedManualHpSpecies = {}
+	for groupIndex, speciesGroup in ipairs(self.LinkedManualHpGroups) do
+		for _, speciesId in ipairs(speciesGroup) do
+			self.LinkedManualHpSpecies[speciesId] = groupIndex
+		end
+	end
+
+	self.LinkedManualAllStatSpecies = {}
+	for groupIndex, speciesGroup in ipairs(self.LinkedManualAllStatGroups) do
+		for _, speciesId in ipairs(speciesGroup) do
+			self.LinkedManualAllStatSpecies[speciesId] = groupIndex
+		end
+	end
+
+	self.LinkedTrackedMoveSpecies = {}
+	for groupIndex, speciesGroup in ipairs(self.LinkedTrackedMoveGroups) do
+		for _, speciesId in ipairs(speciesGroup) do
+			self.LinkedTrackedMoveSpecies[speciesId] = groupIndex
+		end
+	end
+
+	function self.shouldLinkAbilities(pokemonID)
+		return self.LinkedAbilitySpecies[pokemonID or 0] ~= nil
+	end
+
+	function self.getLinkedAbilityGroupSpecies(pokemonID)
+		local groupIndex = self.LinkedAbilitySpecies[pokemonID or 0]
+		if groupIndex == nil then
+			return nil
+		end
+		return self.LinkedAbilityGroups[groupIndex]
+	end
+
+	function self.getLinkedManualHpGroupSpecies(pokemonID)
+		local groupIndex = self.LinkedManualHpSpecies[pokemonID or 0]
+		if groupIndex == nil then
+			return nil
+		end
+		return self.LinkedManualHpGroups[groupIndex]
+	end
+
+	function self.getLinkedManualAllStatGroupSpecies(pokemonID)
+		local groupIndex = self.LinkedManualAllStatSpecies[pokemonID or 0]
+		if groupIndex == nil then
+			return nil
+		end
+		return self.LinkedManualAllStatGroups[groupIndex]
+	end
+
+	function self.getLinkedTrackedMoveGroupSpecies(pokemonID)
+		local groupIndex = self.LinkedTrackedMoveSpecies[pokemonID or 0]
+		if groupIndex == nil then
+			return nil
+		end
+		return self.LinkedTrackedMoveGroups[groupIndex]
+	end
+
+	function self.overrideTrackAbility(pokemonID, abilityId)
+		if type(self.currentTrackAbility) ~= "function" then
+			return
+		end
+
+		self.currentTrackAbility(pokemonID, abilityId)
+
+		if not self.shouldLinkAbilities(pokemonID) then
+			return
+		end
+
+		local linkedSpecies = self.getLinkedAbilityGroupSpecies(pokemonID)
+		if linkedSpecies == nil then
+			return
+		end
+
+		for _, linkedSpeciesId in ipairs(linkedSpecies) do
+			if linkedSpeciesId ~= pokemonID then
+				self.currentTrackAbility(linkedSpeciesId, abilityId)
+			end
+		end
+	end
+
+	function self.overrideSetAbilities(pokemonID, abilityOneText, abilityTwoText)
+		if type(self.currentSetAbilities) ~= "function" then
+			return
+		end
+
+		self.currentSetAbilities(pokemonID, abilityOneText, abilityTwoText)
+
+		if not self.shouldLinkAbilities(pokemonID) then
+			return
+		end
+
+		local linkedSpecies = self.getLinkedAbilityGroupSpecies(pokemonID)
+		if linkedSpecies == nil then
+			return
+		end
+
+		for _, linkedSpeciesId in ipairs(linkedSpecies) do
+			if linkedSpeciesId ~= pokemonID then
+				self.currentSetAbilities(linkedSpeciesId, abilityOneText, abilityTwoText)
+			end
+		end
+	end
+
+	function self.overrideTrackStatMarking(pokemonID, statStage, statState)
+		if type(self.currentTrackStatMarking) ~= "function" then
+			return
+		end
+
+		self.currentTrackStatMarking(pokemonID, statStage, statState)
+
+		local linkedAllStatSpecies = self.getLinkedManualAllStatGroupSpecies(pokemonID)
+		if linkedAllStatSpecies ~= nil then
+			for _, linkedSpeciesId in ipairs(linkedAllStatSpecies) do
+				if linkedSpeciesId ~= pokemonID then
+					self.currentTrackStatMarking(linkedSpeciesId, statStage, statState)
+				end
+			end
+			return
+		end
+
+		if statStage ~= "hp" then
+			return
+		end
+
+		local linkedSpecies = self.getLinkedManualHpGroupSpecies(pokemonID)
+		if linkedSpecies == nil then
+			return
+		end
+
+		for _, linkedSpeciesId in ipairs(linkedSpecies) do
+			if linkedSpeciesId ~= pokemonID then
+				self.currentTrackStatMarking(linkedSpeciesId, statStage, statState)
+			end
+		end
+	end
+
+	function self.overrideTrackMove(pokemonID, moveId, level)
+		if type(self.currentTrackMove) ~= "function" then
+			return
+		end
+
+		self.currentTrackMove(pokemonID, moveId, level)
+
+		local linkedSpecies = self.getLinkedTrackedMoveGroupSpecies(pokemonID)
+		if linkedSpecies == nil then
+			return
+		end
+
+		for _, linkedSpeciesId in ipairs(linkedSpecies) do
+			if linkedSpeciesId ~= pokemonID then
+				self.currentTrackMove(linkedSpeciesId, moveId, level)
+			end
 		end
 	end
 
@@ -369,7 +854,7 @@ local function NatDexExtension()
 		[1081] = "Sharpedo-M"    , [1082] = "Camerupt-M"    , [1083] = "Altaria-M"     , [1084] = "Banette-M"     , [1085] = "Absol-M"       ,
 		[1086] = "Glalie-M"      , [1087] = "Salamence-M"   , [1088] = "Metagross-M"   , [1089] = "Latias-M"      , [1090] = "Latios-M"      ,
 		[1091] = "Lopunny-M"     , [1092] = "Garchomp-M"    , [1093] = "Lucario-M"     , [1094] = "Abomasnow-M"   , [1095] = "Gallade-M"     ,
-		[1096] = "Audino-M"      , [1097] = "Diancie-M"     , [1098] = "Rqyquaza-M"    , [1099] = "Kyogre-P"      , [1100] = "Groudon-P"     ,
+		[1096] = "Audino-M"      , [1097] = "Diancie-M"     , [1098] = "Rayquaza-M"    , [1099] = "Kyogre-P"      , [1100] = "Groudon-P"     ,
 
 		[1101] = "Rattata-A"     , [1102] = "Raticate-A"    , [1103] = "Raichu-A"      , [1104] = "Sandshrew-A"   , [1105] = "Sandslash-A"   ,
 		[1106] = "Vulpix-A"      , [1107] = "Ninetales-A"   , [1108] = "Diglett-A"     , [1109] = "Dugtrio-A"     , [1110] = "Meowth-A"      ,
@@ -391,14 +876,24 @@ local function NatDexExtension()
 		[1181] = "Shaymin-S"     , [1182] = "Basculin-B"    , [1183] = "Basculin-W"    , [1184] = "Darmanitan-Z"  , [1185] = "Darmanitan-GZ" ,
 		[1186] = "Tornadus-T"    , [1187] = "Thundurus-T"   , [1188] = "Landorus-T"    , [1189] = "Kyurem-W"      , [1190] = "Kyurem-B"      ,
 		[1191] = "Meloetta-P"    , [1192] = "Greninja-A"    , [1193] = "Floette-E"     , [1194] = "Meowstic-F"    , [1195] = "Aegislash-B"   ,
-	    [1196] = "Pumpkaboo-S"   , [1197] = "Pumpkaboo-L"   , [1198] = "Pumpkaboo-XL"  , [1199] = "Gourgeist-S"   , [1200] = "Gourgeist-L"   ,
-		[1201] = "Gourgeist-XL"  , [1202] = "Zygarde-10"    , [1203] = "Zygarde-C"     , [1204] = "Hoopa-U"       , [1205] = "Oricorio-E"    ,
+	    [1196] = "Pumpkaboo-S"   , [1197] = "Pumpkaboo-L"   , [1198] = "Pumpkaboo-J"   , [1199] = "Gourgeist-S"   , [1200] = "Gourgeist-L"   ,
+		[1201] = "Gourgeist-J"   , [1202] = "Zygarde-10"    , [1203] = "Zygarde-C"     , [1204] = "Hoopa-U"       , [1205] = "Oricorio-E"    ,
 		[1206] = "Oricorio-P"    , [1207] = "Oricorio-G"    , [1208] = "Lycanroc-M"    , [1209] = "Lycanroc-D"    , [1210] = "Wishiwashi-S"  ,
 		[1211] = "Minior-C"      , [1212] = "Necrozma-DM"   , [1213] = "Necrozma-DW"   , [1214] = "Necrozma-U"    , [1215] = "Toxtricity-L"  ,
 		[1216] = "Eiscue-N"      , [1217] = "Indeedee-F"    , [1218] = "Morpeko-H"     , [1219] = "Zacian-C"      , [1220] = "Zamazenta-C"   ,
 		[1221] = "Eternatus-E"   , [1222] = "Urshifu-R"     , [1223] = "Calyrex-I"     , [1224] = "Calyrex-S"     , [1225] = "Ursaluna-B"    ,
 		[1226] = "Basculegion-F" , [1227] = "Enamorus-T"    , [1228] = "Oinkologne-F"  , [1229] = "Palafin-H"     , [1230] = "Gimmighoul-R"  ,
 		[1231] = "Ogerpon-W"     , [1232] = "Ogerpon-F"     , [1233] = "Ogerpon-R"     , [1234] = "Terapagos-T"   , [1235] = "Terapagos-S"   ,
+		[1236] = "Greninja-B"    , [1237] = "Squawkabilly-W", [1238] = "Clefable-M"    , [1239] = "Victreebel-M"  , [1240] = "Starmie-M"     ,
+		[1241] = "Dragonite-M"   , [1242] = "Meganium-M"    , [1243] = "Feraligatr-M"  , [1244] = "Skarmory-M"    , [1245] = "Froslass-M"    ,
+		[1246] = "Emboar-M"      , [1247] = "Excadrill-M"   , [1248] = "Scolipede-M"   , [1249] = "Scrafty-M"     , [1250] = "Eelektross-M"  ,
+		[1251] = "Chandelure-M"  , [1252] = "Chesnaught-M"  , [1253] = "Delphox-M"     , [1254] = "Greninja-M"    , [1255] = "Pyroar-M"      ,
+		[1256] = "Floette-M"     , [1257] = "Malamar-M"     , [1258] = "Barbaracle-M"  , [1259] = "Dragalge-M"    , [1260] = "Hawlucha-M"    ,
+		[1261] = "Zygarde-M"     , [1262] = "Drampa-M"      , [1263] = "Falinks-M"     , [1264] = "Raichu-X"      , [1265] = "Raichu-Y"      ,
+		[1266] = "Chimecho-M"    , [1267] = "Absol-Z"       , [1268] = "Staraptor-M"   , [1269] = "Garchomp-Z"    , [1270] = "Lucario-Z"     ,
+		[1271] = "Heatran-M"     , [1272] = "Darkrai-M"     , [1273] = "Golurk-M"      , [1274] = "Meowstic-M"    , [1275] = "Crabominable-M",
+		[1276] = "Golisopod-M"   , [1277] = "Magearna-M"    , [1278] = "Zeraora-M"     , [1279] = "Scovillain-M"  , [1280] = "Glimmora-M"    ,
+		[1281] = "Tatsugiri-M"   , [1282] = "Baxcalibur-M"  , [1283] = "Meowstic-F-M"  ,
 	}
 
 	self.Data.moveNameList = {
@@ -1092,7 +1587,7 @@ local function NatDexExtension()
 		},
 		[403] = {
 			NameKey = "Air Slash",
-			Description = "Deals damage and has a 30% chance of causing the target flinch.",
+			Description = "Deals damage and has a 30% chance of causing the target to flinch.",
 		},
 		[404] = {
 			NameKey = "X-Scissor",
@@ -3107,6 +3602,8 @@ local function NatDexExtension()
 		[309] = "Tera Shell",
 		[310] = "Teraform Zero",
 		[311] = "Poison Puppeteer",
+		[312] = "Dragonize",
+		[313] = "Mega Sol",
 	}
 
 	self.Data.natDexAbilityDescriptions = {
@@ -4046,6 +4543,14 @@ local function NatDexExtension()
 			NameKey = "Poison Puppeteer",
 			Description = "Not implemented yet.",
 		},
+		[312] = {
+			NameKey = "Dragonize",
+			Description = "Not implemented yet.",
+		},
+		[313] = {
+			NameKey = "Mega Sol",
+			Description = "Not implemented yet.",
+		},
 	}
 
 	self.Data.natDexEvoStones = {
@@ -4150,6 +4655,18 @@ local function NatDexExtension()
 			name = "Regional Mineral",
 			--icon = "unknown",
 			pocket = MiscData.BagPocket.Items,
+		},
+		[377] = {
+			id = 377,
+			name = "Gracidea",
+			--icon = "unknown",
+			pocket = MiscData.BagPocket.KeyItems,
+		},
+		[378] = {
+			id = 378,
+			name = "Prison Bottle",
+			--icon = "unknown",
+			pocket = MiscData.BagPocket.KeyItems,
 		},
 	}
 
@@ -4258,6 +4775,13 @@ local function NatDexExtension()
 			short = { "Sun", "Leaf", "Dawn", },
 			detailed = { "Sun Stone", "Leaf Stone", "Dawn Stone", },
 			evoItemIds = { 93, 98, 101, },
+		},
+		-- Sun, Leaf or Dawn Stone items
+		SUN_MOON_DUSK = {
+			abbreviation = "SN/MN/DS",
+			short = { "Sun", "Moon", "Dusk", },
+			detailed = { "Sun Stone", "Moon Stone", "Dusk Stone", },
+			evoItemIds = { 93, 94, 100, },
 		},
 		-- Metal Coat or King's Rock items
 		COAT_ROCK = {
@@ -6885,7 +7409,7 @@ local function NatDexExtension()
 		},
 		{
 			name = "Rockruff",
-			evolution = "25",
+			evolution = PokemonData.Evolutions.SUN_MOON_DUSK,
 			bst = 280,
 			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, } },
 			weight = 9.2,
@@ -9272,7 +9796,7 @@ local function NatDexExtension()
 			weight = 27.8,
 		},
 		{
-			name = "Rqyquaza-M",
+			name = "Rayquaza-M",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 780,
 			movelvls = { { 9, 18, 27, 36, 45, 54, 63, 72, 81, 90, }, { 9, 18, 27, 36, 45, 54, 63, 72, 81, 90, } },
@@ -9994,7 +10518,7 @@ local function NatDexExtension()
 			weight = 7.5,
 		},
 		{
-			name = "Pumpkaboo-X",
+			name = "Pumpkaboo-J",
 			evolution = PokemonData.Evolutions.LINKING_CORD,
 			bst = 335,
 			movelvls = { { 4, 8, 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, }, { 4, 8, 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, } },
@@ -10015,7 +10539,7 @@ local function NatDexExtension()
 			weight = 14.0,
 		},
 		{
-			name = "Gourgeist-X",
+			name = "Gourgeist-J",
 			evolution = PokemonData.Evolutions.NONE,
 			bst = 494,
 			movelvls = { { 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, 48, }, { 12, 12, 16, 20, 24, 24, 28, 32, 36, 36, 40, 44, 48, } },
@@ -10270,6 +10794,342 @@ local function NatDexExtension()
 			bst = 700,
 			movelvls = { { 10, 20, 30, 40, 50, 60, 70, 80, 90, }, { 10, 20, 30, 40, 50, 60, 70, 80, 90, } }, 
 			weight = 77.0,
+		},
+		{
+			name = "Greninja-B",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 530,
+			movelvls = { { 10, 14, 19, 23, 28, 33, 42, 49, 56, 68, }, { 10, 14, 19, 23, 28, 33, 42, 49, 56, 68, } },
+			weight = 40.0,
+		},
+		{
+			name = "Squawkabilly-W",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 417,
+			movelvls = { { 6, 10, 13, 17, 20, 24, 27, 30, 34, 38, 42, 47, 52, }, { 6, 10, 13, 17, 20, 24, 27, 30, 34, 38, 42, 47, 52, } },
+			weight = 2.4,
+		},
+		{
+			name = "Clefable-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 583,
+			movelvls = { {  }, {  } },
+			weight = 42.3,
+		},
+		{
+			name = "Victreebel-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 590,
+			movelvls = { { 44, }, { 44, } },
+			weight = 125.5,
+		},
+		{
+			name = "Starmie-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 660,
+			movelvls = { {  }, {  } },
+			weight = 80.0,
+		},
+		{
+			name = "Dragonite-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 700,
+			movelvls = { { 15, 20, 25, 33, 39, 41, 46, 53, 62, 80, }, { 15, 20, 25, 33, 39, 41, 46, 53, 62, 80, } },
+			weight = 290.0,
+		},
+		{
+			name = "Meganium-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 625,
+			movelvls = { { 12, 18, 22, 26, 34, 40, 46, 54, 60, 65, }, { 12, 18, 22, 26, 34, 40, 46, 54, 60, 65, } },
+			weight = 201.0,
+		},
+		{
+			name = "Feraligatr-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 630,
+			movelvls = { { 13, 15, 21, 24, 32, 37, 44, 51, 59, 65, 70, }, { 13, 15, 21, 24, 32, 37, 44, 51, 59, 65, 70, } },
+			weight = 108.8,
+		},
+		{
+			name = "Skarmory-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 565,
+			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, } },
+			weight = 40.4,
+		},
+		{
+			name = "Froslass-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 580,
+			movelvls = { { 15, 20, 25, 30, 35, 40, 47, 54, 61, 68, }, { 15, 20, 25, 30, 35, 40, 47, 54, 61, 68, } },
+			weight = 29.6,
+		},
+		{
+			name = "Emboar-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 628,
+			movelvls = { { 13, 15, 20, 23, 28, 31, 38, 43, 50, 55, 62, }, { 13, 15, 20, 23, 28, 31, 38, 43, 50, 55, 62, } },
+			weight = 180.3,
+		},
+		{
+			name = "Excadrill-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 608,
+			movelvls = { { 12, 16, 20, 24, 28, 34, 40, 46, 52, 58, }, { 12, 16, 20, 24, 28, 34, 40, 46, 52, 58, } },
+			weight = 60.0,
+		},
+		{
+			name = "Scolipede-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 585,
+			movelvls = { { 12, 16, 20, 26, 34, 42, 50, 58, 66, 74, }, { 12, 16, 20, 26, 34, 42, 50, 58, 66, 74, } },
+			weight = 230.5,
+		},
+		{
+			name = "Scrafty-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 588,
+			movelvls = { { 12, 16, 20, 24, 28, 32, 36, 42, 48, 54, 60, }, { 12, 16, 20, 24, 28, 32, 36, 42, 48, 54, 60, } },
+			weight = 31.0,
+		},
+		{
+			name = "Eelektross-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 615,
+			movelvls = { { 5, }, { 5, } },
+			weight = 180.0,
+		},
+		{
+			name = "Chandelure-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 620,
+			movelvls = { {  }, {  } },
+			weight = 69.6,
+		},
+		{
+			name = "Chesnaught-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 630,
+			movelvls = { { 11, 15, 19, 29, 35, 41, 48, 54, 60, 66, 78, }, { 11, 15, 19, 29, 35, 41, 48, 54, 60, 66, 78, } },
+			weight = 90.0,
+		},
+		{
+			name = "Delphox-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 634,
+			movelvls = { { 14, 18, 22, 28, 38, 45, 51, 57, 62, 68, 74, }, { 14, 18, 22, 28, 38, 45, 51, 57, 62, 68, 74, } },
+			weight = 39.0,
+		},
+		{
+			name = "Greninja-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 630,
+			movelvls = { { 10, 14, 19, 23, 28, 33, 42, 49, 56, 68, }, { 10, 14, 19, 23, 28, 33, 42, 49, 56, 68, } },
+			weight = 40.0,
+		},
+		{
+			name = "Pyroar-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 607,
+			movelvls = { { 11, 15, 20, 23, 28, 33, 38, 42, 48, 51, 57, }, { 11, 15, 20, 23, 28, 33, 38, 42, 48, 51, 57, } },
+			weight = 93.3,
+		},
+		{
+			name = "Floette-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 651,
+			movelvls = { { 10, 15, 20, 25, 27, 33, 38, 43, 46, 50, 51, 58, }, { 10, 15, 20, 25, 27, 33, 38, 43, 46, 50, 51, 58, } },
+			weight = 100.8,
+		},
+		{
+			name = "Malamar-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 582,
+			movelvls = { { 9, 12, 15, 18, 21, 24, 27, 33, 37, 42, 47, }, { 9, 12, 15, 18, 21, 24, 27, 33, 37, 42, 47, } },
+			weight = 69.8,
+		},
+		{
+			name = "Barbaracle-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 600,
+			movelvls = { { 12, 16, 20, 24, 28, 32, 36, 42, 48, 54, }, { 12, 16, 20, 24, 28, 32, 36, 42, 48, 54, } },
+			weight = 100.0,
+		},
+		{
+			name = "Dragalge-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 594,
+			movelvls = { { 15, 20, 25, 30, 35, 40, 45, 52, 59, 66, }, { 15, 20, 25, 30, 35, 40, 45, 52, 59, 66, } },
+			weight = 100.3,
+		},
+		{
+			name = "Hawlucha-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 600,
+			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, } },
+			weight = 25.0,
+		},
+		{
+			name = "Zygarde-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 778,
+			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, }, { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, } },
+			weight = 610.0,
+		},
+		{
+			name = "Drampa-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 585,
+			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, } },
+			weight = 240.5,
+		},
+		{
+			name = "Falinks-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 570,
+			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, } },
+			weight = 99.0,
+		},
+		{
+			name = "Raichu-X",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 585,
+			movelvls = { { 5, }, { 5, } },
+			weight = 38.0,
+		},
+		{
+			name = "Raichu-Y",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 585,
+			movelvls = { { 5, }, { 5, } },
+			weight = 26.0,
+		},
+		{
+			name = "Chimecho-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 555,
+			movelvls = { { 13, 16, 19, 22, 27, 32, 37, 42, 47, }, { 13, 16, 19, 22, 27, 32, 37, 42, 47, } },
+			weight = 8.0,
+		},
+		{
+			name = "Absol-Z",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 565,
+			movelvls = { { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, }, { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, } },
+			weight = 49.0,
+		},
+		{
+			name = "Staraptor-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 585,
+			movelvls = { { 13, 18, 23, 28, 33, 41, 49, 57, }, { 13, 18, 23, 28, 33, 41, 49, 57, } },
+			weight = 50.0,
+		},
+		{
+			name = "Garchomp-Z",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 700,
+			movelvls = { { 18, 27, 34, 42, 52, 62, 72, 82, }, { 18, 27, 34, 42, 52, 62, 72, 82, } },
+			weight = 99.0,
+		},
+		{
+			name = "Lucario-Z",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 625,
+			movelvls = { { 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, }, { 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, } },
+			weight = 49.4,
+		},
+		{
+			name = "Heatran-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 700,
+			movelvls = { { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, }, { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, } },
+			weight = 570.0,
+		},
+		{
+			name = "Darkrai-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 700,
+			movelvls = { { 11, 20, 29, 38, 47, 57, 66, 75, 84, 93, }, { 11, 20, 29, 38, 47, 57, 66, 75, 84, 93, } },
+			weight = 240.0,
+		},
+		{
+			name = "Golurk-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 583,
+			movelvls = { { 12, 16, 20, 24, 28, 32, 36, 40, 46, 52, 58, 64, }, { 12, 16, 20, 24, 28, 32, 36, 40, 46, 52, 58, 64, } },
+			weight = 330.0,
+		},
+		{
+			name = "Meowstic-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 566,
+			movelvls = { { 9, 12, 15, 18, 21, 24, 29, 34, 34, 39, 44, 49, 54, 59, }, { 9, 12, 15, 18, 21, 24, 29, 34, 34, 39, 44, 49, 54, 59, } },
+			weight = 10.1,
+		},
+		{
+			name = "Crabominable-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 578,
+			movelvls = { { 17, 22, 25, 29, 33, 37, 42, 45, 49, }, { 17, 22, 25, 29, 33, 37, 42, 45, 49, } },
+			weight = 252.8,
+		},
+		{
+			name = "Golisopod-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 630,
+			movelvls = { { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, }, { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, } },
+			weight = 148.0,
+		},
+		{
+			name = "Magearna-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 700,
+			movelvls = { { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, }, { 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, } },
+			weight = 248.1,
+		},
+		{
+			name = "Zeraora-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 700,
+			movelvls = { { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, }, { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, } },
+			weight = 44.5,
+		},
+		{
+			name = "Scovillain-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 586,
+			movelvls = { { 4, 10, 13, 17, 21, 24, 28, 33, 38, 44, 48, 48, }, { 4, 10, 13, 17, 21, 24, 28, 33, 38, 44, 48, 48, } },
+			weight = 22.0,
+		},
+		{
+			name = "Glimmora-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 625,
+			movelvls = { { 7, 11, 15, 18, 22, 26, 29, 33, 39, 44, 50, }, { 7, 11, 15, 18, 22, 26, 29, 33, 39, 44, 50, } },
+			weight = 77.0,
+		},
+		{
+			name = "Tatsugiri-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 575,
+			movelvls = { { 6, 12, 17, 23, 28, 34, 39, 43, 47, 52, }, { 6, 12, 17, 23, 28, 34, 39, 43, 47, 52, } },
+			weight = 24.0,
+		},
+		{
+			name = "Baxcalibur-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 700,
+			movelvls = { { 6, 12, 18, 24, 29, 35, 42, 48, 55, 62, }, { 6, 12, 18, 24, 29, 35, 42, 48, 55, 62, } },
+			weight = 315.0,
+		},
+		{
+			name = "Meowstic-F-M",
+			evolution = PokemonData.Evolutions.NONE,
+			bst = 566,
+			movelvls = { { 9, 12, 15, 18, 21, 24, 29, 34, 34, 39, 44, 49, 54, 59, }, { 9, 12, 15, 18, 21, 24, 29, 34, 34, 39, 44, 49, 54, 59, } },
+			weight = 10.1,
 		},
 	}
 
@@ -15654,6 +16514,14 @@ local function NatDexExtension()
 			id = 311,
 			name = "Poison Puppeteer",
 		},
+		{
+			id = 312,
+			name = "Dragonize",
+		},
+		{
+			id = 313,
+			name = "Mega Sol",
+		},
 	}
 
 	self.Data.natDexTypes = {
@@ -15847,6 +16715,8 @@ local function NatDexExtension()
 		itemNames[282] = "Key to Room 2"
 		itemNames[283] = "Key to Room 4"
 		itemNames[284] = "Key to Room 6"
+		itemNames[377] = "Gracidea"
+		itemNames[378] = "Prison Bottle"
 
 		Resources.sanitizeTable(Resources.Data)
 	end
@@ -15855,10 +16725,18 @@ local function NatDexExtension()
 		GameOverScreen.Buttons.NatDexVersion = {
 		type = Constants.ButtonTypes.NO_BORDER,
 		-- The location and dimensions of the button {x,y,w,h}; shares space with Retry Battle button.
-		box = { Constants.SCREEN.WIDTH + 80, 7, 32, 16 },
+		box = { Constants.SCREEN.WIDTH + 68, 7, 32, 16 },
 		-- Text to show on the button
 		getText = function(_thisBtnObj)
-			return string.format("[v%s]", self.version_fake)
+			local major = Memory.readbyte(self.romVersionMajorAddr) or 0
+			local minor = Memory.readbyte(self.romVersionMinorAddr) or 0
+			local patch = Memory.readbyte(self.romVersionPatchAddr) or 0
+			local build = Memory.read32(self.romVersionBuildAddr) or 0
+			if build == 0 then
+				return string.format("[v%s.%s.%s]", major, minor, patch)
+			else
+				return string.format("[v%s.%s.%s-r%s]", major, minor, patch, build)
+			end
 		end,
 		-- Color used for the text only; must pick a color from Theme
 		textColor = "Intermediate text",
@@ -15884,8 +16762,8 @@ local function NatDexExtension()
 	function self.updatePokeData()
 		local PE = PokemonData.Evolutions
 
-		PokemonData.Values.EggId = 1236
-		PokemonData.Values.GhostId = 1237
+		PokemonData.Values.EggId = 1284
+		PokemonData.Values.GhostId = 1285
 		PokemonData.Values.DefaultBaseFriendship = 50
 		PokemonData.TypeIndexMap[0x12] = PokemonData.Types.FAIRY
 
@@ -16373,6 +17251,7 @@ local function NatDexExtension()
 		mon[733].evolution = PE.LINKING_CORD
 		mon[735].evolution = PE.LINKING_CORD
 		mon[764].evolution = PE.ICE
+		mon[769].evolution = PE.SUN_MOON_DUSK
 		mon[782].evolution = PE.FEMALE33
 		mon[865].evolution = PE.SUN_LEAF_DAWN
 		mon[893].evolution = PE.SHINY
@@ -16543,6 +17422,20 @@ local function NatDexExtension()
 		PA.offsetPokedex = Memory.read32(0x08000158)
 		PA.offsetPokedexOwned = Memory.read16(0x08000424)
 		PA.offsetPokedexSeen = Memory.read16(0x08000426)
+		PA.offsetTrainerClass = Memory.read16(0x08000494)
+		PA.offsetTrainerGender = Memory.read16(0x08000496)
+		PA.offsetTrainerPic = Memory.read16(0x08000498)
+		PA.offsetTrainerName = Memory.read16(0x0800049a)
+		PA.offsetTrainerItems = Memory.read16(0x0800049c)
+		PA.offsetTrainerDoubleBattle = Memory.read16(0x0800049e)
+		PA.offsetTrainerFlagsAI = Memory.read16(0x080004a0)
+		PA.offsetTrainerPartySize = Memory.read16(0x080004a2)
+		PA.offsetTrainerPartyPtr = Memory.read16(0x080004a4)
+		PA.offsetTrainerMonLevel = Memory.read16(0x080004a6)
+		PA.offsetTrainerMonSpecies = Memory.read16(0x080004a8)
+		PA.offsetTrainerMonItem = Memory.read16(0x080004aa)
+		PA.offsetTrainerMonNoItemMove1 = Memory.read16(0x080004ac)
+		PA.offsetTrainerMonItemMove1 = Memory.read16(0x080004ae)
 
 		PA.sizeofBaseStatsPokemon = Memory.read16(0x08000428)
 		PA.sizeofExpTablePokemon = Memory.read16(0x0800042a)
@@ -16559,6 +17452,10 @@ local function NatDexExtension()
 		PA.sizeofLastAttackerMove = Memory.read16(0x08000440)
 		PA.sizeofPokemonStruct = Memory.read16(0x08000442)
 		PA.sizeofPokemonNickname = Memory.read8(0x08000176)
+		PA.sizeofTrainerMonWithDefaultMoves = Memory.read16(0x080004b0)
+		PA.sizeofTrainerMonWithCustomMoves = Memory.read16(0x080004b2)
+		PA.sizeofTrainerItem = Memory.read16(0x080004b4)
+		PA.sizeofTrainerMonCustomMove = Memory.read16(0x080004b6)
 
 		local BDSA = BattleDetailsScreen.Addresses
 		BDSA.offsetBattleMonsStatus2 = Memory.read16(0x08000448)
@@ -16599,6 +17496,10 @@ local function NatDexExtension()
 		local PV = Program.Values
 		PV.ShinyOdds = Memory.read16(0x08000444)
 		PV.ButtonModeLR = Memory.read8(0x08000446)
+
+		local MiDV = MiscData.Values
+		MiDV.totalItemsFRLG = Memory.read16(0x080004b8)
+		MiDV.totalItemsEmerald = Memory.read16(0x080004b8)
 	end
 
 	function self.updateGameSettings()
@@ -16681,7 +17582,11 @@ local function NatDexExtension()
 		GS.BattleIntroOpponentSendsOutMonAnimation = Memory.read32(0x080002f0) -- BattleIntroRecordMonsToDex
 		GS.HandleTurnActionSelectionState =          Memory.read32(0x080002f4)
 		GS.ReturnFromBattleToOverworld =             Memory.read32(0x080002f8)
-		GS.FriendshipRequiredToEvo =             	 Memory.read32(0x080002fc) + 0x155 -- GetEvolutionTargetSpecies
+		if GS.game == 3 then -- FireRed
+			GS.FriendshipRequiredToEvo =             	 Memory.read32(0x080002fc) + 0x159 -- GetEvolutionTargetSpecies
+		elseif GS.game == 2 then -- Emerald
+			GS.FriendshipRequiredToEvo =             	 Memory.read32(0x080002fc) + 0x15d -- GetEvolutionTargetSpecies
+		end
 		GS.Task_HandleConfirmStarterInput =          Memory.read32(0x08000300) - 0x1
 		GS.Task_EvolutionScene =                     Memory.read32(0x08000304)
 		GS.gBattleMoves =                            Memory.read32(0x080001cc)
@@ -18569,26 +19474,31 @@ local function NatDexExtension()
 		[1025] = 1000, [1026] = 1001, [1027] = 1002, [1028] = 1003, [1029] = 1004, [1030] = 1005, [1031] = 1006, [1032] = 1007, [1033] = 1008, [1034] = 1009,
 		[1035] = 1010, [1036] = 1011, [1037] = 1012, [1038] = 1013, [1039] = 1014, [1040] = 1015, [1041] = 1016, [1042] = 1017, [1043] = 1018, [1044] = 1019,
 		[1045] = 1020, [1046] = 1021, [1047] = 1022, [1048] = 1023, [1049] = 1024, [1050] = 1025, [1051] = 1026, [1052] = 1027, [1053] = 1028, [1054] = 1029,
-		[1055] = 1030, [1056] = 1031, [1057] = 1032, [1058] = 1033, [1059] = 1034, [1060] = 1035, [1061] = 1036, [1062] = 1037, [1063] = 1038, [1064] = 1039,
-		[1065] = 1040, [1066] = 1041, [1067] = 1042, [1068] = 1043, [1069] = 1044, [1070] = 1045, [1071] = 1046, [1072] = 1047, [1073] = 1048, [1074] = 1049,
-		[1075] = 1050, [1076] = 1051, [1077] = 1052, [1078] = 1053, [1079] = 1054, [1080] = 1055, [1081] = 1056, [1082] = 1057, [1083] = 1058, [1084] = 1059,
-		[1085] = 1060, [1086] = 1061, [1087] = 1062, [1088] = 1063, [1089] = 1064, [1090] = 1065, [1091] = 1066, [1092] = 1067, [1093] = 1068, [1094] = 1069,
-		[1095] = 1070, [1096] = 1071, [1097] = 1072, [1098] = 1073, [1099] = 1074, [1100] = 1075, [1101] = 1076, [1102] = 1077, [1103] = 1078, [1104] = 1079,
-		[1105] = 1080, [1106] = 1081, [1107] = 1082, [1108] = 1083, [1109] = 1084, [1110] = 1085, [1111] = 1086, [1112] = 1087, [1113] = 1088, [1114] = 1089,
-		[1115] = 1090, [1116] = 1091, [1117] = 1092, [1118] = 1093, [1119] = 1094, [1120] = 1095, [1121] = 1096, [1122] = 1097, [1123] = 1098, [1124] = 1099,
-		[1125] = 1100, [1126] = 1101, [1127] = 1102, [1128] = 1103, [1129] = 1104, [1130] = 1105, [1131] = 1106, [1132] = 1107, [1133] = 1108, [1134] = 1109,
-		[1135] = 1110, [1136] = 1111, [1137] = 1112, [1138] = 1113, [1139] = 1114, [1140] = 1115, [1141] = 1116, [1142] = 1117, [1143] = 1118, [1144] = 1119,
-		[1145] = 1120, [1146] = 1121, [1147] = 1122, [1148] = 1123, [1149] = 1124, [1150] = 1125, [1151] = 1126, [1152] = 1127, [1153] = 1128, [1154] = 1129,
-		[1155] = 1130, [1156] = 1131, [1157] = 1132, [1158] = 1133, [1159] = 1134, [1160] = 1135, [1161] = 1136, [1162] = 1137, [1163] = 1138, [1164] = 1139,
-		[1165] = 1140, [1166] = 1141, [1167] = 1142, [1168] = 1143, [1169] = 1144, [1170] = 1145, [1171] = 1146, [1172] = 1147, [1173] = 1148, [1174] = 1149,
-		[1175] = 1150, [1176] = 1151, [1177] = 1152, [1178] = 1153, [1179] = 1154, [1180] = 1155, [1181] = 1156, [1182] = 1157, [1183] = 1158, [1184] = 1159,
-		[1185] = 1160, [1186] = 1161, [1187] = 1162, [1188] = 1163, [1189] = 1164, [1190] = 1165, [1191] = 1166, [1192] = 1167, [1193] = 1168, [1194] = 1169,
-		[1195] = 1170, [1196] = 1171, [1197] = 1172, [1198] = 1173, [1199] = 1174, [1200] = 1175, [1201] = 1176, [1202] = 1177, [1203] = 1178, [1204] = 1179,
-		[1205] = 1180, [1206] = 1181, [1207] = 1182, [1208] = 1183, [1209] = 1184, [1210] = 1185, [1211] = 1186, [1212] = 1187, [1213] = 1188, [1214] = 1189,
-		[1215] = 1190, [1216] = 1191, [1217] = 1192, [1218] = 1193, [1219] = 1194, [1220] = 1195, [1221] = 1196, [1222] = 1197, [1223] = 1198, [1224] = 1199,
-		[1225] = 1200, [1226] = 1201, [1227] = 1202, [1228] = 1203, [1229] = 1204, [1230] = 1205, [1231] = 1206, [1232] = 1207, [1233] = 1208, [1234] = 1209,
-		[1235] = 1210,
+		[1055] = 1030, [1056] = 1031, [1057] = 1035, [1058] = 1037, [1059] = 1038, [1060] = 1039, [1061] = 1041, [1062] = 1042, [1063] = 1043, [1064] = 1045,
+		[1065] = 1046, [1066] = 1049, [1067] = 1050, [1068] = 1051, [1069] = 1052, [1070] = 1054, [1071] = 1055, [1072] = 1056, [1073] = 1057, [1074] = 1058,
+		[1075] = 1059, [1076] = 1060, [1077] = 1061, [1078] = 1062, [1079] = 1063, [1080] = 1064, [1081] = 1065, [1082] = 1066, [1083] = 1067, [1084] = 1068,
+		[1085] = 1070, [1086] = 1072, [1087] = 1073, [1088] = 1074, [1089] = 1075, [1090] = 1076, [1091] = 1078, [1092] = 1079, [1093] = 1081, [1094] = 1083,
+		[1095] = 1084, [1096] = 1090, [1097] = 1108, [1098] = 1119, [1099] = 1120, [1100] = 1121, [1101] = 1122, [1102] = 1123, [1103] = 1124, [1104] = 1125,
+		[1105] = 1126, [1106] = 1127, [1107] = 1128, [1108] = 1129, [1109] = 1130, [1110] = 1131, [1111] = 1132, [1112] = 1133, [1113] = 1134, [1114] = 1135,
+		[1115] = 1136, [1116] = 1137, [1117] = 1138, [1118] = 1139, [1119] = 1140, [1120] = 1141, [1121] = 1142, [1122] = 1143, [1123] = 1144, [1124] = 1145,
+		[1125] = 1146, [1126] = 1147, [1127] = 1148, [1128] = 1149, [1129] = 1150, [1130] = 1151, [1131] = 1152, [1132] = 1153, [1133] = 1154, [1134] = 1155,
+		[1135] = 1156, [1136] = 1157, [1137] = 1158, [1138] = 1159, [1139] = 1160, [1140] = 1161, [1141] = 1162, [1142] = 1163, [1143] = 1164, [1144] = 1165,
+		[1145] = 1166, [1146] = 1167, [1147] = 1168, [1148] = 1169, [1149] = 1170, [1150] = 1171, [1151] = 1172, [1152] = 1173, [1153] = 1174, [1154] = 1175,
+		[1155] = 1176, [1156] = 1177, [1157] = 1178, [1158] = 1179, [1159] = 1180, [1160] = 1181, [1161] = 1182, [1162] = 1183, [1163] = 1184, [1164] = 1185,
+		[1165] = 1186, [1166] = 1187, [1167] = 1188, [1168] = 1189, [1169] = 1190, [1170] = 1191, [1171] = 1192, [1172] = 1193, [1173] = 1194, [1174] = 1195,
+		[1175] = 1196, [1176] = 1197, [1177] = 1198, [1178] = 1199, [1179] = 1200, [1180] = 1201, [1181] = 1202, [1182] = 1203, [1183] = 1204, [1184] = 1205,
+		[1185] = 1206, [1186] = 1207, [1187] = 1208, [1188] = 1209, [1189] = 1210, [1190] = 1211, [1191] = 1212, [1192] = 1214, [1193] = 1215, [1194] = 1216,
+		[1195] = 1217, [1196] = 1218, [1197] = 1219, [1198] = 1220, [1199] = 1221, [1200] = 1222, [1201] = 1223, [1202] = 1224, [1203] = 1225, [1204] = 1226,
+		[1205] = 1227, [1206] = 1228, [1207] = 1229, [1208] = 1230, [1209] = 1231, [1210] = 1232, [1211] = 1233, [1212] = 1234, [1213] = 1235, [1214] = 1236,
+		[1215] = 1237, [1216] = 1238, [1217] = 1239, [1218] = 1240, [1219] = 1241, [1220] = 1242, [1221] = 1243, [1222] = 1244, [1223] = 1245, [1224] = 1246,
+		[1225] = 1247, [1226] = 1248, [1227] = 1249, [1228] = 1250, [1229] = 1252, [1230] = 1253, [1231] = 1254, [1232] = 1255, [1233] = 1256, [1234] = 1257,
+		[1235] = 1258, [1236] = 1213, [1237] = 1251, [1238] = 1034, [1239] = 1036, [1240] = 1040, [1241] = 1044, [1242] = 1047, [1243] = 1048, [1244] = 1053,
+		[1245] = 1085, [1246] = 1088, [1247] = 1089, [1248] = 1091, [1249] = 1092, [1250] = 1093, [1251] = 1094, [1252] = 1096, [1253] = 1097, [1254] = 1098,
+		[1255] = 1099, [1256] = 1100, [1257] = 1103, [1258] = 1104, [1259] = 1105, [1260] = 1106, [1261] = 1107, [1262] = 1111, [1263] = 1114, [1264] = 1032,
+		[1265] = 1033, [1266] = 1069, [1267] = 1071, [1268] = 1077, [1269] = 1080, [1270] = 1082, [1271] = 1086, [1272] = 1087, [1273] = 1095, [1274] = 1101,
+		[1275] = 1109, [1276] = 1110, [1277] = 1112, [1278] = 1113, [1279] = 1115, [1280] = 1116, [1281] = 1117, [1282] = 1118, [1283] = 1102,
 	}
+
 	local idNatToInternal = {
 		[252] = 277, [253] = 278, [254] = 279, [255] = 280, [256] = 281, [257] = 282, [258] = 283, [259] = 284,
 		[260] = 285, [261] = 286, [262] = 287, [263] = 288, [264] = 289, [265] = 290, [266] = 291, [267] = 292, [268] = 293, [269] = 294,
@@ -18668,25 +19578,29 @@ local function NatDexExtension()
 		[1000] = 1025, [1001] = 1026, [1002] = 1027, [1003] = 1028, [1004] = 1029, [1005] = 1030, [1006] = 1031, [1007] = 1032, [1008] = 1033, [1009] = 1034,
 		[1010] = 1035, [1011] = 1036, [1012] = 1037, [1013] = 1038, [1014] = 1039, [1015] = 1040, [1016] = 1041, [1017] = 1042, [1018] = 1043, [1019] = 1044,
 		[1020] = 1045, [1021] = 1046, [1022] = 1047, [1023] = 1048, [1024] = 1049, [1025] = 1050, [1026] = 1051, [1027] = 1052, [1028] = 1053, [1029] = 1054,
-		[1030] = 1055, [1031] = 1056, [1032] = 1057, [1033] = 1058, [1034] = 1059, [1035] = 1060, [1036] = 1061, [1037] = 1062, [1038] = 1063, [1039] = 1064,
-		[1040] = 1065, [1041] = 1066, [1042] = 1067, [1043] = 1068, [1044] = 1069, [1045] = 1070, [1046] = 1071, [1047] = 1072, [1048] = 1073, [1049] = 1074,
-		[1050] = 1075, [1051] = 1076, [1052] = 1077, [1053] = 1078, [1054] = 1079, [1055] = 1080, [1056] = 1081, [1057] = 1082, [1058] = 1083, [1059] = 1084,
-		[1060] = 1085, [1061] = 1086, [1062] = 1087, [1063] = 1088, [1064] = 1089, [1065] = 1090, [1066] = 1091, [1067] = 1092, [1068] = 1093, [1069] = 1094,
-		[1070] = 1095, [1071] = 1096, [1072] = 1097, [1073] = 1098, [1074] = 1099, [1075] = 1100, [1076] = 1101, [1077] = 1102, [1078] = 1103, [1079] = 1104,
-		[1080] = 1105, [1081] = 1106, [1082] = 1107, [1083] = 1108, [1084] = 1109, [1085] = 1110, [1086] = 1111, [1087] = 1112, [1088] = 1113, [1089] = 1114,
-		[1090] = 1115, [1091] = 1116, [1092] = 1117, [1093] = 1118, [1094] = 1119, [1095] = 1120, [1096] = 1121, [1097] = 1122, [1098] = 1123, [1099] = 1124,
-		[1100] = 1125, [1101] = 1126, [1102] = 1127, [1103] = 1128, [1104] = 1129, [1105] = 1130, [1106] = 1131, [1107] = 1132, [1108] = 1133, [1109] = 1134,
-		[1110] = 1135, [1111] = 1136, [1112] = 1137, [1113] = 1138, [1114] = 1139, [1115] = 1140, [1116] = 1141, [1117] = 1142, [1118] = 1143, [1119] = 1144,
-		[1120] = 1145, [1121] = 1146, [1122] = 1147, [1123] = 1148, [1124] = 1149, [1125] = 1150, [1126] = 1151, [1127] = 1152, [1128] = 1153, [1129] = 1154,
-		[1130] = 1155, [1131] = 1156, [1132] = 1157, [1133] = 1158, [1134] = 1159, [1135] = 1160, [1136] = 1161, [1137] = 1162, [1138] = 1163, [1139] = 1164,
-		[1140] = 1165, [1141] = 1166, [1142] = 1167, [1143] = 1168, [1144] = 1169, [1145] = 1170, [1146] = 1171, [1147] = 1172, [1148] = 1173, [1149] = 1174,
-		[1150] = 1175, [1151] = 1176, [1152] = 1177, [1153] = 1178, [1154] = 1179, [1155] = 1180, [1156] = 1181, [1157] = 1182, [1158] = 1183, [1159] = 1184,
-		[1160] = 1185, [1161] = 1186, [1162] = 1187, [1163] = 1188, [1164] = 1189, [1165] = 1190, [1166] = 1191, [1167] = 1192, [1168] = 1193, [1169] = 1194,
-		[1170] = 1195, [1171] = 1196, [1172] = 1197, [1173] = 1198, [1174] = 1199, [1175] = 1200, [1176] = 1201, [1177] = 1202, [1178] = 1203, [1179] = 1204,
-		[1180] = 1205, [1181] = 1206, [1182] = 1207, [1183] = 1208, [1184] = 1209, [1185] = 1210, [1186] = 1211, [1187] = 1212, [1188] = 1213, [1189] = 1214,
-		[1190] = 1215, [1191] = 1216, [1192] = 1217, [1193] = 1218, [1194] = 1219, [1195] = 1220, [1196] = 1221, [1197] = 1222, [1198] = 1223, [1199] = 1224,
-		[1200] = 1225, [1201] = 1226, [1202] = 1227, [1203] = 1228, [1204] = 1229, [1205] = 1230, [1206] = 1231, [1207] = 1232, [1208] = 1233, [1209] = 1234,
-		[1210] = 1235,
+		[1030] = 1055, [1031] = 1056, [1035] = 1057, [1037] = 1058, [1038] = 1059, [1039] = 1060, [1041] = 1061, [1042] = 1062, [1043] = 1063, [1045] = 1064,
+		[1046] = 1065, [1049] = 1066, [1050] = 1067, [1051] = 1068, [1052] = 1069, [1054] = 1070, [1055] = 1071, [1056] = 1072, [1057] = 1073, [1058] = 1074,
+		[1059] = 1075, [1060] = 1076, [1061] = 1077, [1062] = 1078, [1063] = 1079, [1064] = 1080, [1065] = 1081, [1066] = 1082, [1067] = 1083, [1068] = 1084,
+		[1070] = 1085, [1072] = 1086, [1073] = 1087, [1074] = 1088, [1075] = 1089, [1076] = 1090, [1078] = 1091, [1079] = 1092, [1081] = 1093, [1083] = 1094,
+		[1084] = 1095, [1090] = 1096, [1108] = 1097, [1119] = 1098, [1120] = 1099, [1121] = 1100, [1122] = 1101, [1123] = 1102, [1124] = 1103, [1125] = 1104,
+		[1126] = 1105, [1127] = 1106, [1128] = 1107, [1129] = 1108, [1130] = 1109, [1131] = 1110, [1132] = 1111, [1133] = 1112, [1134] = 1113, [1135] = 1114,
+		[1136] = 1115, [1137] = 1116, [1138] = 1117, [1139] = 1118, [1140] = 1119, [1141] = 1120, [1142] = 1121, [1143] = 1122, [1144] = 1123, [1145] = 1124,
+		[1146] = 1125, [1147] = 1126, [1148] = 1127, [1149] = 1128, [1150] = 1129, [1151] = 1130, [1152] = 1131, [1153] = 1132, [1154] = 1133, [1155] = 1134,
+		[1156] = 1135, [1157] = 1136, [1158] = 1137, [1159] = 1138, [1160] = 1139, [1161] = 1140, [1162] = 1141, [1163] = 1142, [1164] = 1143, [1165] = 1144,
+		[1166] = 1145, [1167] = 1146, [1168] = 1147, [1169] = 1148, [1170] = 1149, [1171] = 1150, [1172] = 1151, [1173] = 1152, [1174] = 1153, [1175] = 1154,
+		[1176] = 1155, [1177] = 1156, [1178] = 1157, [1179] = 1158, [1180] = 1159, [1181] = 1160, [1182] = 1161, [1183] = 1162, [1184] = 1163, [1185] = 1164,
+		[1186] = 1165, [1187] = 1166, [1188] = 1167, [1189] = 1168, [1190] = 1169, [1191] = 1170, [1192] = 1171, [1193] = 1172, [1194] = 1173, [1195] = 1174,
+		[1196] = 1175, [1197] = 1176, [1198] = 1177, [1199] = 1178, [1200] = 1179, [1201] = 1180, [1202] = 1181, [1203] = 1182, [1204] = 1183, [1205] = 1184,
+		[1206] = 1185, [1207] = 1186, [1208] = 1187, [1209] = 1188, [1210] = 1189, [1211] = 1190, [1212] = 1191, [1214] = 1192, [1215] = 1193, [1216] = 1194,
+		[1217] = 1195, [1218] = 1196, [1219] = 1197, [1220] = 1198, [1221] = 1199, [1222] = 1200, [1223] = 1201, [1224] = 1202, [1225] = 1203, [1226] = 1204,
+		[1227] = 1205, [1228] = 1206, [1229] = 1207, [1230] = 1208, [1231] = 1209, [1232] = 1210, [1233] = 1211, [1234] = 1212, [1235] = 1213, [1236] = 1214,
+		[1237] = 1215, [1238] = 1216, [1239] = 1217, [1240] = 1218, [1241] = 1219, [1242] = 1220, [1243] = 1221, [1244] = 1222, [1245] = 1223, [1246] = 1224,
+		[1247] = 1225, [1248] = 1226, [1249] = 1227, [1250] = 1228, [1252] = 1229, [1253] = 1230, [1254] = 1231, [1255] = 1232, [1256] = 1233, [1257] = 1234,
+		[1258] = 1235, [1213] = 1236, [1251] = 1237, [1034] = 1238, [1036] = 1239, [1040] = 1240, [1044] = 1241, [1047] = 1242, [1048] = 1243, [1053] = 1244,
+		[1085] = 1245, [1088] = 1246, [1089] = 1247, [1091] = 1248, [1092] = 1249, [1093] = 1250, [1094] = 1251, [1096] = 1252, [1097] = 1253, [1098] = 1254,
+		[1099] = 1255, [1100] = 1256, [1103] = 1257, [1104] = 1258, [1105] = 1259, [1106] = 1260, [1107] = 1261, [1111] = 1262, [1114] = 1263, [1032] = 1264,
+		[1033] = 1265, [1069] = 1266, [1071] = 1267, [1077] = 1268, [1080] = 1269, [1082] = 1270, [1086] = 1271, [1087] = 1272, [1095] = 1273, [1101] = 1274,
+		[1109] = 1275, [1110] = 1276, [1112] = 1277, [1113] = 1278, [1115] = 1279, [1116] = 1280, [1117] = 1281, [1118] = 1282, [1102] = 1283,
 	}
 
 	function self.overrideDexMapInternalToNational(pokemonID)
