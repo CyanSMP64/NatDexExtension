@@ -110,17 +110,25 @@ local function NatDexExtension()
 		self.currentDexMapNationalToInternal = PokemonData.dexMapNationalToInternal
 		PokemonData.dexMapNationalToInternal = self.overrideDexMapNationalToInternal
 
-		self.currentTrackAbility = Tracker.TrackAbility
-		Tracker.TrackAbility = self.overrideTrackAbility
+		if Tracker.TrackAbility ~= self.overrideTrackAbility then
+			self.currentTrackAbility = Tracker.TrackAbility
+			Tracker.TrackAbility = self.overrideTrackAbility
+		end
 
-		self.currentSetAbilities = Tracker.setAbilities
-		Tracker.setAbilities = self.overrideSetAbilities
+		if Tracker.setAbilities ~= self.overrideSetAbilities then
+			self.currentSetAbilities = Tracker.setAbilities
+			Tracker.setAbilities = self.overrideSetAbilities
+		end
 
-		self.currentTrackStatMarking = Tracker.TrackStatMarking
-		Tracker.TrackStatMarking = self.overrideTrackStatMarking
+		if Tracker.TrackStatMarking ~= self.overrideTrackStatMarking then
+			self.currentTrackStatMarking = Tracker.TrackStatMarking
+			Tracker.TrackStatMarking = self.overrideTrackStatMarking
+		end
 
-		self.currentTrackMove = Tracker.TrackMove
-		Tracker.TrackMove = self.overrideTrackMove
+		if Tracker.TrackMove ~= self.overrideTrackMove then
+			self.currentTrackMove = Tracker.TrackMove
+			Tracker.TrackMove = self.overrideTrackMove
+		end
 	end
 
 	function self.undoOverrideCoreTrackerFunctions()
@@ -510,6 +518,38 @@ local function NatDexExtension()
 		return self.LinkedTrackedMoveGroups[groupIndex]
 	end
 
+	function self.shouldSkipLinkedTrackAbility(pokemonID, abilityId)
+		if pokemonID == nil or abilityId == nil then
+			return false
+		end
+
+		local trackedPokemon = Tracker.getOrCreateTrackedPokemon(pokemonID, false)
+		local abilities = trackedPokemon.abilities or {}
+		local ability1 = (abilities[1] or {}).id or 0
+		local ability2 = (abilities[2] or {}).id or 0
+
+		return ability1 == abilityId or ability2 == abilityId
+	end
+
+	function self.shouldSkipLinkedTrackMove(pokemonID, moveId, level)
+		if pokemonID == nil or moveId == nil then
+			return false
+		end
+
+		local trackedPokemon = Tracker.getOrCreateTrackedPokemon(pokemonID, false)
+		for _, move in pairs(trackedPokemon.moves or {}) do
+			if move.id == moveId then
+				local minLv = move.minLv or move.level
+				local maxLv = move.maxLv or move.level
+				if level == nil or (minLv ~= nil and maxLv ~= nil and level >= minLv and level <= maxLv) then
+					return true
+				end
+			end
+		end
+
+		return false
+	end
+
 	function self.overrideTrackAbility(pokemonID, abilityId)
 		if type(self.currentTrackAbility) ~= "function" then
 			return
@@ -528,7 +568,9 @@ local function NatDexExtension()
 
 		for _, linkedSpeciesId in ipairs(linkedSpecies) do
 			if linkedSpeciesId ~= pokemonID then
-				self.currentTrackAbility(linkedSpeciesId, abilityId)
+				if not self.shouldSkipLinkedTrackAbility(linkedSpeciesId, abilityId) then
+					self.currentTrackAbility(linkedSpeciesId, abilityId)
+				end
 			end
 		end
 	end
@@ -603,7 +645,9 @@ local function NatDexExtension()
 
 		for _, linkedSpeciesId in ipairs(linkedSpecies) do
 			if linkedSpeciesId ~= pokemonID then
-				self.currentTrackMove(linkedSpeciesId, moveId, level)
+				if not self.shouldSkipLinkedTrackMove(linkedSpeciesId, moveId, level) then
+					self.currentTrackMove(linkedSpeciesId, moveId, level)
+				end
 			end
 		end
 	end
