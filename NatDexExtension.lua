@@ -6,7 +6,7 @@ local function NatDexExtension()
 		description = "Extension that allows for compatibility with the Emerald & FireRed Nat. Dex ROM hacks.",
 		github = "CyanSMP64/NatDexExtension", -- Replace "MyUsername" and "ExtensionRepo" to match your GitHub repo url, if any
 
-		requiredVersion = "v8.5.0", -- minimum Tracker version required to use this extension with full support
+		requiredVersion = "v9.3.0", -- minimum Tracker version required to use this extension with full support
 		extensionKey = "NatDexExtension", -- matches the name of this file, used for enabling/disabling this extension
     	isNatDex = false, -- a stored verification check if this game rom is a nat. dex game rom
 		allowWarningPopup = true, -- if tracker doesn't support this extension, popup a warning
@@ -3696,10 +3696,10 @@ local function NatDexExtension()
 		[311] = "Poison Puppeteer",
 		[312] = "Piercing Drill",
 		[313] = "Dragonize",
-		[314] = "314",
+		[314] = "Eelevate",
 		[315] = "315",
 		[316] = "Mega Sol",
-		[317] = "317",
+		[317] = "Fire Mane",
 		[318] = "318",
 		[319] = "Spicy Spray",
 	}
@@ -4650,7 +4650,7 @@ local function NatDexExtension()
 			Description = "Not implemented yet.",
 		},
 		[314] = {
-			NameKey = "314",
+			NameKey = "Eelevate",
 			Description = "Not implemented yet.",
 		},
 		[315] = {
@@ -4662,7 +4662,7 @@ local function NatDexExtension()
 			Description = "Not implemented yet.",
 		},
 		[317] = {
-			NameKey = "317",
+			NameKey = "Fire Mane",
 			Description = "Not implemented yet.",
 		},
 		[318] = {
@@ -16646,7 +16646,7 @@ local function NatDexExtension()
 		},
 		{
 			id = 314,
-			name = "314",
+			name = "Eelevate",
 		},
 		{
 			id = 315,
@@ -16658,7 +16658,7 @@ local function NatDexExtension()
 		},
 		{
 			id = 317,
-			name = "317",
+			name = "Fire Mane",
 		},
 		{
 			id = 318,
