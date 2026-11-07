@@ -1,6 +1,6 @@
 local function NatDexExtension()
 	local self = {
-		version = "1.2.1",
+		version = "1.2.2",
 		name = "Nat. Dex",
 		author = "CyanSixFour, UTDZac",
 		description = "Extension that allows for compatibility with the Emerald & FireRed Nat. Dex ROM hacks.",
@@ -129,6 +129,11 @@ local function NatDexExtension()
 			self.currentTrackMove = Tracker.TrackMove
 			Tracker.TrackMove = self.overrideTrackMove
 		end
+
+		if Battle.updateTrackedInfo ~= self.overrideBattleUpdateTrackedInfo then
+			self.currentBattleUpdateTrackedInfo = Battle.updateTrackedInfo
+			Battle.updateTrackedInfo = self.overrideBattleUpdateTrackedInfo
+		end
 	end
 
 	function self.undoOverrideCoreTrackerFunctions()
@@ -155,6 +160,9 @@ local function NatDexExtension()
 		end
 		if type(self.currentTrackMove) == "function" then
 			Tracker.TrackMove = self.currentTrackMove
+		end
+		if type(self.currentBattleUpdateTrackedInfo) == "function" then
+			Battle.updateTrackedInfo = self.currentBattleUpdateTrackedInfo
 		end
 	end
 
@@ -665,6 +673,142 @@ local function NatDexExtension()
 				end
 			end
 		end
+	end
+
+	function self.tryRepairEnemyBattlePartySnapshot()
+		if type(Battle) ~= "table" or not Battle.inBattleScreen then
+			return
+		end
+
+		local gameData = Program and Program.GameData or nil
+		local enemyTeam = gameData and gameData.EnemyTeam or nil
+		local battleParties = Battle.BattleParties or nil
+		if type(enemyTeam) ~= "table" or type(battleParties) ~= "table" then
+			return
+		end
+
+		if type(battleParties[1]) ~= "table" then
+			battleParties[1] = {}
+		end
+		local enemyPartySnapshot = battleParties[1]
+		local combatants = Battle.Combatants or {}
+
+		local function slotOutOfSync(slot)
+			if type(slot) ~= "number" or slot <= 0 then
+				return false
+			end
+
+			local etMon = enemyTeam[slot]
+			if etMon == nil then
+				return false
+			end
+
+			local bpMon = enemyPartySnapshot[slot]
+			if bpMon == nil then
+				return true
+			end
+
+			if bpMon.sourceSnapshotOutOfSync or (bpMon.sourcePokemonID ~= nil and bpMon.sourcePokemonID ~= etMon.pokemonID) then
+				return true
+			end
+
+			-- fixes sketch/mimic tracking
+			if Battle.firstActionTaken then
+				return false
+			end
+
+			local bpMoves = bpMon.moves or {}
+			local etMoves = etMon.moves or {}
+			for i = 1, 4 do
+				local bpMoveId = bpMoves[i] or 0
+				local etMoveId = ((etMoves[i] or {}).id or 0)
+				if bpMoveId ~= etMoveId then
+					return true
+				end
+			end
+
+			return false
+		end
+
+		local function syncEnemySlot(slot)
+			local etMon = enemyTeam[slot]
+			if etMon == nil then
+				return
+			end
+
+			local previous = enemyPartySnapshot[slot] or {}
+			local enemyMoves = {
+				((etMon.moves[1] or {}).id or 0),
+				((etMon.moves[2] or {}).id or 0),
+				((etMon.moves[3] or {}).id or 0),
+				((etMon.moves[4] or {}).id or 0),
+			}
+			local ability = PokemonData.getAbilityId(etMon.pokemonID, etMon.abilityNum)
+
+			enemyPartySnapshot[slot] = {
+				seenAlready = previous.seenAlready == true,
+				sourcePokemonID = etMon.pokemonID,
+				sourceSnapshotOutOfSync = false,
+				abilityOwner = {
+					isOwn = false,
+					slot = slot,
+				},
+				["originalAbility"] = ability,
+				["ability"] = ability,
+				transformData = {
+					isOwn = false,
+					slot = slot,
+				},
+				moves = enemyMoves,
+			}
+		end
+
+		local leftSlot = combatants.LeftOther
+		local rightSlot = combatants.RightOther
+		local leftOutOfSync = slotOutOfSync(leftSlot)
+		local rightOutOfSync = Battle.numBattlers == 4 and slotOutOfSync(rightSlot)
+
+		if leftOutOfSync then
+			syncEnemySlot(leftSlot)
+		end
+		if rightOutOfSync then
+			syncEnemySlot(rightSlot)
+		end
+	end
+
+	function self.afterBattleBegins()
+		local enemyTeam = Program and Program.GameData and Program.GameData.EnemyTeam or nil
+		local enemyPartySnapshot = Battle and Battle.BattleParties and Battle.BattleParties[1] or nil
+		if type(enemyTeam) ~= "table" or type(enemyPartySnapshot) ~= "table" then
+			return
+		end
+
+		for slot, enemyPokemon in pairs(enemyTeam) do
+			local battlePokemon = enemyPartySnapshot[slot]
+			if battlePokemon ~= nil then
+				battlePokemon.sourcePokemonID = enemyPokemon.pokemonID
+				local battleMoves = battlePokemon.moves or {}
+				local enemyMoves = enemyPokemon.moves or {}
+				battlePokemon.sourceSnapshotOutOfSync = false
+				for moveIndex = 1, 4 do
+					local battleMoveId = battleMoves[moveIndex] or 0
+					local enemyMoveId = ((enemyMoves[moveIndex] or {}).id or 0)
+					if battleMoveId ~= enemyMoveId then
+						battlePokemon.sourceSnapshotOutOfSync = true
+						break
+					end
+				end
+			end
+		end
+	end
+
+	function self.overrideBattleUpdateTrackedInfo()
+		if type(self.currentBattleUpdateTrackedInfo) ~= "function" then
+			return
+		end
+
+		self.tryRepairEnemyBattlePartySnapshot()
+		self.currentBattleUpdateTrackedInfo()
 	end
 
 	function self.overrideGetRandomizerSettingsPath()
@@ -3702,6 +3846,7 @@ local function NatDexExtension()
 		[317] = "Fire Mane",
 		[318] = "318",
 		[319] = "Spicy Spray",
+		[320] = "Aura Guard",
 	}
 
 	self.Data.natDexAbilityDescriptions = {
@@ -4671,6 +4816,10 @@ local function NatDexExtension()
 		},
 		[319] = {
 			NameKey = "Spicy Spray",
+			Description = "Not implemented yet.",
+		},
+		[320] = {
+			NameKey = "Aura Guard",
 			Description = "Not implemented yet.",
 		},
 	}
@@ -11894,7 +12043,7 @@ local function NatDexExtension()
 			pp = "30",
 			accuracy = "100",
 			category = MoveData.Categories.PHYSICAL,
-			isContact = true,
+			iscontact = true,
 			priority = "+ 1",
 		},
 		{
@@ -16668,6 +16817,10 @@ local function NatDexExtension()
 			id = 319,
 			name = "Spicy Spray",
 		},
+		{
+			id = 320,
+			name = "Aura Guard",
+		},
 	}
 
 	self.Data.natDexTypes = {
@@ -17644,8 +17797,8 @@ local function NatDexExtension()
 		PV.ButtonModeLR = Memory.read8(0x08000446)
 
 		local MiDV = MiscData.Values
-		MiDV.totalItemsFRLG = Memory.read16(0x080004b8)
-		MiDV.totalItemsEmerald = Memory.read16(0x080004b8)
+		MiDV.TotalItemsFRLG = Memory.read16(0x080004b8)
+		MiDV.TotalItemsEmerald = Memory.read16(0x080004b8)
 	end
 
 	function self.updateGameSettings()
